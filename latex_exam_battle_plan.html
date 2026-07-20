@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The LaTeX Board III — 50-Minute Battle Plan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Literata:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --board:#182922;
+    --board-2:#1f3229;
+    --board-edge:#0f1d17;
+    --chalk:#F1EEE4;
+    --chalk-dim:#C7D1C9;
+    --chalk-yellow:#EFCB53;
+    --chalk-blue:#9BCBE0;
+    --chalk-pink:#E39AAE;
+    --paper:#FBF8EF;
+    --paper-2:#F3EFE1;
+    --ink:#201D17;
+    --ink-soft:#4a4636;
+    --rule:#d8d2bd;
+    --accent:#8B1E3F;
+    --mono:'JetBrains Mono', monospace;
+    --serif:'Literata', serif;
+    --chalkfont:'Caveat', cursive;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--board);
+    color:var(--chalk);
+    font-family:var(--serif);
+    line-height:1.62;
+    -webkit-font-smoothing:antialiased;
+  }
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(255,255,255,0.02), transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(255,255,255,0.02), transparent 40%);
+    pointer-events:none;
+    z-index:0;
+  }
+  a{color:var(--chalk-blue);}
+
+  .wrap{display:flex; min-height:100vh; position:relative; z-index:1;}
+  .sidebar{
+    width:280px; flex:0 0 280px;
+    background:var(--board-edge);
+    border-right:2px dashed rgba(241,238,228,0.15);
+    padding:28px 20px 40px;
+    position:sticky; top:0; height:100vh; overflow-y:auto;
+  }
+  .sidebar-title{
+    font-family:var(--chalkfont); color:var(--chalk-yellow);
+    font-size:1.6rem; margin:0 0 4px; letter-spacing:0.5px;
+  }
+  .sidebar-sub{color:var(--chalk-dim); font-size:0.78rem; margin:0 0 22px; line-height:1.5;}
+  .toc{list-style:none; margin:0; padding:0;}
+  .toc li{margin-bottom:2px;}
+  .toc a{
+    display:flex; gap:10px; align-items:baseline;
+    text-decoration:none; color:var(--chalk-dim);
+    font-size:0.84rem; padding:7px 10px; border-radius:4px;
+    border-left:2px solid transparent;
+  }
+  .toc a:hover, .toc a.active{
+    color:var(--chalk); background:rgba(241,238,228,0.07);
+    border-left:2px solid var(--chalk-yellow);
+  }
+  .toc .n{font-family:var(--mono); color:var(--chalk-yellow); font-size:0.72rem;}
+
+  main{flex:1; min-width:0; padding:0 0 80px;}
+
+  .hero{
+    padding:60px 56px 42px; border-bottom:2px dashed rgba(241,238,228,0.15);
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+  }
+  .hero-eyebrow{font-family:var(--mono); color:var(--chalk-blue); font-size:0.8rem; letter-spacing:2px; text-transform:uppercase;}
+  .hero h1{
+    font-family:var(--chalkfont); font-weight:700; color:var(--chalk);
+    font-size:3.1rem; margin:8px 0 6px; line-height:1;
+  }
+  .hero p.lede{color:var(--chalk-dim); max-width:700px; font-size:1.02rem; margin:0 0 20px;}
+  .hero-tags{display:flex; flex-wrap:wrap; gap:8px;}
+  .tag{
+    font-family:var(--mono); font-size:0.72rem; color:var(--board);
+    background:var(--chalk-yellow); padding:4px 10px; border-radius:20px;
+  }
+
+  section{padding:46px 56px; border-bottom:2px dashed rgba(241,238,228,0.13); scroll-margin-top:16px;}
+  .section-head{display:flex; align-items:baseline; gap:16px; margin-bottom:6px;}
+  .section-num{font-family:var(--mono); color:var(--chalk-yellow); font-size:1rem; opacity:0.85;}
+  section h2{font-family:var(--chalkfont); font-size:2.15rem; color:var(--chalk); margin:0;}
+  p.lead{color:var(--chalk-dim); max-width:800px; margin:0 0 26px; font-size:0.98rem;}
+  .subtopic{margin:28px 0 40px;}
+  .subtopic h3{
+    color:var(--chalk-yellow); font-size:1.14rem; margin:0 0 10px;
+    font-family:var(--serif); font-weight:600;
+  }
+  .subtopic h4{color:var(--chalk); font-size:0.98rem; margin:20px 0 8px; font-weight:600;}
+  .subtopic p{color:var(--chalk); max-width:820px; margin:0 0 12px; font-size:0.96rem;}
+  .subtopic p.small-note{color:var(--chalk-dim); font-size:0.86rem;}
+
+  .callout{
+    border-left:3px solid var(--chalk-pink); background:rgba(227,154,174,0.10);
+    padding:12px 16px; margin:14px 0; font-size:0.88rem; color:var(--chalk); max-width:800px; border-radius:0 6px 6px 0;
+  }
+  .callout b{color:var(--chalk-pink);}
+  .tip{
+    border-left:3px solid var(--chalk-blue); background:rgba(155,203,224,0.10);
+    padding:12px 16px; margin:14px 0; font-size:0.88rem; color:var(--chalk); max-width:800px; border-radius:0 6px 6px 0;
+  }
+  .tip b{color:var(--chalk-blue);}
+  .speed{
+    border-left:3px solid #7CD992; background:rgba(124,217,146,0.10);
+    padding:12px 16px; margin:14px 0; font-size:0.88rem; color:var(--chalk); max-width:800px; border-radius:0 6px 6px 0;
+  }
+  .speed b{color:#7CD992;}
+
+  .demo-grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:22px;
+    margin:16px 0 8px; align-items:start;
+  }
+  @media (max-width:900px){ .demo-grid{grid-template-columns:1fr;} }
+
+  .note{
+    position:relative; border-radius:3px; padding:22px 18px 18px;
+    box-shadow:0 10px 22px rgba(0,0,0,0.35), 0 2px 0 rgba(0,0,0,0.15);
+    margin-bottom:6px;
+  }
+  .note::before{
+    content:""; position:absolute; top:-9px; left:50%; transform:translateX(-50%);
+    width:16px; height:16px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #ff8a8a, var(--accent) 65%);
+    box-shadow:0 3px 5px rgba(0,0,0,0.4);
+  }
+  .note-label{
+    font-family:var(--mono); font-size:0.68rem; letter-spacing:1.5px;
+    text-transform:uppercase; margin-bottom:10px; display:inline-block;
+    padding:2px 8px; border-radius:3px;
+  }
+  .note-code{ background:var(--paper); transform:rotate(-0.5deg); }
+  .note-code .note-label{ background:var(--ink); color:var(--chalk-yellow); }
+  .note-output{ background:#ffffff; transform:rotate(0.4deg); }
+  .note-output .note-label{ background:#e8e8e8; color:var(--accent); }
+  @media (max-width:900px){
+    .note-code, .note-output{ transform:none; }
+  }
+
+  pre.tex-code{
+    margin:0; font-family:var(--mono); font-size:0.79rem; color:var(--ink);
+    white-space:pre-wrap; word-break:break-word; line-height:1.5;
+  }
+  .tex-cmd{color:#8B1E3F; font-weight:600;}
+  .tex-brace{color:#146b66; font-weight:600;}
+  .tex-comment{color:#6b6552; font-style:italic;}
+
+  .rendered{ color:var(--ink); font-family:var(--serif); font-size:0.9rem; }
+
+  table.demo-table{ border-collapse:collapse; width:100%; font-size:0.83rem; background:#ffffff; color:#201D17; }
+  table.demo-table td, table.demo-table th{ padding:6px 9px; text-align:center; color:#201D17; }
+  .tbl-hlines td, .tbl-hlines th{ border:1px solid #201D17; }
+  .tbl-booktabs th{ border-top:1.6px solid #201D17; border-bottom:1px solid #201D17; }
+  .tbl-booktabs td.bottom-rule{ border-bottom:1.6px solid #201D17; }
+
+  .fig-row{ display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap; }
+  .fig-box{
+    position:relative; background:#c7c7c7; border:1px solid #7c7c7c;
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--serif); font-weight:700; color:#2b2b2b; font-size:0.8rem;
+    background-image:
+      linear-gradient(45deg, transparent 48%, #9a9a9a 49%, #9a9a9a 51%, transparent 52%),
+      linear-gradient(-45deg, transparent 48%, #9a9a9a 49%, #9a9a9a 51%, transparent 52%);
+  }
+  .fig-cap{ text-align:center; font-size:0.74rem; color:var(--ink-soft); margin-top:3px; }
+  .fig-group-title{ text-align:center; font-weight:700; font-size:0.9rem; color:#201D17; margin:10px 0 6px; }
+
+  code.inline{ font-family:var(--mono); background:rgba(241,238,228,0.10); color:var(--chalk-yellow); padding:1px 6px; border-radius:4px; font-size:0.87em;}
+
+  .grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+  @media (max-width:900px){ .grid-2{grid-template-columns:1fr;} }
+
+  .pkg-table{ width:100%; border-collapse:collapse; margin:16px 0; font-size:0.86rem; max-width:840px;}
+  .pkg-table th{ text-align:left; color:var(--chalk-yellow); font-family:var(--mono); font-weight:500; font-size:0.73rem; text-transform:uppercase; letter-spacing:1px; padding:9px 12px; border-bottom:1px dashed rgba(241,238,228,0.3); background:rgba(241,238,228,0.04);}
+  .pkg-table td{ padding:9px 12px; border-bottom:1px dashed rgba(241,238,228,0.15); color:var(--chalk); vertical-align:top;}
+  .pkg-table tr:nth-child(even) td{ background:rgba(241,238,228,0.035); }
+  .pkg-table code.inline{ white-space:nowrap; }
+  .table-scroll{ overflow-x:auto; }
+
+  .sym-table{ width:100%; border-collapse:collapse; margin:12px 0 20px; font-size:0.85rem; background:#ffffff; color:#201D17; max-width:840px;}
+  .sym-table th{ background:#201D17; color:#F1EEE4; text-align:left; padding:8px 12px; font-family:var(--mono); font-size:0.71rem; letter-spacing:1px; text-transform:uppercase;}
+  .sym-table td{ padding:6px 12px; border-bottom:1px solid #e4e0d0; color:#201D17;}
+  .sym-table tr:nth-child(even) td{ background:#f7f4e9; }
+  .sym-table .cmd{ font-family:var(--mono); color:#8B1E3F; }
+  .sym-table .glyph{ font-size:1.1rem; text-align:center; }
+  .sym-table .rare{ background:#fdeaa0 !important; }
+
+  .clock{
+    display:inline-flex; align-items:center; gap:6px; font-family:var(--mono);
+    background:var(--chalk-yellow); color:var(--board); padding:2px 10px; border-radius:20px; font-size:0.78rem;
+  }
+
+  footer{ padding:40px 56px; text-align:center; color:var(--chalk-dim); font-size:0.85rem; }
+  footer .sign{ font-family:var(--chalkfont); font-size:1.4rem; color:var(--chalk-yellow); }
+
+  .nav-toggle{ display:none; }
+  @media (max-width:820px){
+    .sidebar{
+      position:fixed; left:0; top:0; height:100vh; z-index:20;
+      transform:translateX(-100%); transition:transform 0.25s ease; width:78vw; max-width:300px;
+    }
+    .sidebar.open{ transform:translateX(0); }
+    .nav-toggle{
+      display:flex; align-items:center; gap:8px; position:fixed; top:14px; left:14px; z-index:21;
+      background:var(--chalk-yellow); color:var(--board); border:none; border-radius:20px;
+      padding:8px 14px; font-family:var(--mono); font-size:0.78rem; cursor:pointer;
+    }
+    .hero, section, footer{ padding-left:24px; padding-right:24px; }
+    .hero{ padding-top:70px; }
+    .hero h1{ font-size:2.2rem; }
+  }
+  @media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto;} .sidebar{transition:none;} }
+</style>
+</head>
+<body>
+
+<button class="nav-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰ Topics</button>
+
+<div class="wrap">
+  <nav class="sidebar">
+    <div class="sidebar-title">The LaTeX Board III</div>
+    <p class="sidebar-sub">Not a reference to study — a battle plan to have <em>open</em> during a timed reproduction exam. Built around the B1 (Laplace/RC) and C2 (Solar System) question patterns.</p>
+    <ul class="toc" id="toc">
+      <li><a href="#plan"><span class="n">00</span> The Battle Plan</a></li>
+      <li><a href="#preamble"><span class="n">01</span> The One True Preamble</a></li>
+      <li><a href="#title"><span class="n">02</span> Title Blocks, Multi-Author</a></li>
+      <li><a href="#lists"><span class="n">03</span> Symbol Bullets, Fast</a></li>
+      <li><a href="#tables"><span class="n">04</span> The Spanning Table Skeleton</a></li>
+      <li><a href="#figures"><span class="n">05</span> Wrapped, Rotated &amp; Grouped Figures</a></li>
+      <li><a href="#arsenal"><span class="n">06</span> The Math Symbol Arsenal</a></li>
+      <li><a href="#derivations"><span class="n">07</span> Fast Multi-Step Derivations</a></li>
+      <li><a href="#theorem"><span class="n">08</span> Proposition/Proof, Per-Section</a></li>
+      <li><a href="#cite"><span class="n">09</span> Citations Without the BibTeX Tax</a></li>
+      <li><a href="#cheap"><span class="n">10</span> Footnotes &amp; Hyperlinks — Cheap Points</a></li>
+      <li><a href="#listings"><span class="n">11</span> Code Listings, Fast</a></li>
+      <li><a href="#checklist"><span class="n">12</span> Final 5-Minute Checklist</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <header class="hero">
+      <div class="hero-eyebrow">CSE200 · 50-Minute Format · Speed Edition</div>
+      <h1>The Battle Plan</h1>
+      <p class="lede">Both B1 and C2 are the same underlying exam wearing a different topic: a title block with numbered affiliations, nested lists with strange bullet symbols, one genuinely brutal spanning table, a figure that's either wrapped/rotated or a grouped subfigure grid, a wall of math with symbols you won't have time to look up, a theorem/proposition, and three cheap one-line items (footnote, hyperlink, citation) at the bottom. This board drills the <em>pattern</em>, not the specific paper — generic, reusable skeletons plus a symbol reference dense enough to keep open in a second window while you type.</p>
+      <div class="hero-tags">
+        <span class="tag">time-budgeted by mark value</span>
+        <span class="tag">copy-paste skeletons</span>
+        <span class="tag">thebibliography, no BibTeX</span>
+        <span class="tag">rare symbol arsenal</span>
+        <span class="tag">offline materials = allowed</span>
+      </div>
+    </header>
+
+    <!-- ============ 00 PLAN ============ -->
+    <section id="plan">
+      <div class="section-head"><span class="section-num">00</span><h2>The Battle Plan</h2></div>
+      <p class="lead">Both papers score out of 50 for a 50-minute slot — that's not a coincidence, treat it as <b>1 mark ≈ 1 minute</b> of budget. The instructions on both papers explicitly say exact line breaks and float placement are <em>not</em> required, and the document just has to compile and closely resemble the original. That sentence is doing a lot of work: it means "good enough and compiling" beats "perfect and unfinished," every single time.</p>
+
+      <div class="subtopic">
+        <h3>Attack in mark-value order, not document order</h3>
+        <p>Reading top to bottom and writing what you meet is the instinct — resist it. Skim the mark table first, rank items by value, and write the biggest chunks while your head is clearest. A rough shape, using B1's actual distribution as the model:</p>
+        <table class="pkg-table">
+          <tr><th>Rank</th><th>Item</th><th>Marks</th><th>Suggested pace</th></tr>
+          <tr><td>1</td><td>Big math derivation block (Laplace/RC-style transfer function, or Kepler/GR equations)</td><td>8–10</td><td><span class="clock">⏱ 12–15 min</span></td></tr>
+          <tr><td>2</td><td>The spanning multirow/multicolumn table</td><td>6–10</td><td><span class="clock">⏱ 8–10 min</span></td></tr>
+          <tr><td>3</td><td>Figure (wrapped+rotated, or the full subfigure grid)</td><td>4–10</td><td><span class="clock">⏱ 6–8 min</span></td></tr>
+          <tr><td>4</td><td>Document structure, title, affiliations, TOC</td><td>4</td><td><span class="clock">⏱ 4 min</span></td></tr>
+          <tr><td>5</td><td>Lists, nested lists, text formatting, colors</td><td>4</td><td><span class="clock">⏱ 4 min</span></td></tr>
+          <tr><td>6</td><td>Code listing (if present)</td><td>5</td><td><span class="clock">⏱ 4 min</span></td></tr>
+          <tr><td>7</td><td>Theorem/Proposition + proof, cross-refs</td><td>2–3</td><td><span class="clock">⏱ 3 min</span></td></tr>
+          <tr><td>8</td><td>Footnote + hyperlink + citation, combined</td><td>3</td><td><span class="clock">⏱ 2 min</span></td></tr>
+          <tr><td>9</td><td>Final compile, skim, fix</td><td>—</td><td><span class="clock">⏱ 5 min buffer</span></td></tr>
+        </table>
+        <p class="small-note">Notice the cheap trio at the bottom — footnote, hyperlink, citation — is worth 1 mark each on both papers. That's three one-line commands. Don't budget more than two minutes for all three combined, and don't do them first just because they're easy; do the expensive things while you have the most time left.</p>
+      </div>
+
+      <div class="subtopic">
+        <h3>Skeleton first, content second</h3>
+        <p>In the first four minutes, before writing a single equation, type every section heading, every <code class="inline">\caption</code>/<code class="inline">\label</code> placeholder for every required float, and the title block — even with empty or placeholder bodies. This does two things: it locks in the "Document Structure" marks almost immediately, and it turns the rest of the exam into "fill in this blank," which is a much faster mode to work in than "figure out what comes next" every few minutes.</p>
+        <div class="speed"><b>Why this works:</b> a half-finished document with a correct skeleton and three empty sections still visibly "closely resembles the supplied article" — which is literally the grading standard stated on both papers. A document with one perfect section and four missing ones does not.</div>
+      </div>
+
+      <div class="subtopic">
+        <h3>You are allowed to use this document. Use it.</h3>
+        <p>Both cover sheets say the same thing: <em>"You may use offline materials and online searching."</em> A dense, pre-organized symbol and skeleton reference — this one — is exactly what that sentence is inviting you to bring. The move is: keep §06 (the symbol arsenal) open in a second window the entire time, and never spend more than 10 seconds hunting for a command before checking there instead.</p>
+      </div>
+    </section>
+
+    <!-- ============ 01 PREAMBLE ============ -->
+    <section id="preamble">
+      <div class="section-head"><span class="section-num">01</span><h2>The One True Preamble</h2></div>
+      <p class="lead">One block, pasted blind at t = 0, before you've even read the whole paper. It covers everything either exam pattern has ever asked for. Unused packages cost nothing.</p>
+      <div class="demo-grid" style="grid-template-columns:1fr;">
+        <div class="note note-code" style="transform:none;">
+          <span class="note-label">preamble.tex — paste this first, every time</span>
+          <pre class="tex-code"><code>\documentclass[a4paper,11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{float}
+\usepackage[table]{xcolor}
+\usepackage{enumitem}
+\usepackage{wrapfig}
+\usepackage{listings}
+\usepackage{hyperref}   % load last
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+
+\hypersetup{colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=magenta}
+
+\lstset{basicstyle=\ttfamily\small, breaklines=true,
+        frame=single, showstringspaces=false}
+
+\begin{document}</code></pre>
+        </div>
+      </div>
+      <p class="small-note">Natbib is deliberately left out — §09 makes the case that <code class="inline">thebibliography</code> is faster and safer under a 50-minute clock, and both sample papers use plain numeric <code class="inline">[1]</code> style anyway, which needs nothing beyond what's already here. The two theorem-like environments are pre-declared with <code class="inline">[section]</code> numbering (so "Proposition 3.1" comes out correct automatically) — delete whichever one you don't end up needing, it costs nothing to leave both.</p>
+    </section>
+
+    <!-- ============ 02 TITLE ============ -->
+    <section id="title">
+      <div class="section-head"><span class="section-num">02</span><h2>Title Blocks, Multi-Author</h2></div>
+      <p class="lead">Both papers use superscript numbers linking each author to a numbered affiliation footnote. This is <code class="inline">\thanks</code>, not a plain <code class="inline">\author</code> string — worth having memorized rather than reconstructed live.</p>
+      <div class="demo-grid">
+        <div class="note note-code">
+          <span class="note-label">generic skeleton</span>
+          <pre class="tex-code"><code>\title{Article Title Here}
+\author{
+  Author One\textsuperscript{1} \and
+  Author Two\textsuperscript{2} \and
+  Author Three\textsuperscript{3}
+}
+\date{}
+
+% then, right before \maketitle, or via
+% footnotetext tied to \maketitle:
+\author{
+  Author One\thanks{Affiliation One, City, Country} \and
+  Author Two\thanks{Affiliation Two, City, Country}
+}</code></pre>
+        </div>
+        <div class="note note-output">
+          <span class="note-label">what to know</span>
+          <div class="rendered" style="font-size:0.87rem;">
+            <code style="background:#eee; padding:0 3px;">\and</code> separates multiple authors within one <code style="background:#eee; padding:0 3px;">\author{}</code> block — required, not optional, if you want them laid out side by side rather than concatenated into one run-on string.<br><br>
+            <code style="background:#eee; padding:0 3px;">\thanks{...}</code> is the fastest path to "superscript number next to the name, footnote with the affiliation at the bottom of page 1" — it's built for exactly this pattern and needs no extra package.<br><br>
+            If a grader is picky about matching the numbering style exactly, <code style="background:#eee; padding:0 3px;">\textsuperscript{1}</code> paired with a manual <code style="background:#eee; padding:0 3px;">\footnotetext{}</code> gives you full manual control — slower to type, use only if <code style="background:#eee; padding:0 3px;">\thanks</code> visibly doesn't match.
+          </div>
+        </div>
+      </div>
+      <div class="speed"><b>Speed call:</b> don't chase pixel-perfect affiliation formatting. One mark of the four in "Document Structure" is the title block; getting a superscript-linked author/affiliation on the page at all, even slightly differently styled, captures it. Move on.</div>
+    </section>
+
+    <!-- ============ 03 LISTS ============ -->
+    <section id="lists">
+      <div class="section-head"><span class="section-num">03</span><h2>Symbol Bullets, Fast</h2></div>
+      <p class="lead">Both papers deliberately avoid plain <code class="inline">•</code> and <code class="inline">1.</code> bullets in favor of math symbols as list markers — this is the single most time-costly trap if you don't already know the command names cold.</p>
+      <div class="subtopic">
+        <h3>The pattern, once, generalized</h3>
+        <pre class="tex-code" style="background:var(--paper); color:var(--ink); padding:14px; border-radius:6px;"><code>\begin{itemize}[label=$\oplus$]
+    \item first point
+\end{itemize}
+
+\begin{itemize}[label=$\triangleright$]
+    \item first point
+\end{itemize}</code></pre>
+        <p class="small-note">Every symbol bullet follows this exact shape: <code class="inline">[label=$\command$]</code>, dollar signs included, because the symbol only exists in math mode. Swap the command, nothing else changes. That means memorizing the <em>command names</em> below is 90% of the battle — the wrapper syntax is one line you'll type from muscle memory by your third list.</p>
+      </div>
+      <table class="sym-table">
+        <tr><th>Glyph</th><th>Command</th><th>Seen in</th></tr>
+        <tr><td class="glyph">⊕</td><td class="cmd">\oplus</td><td>B1 — "how Laplace analysis is used" list</td></tr>
+        <tr><td class="glyph">▷</td><td class="cmd rare">\triangleright</td><td>B1 — sub-bullets under "control systems"</td></tr>
+        <tr><td class="glyph">†</td><td class="cmd">\dagger</td><td>C2 — inner/outer planet sub-bullets</td></tr>
+        <tr><td class="glyph">⋄</td><td class="cmd">\diamond</td><td>C2 — "faster/slower near the Sun" bullets</td></tr>
+        <tr><td class="glyph">‡</td><td class="cmd rare">\ddagger</td><td>not seen yet, but same family as †</td></tr>
+        <tr><td class="glyph">⊗</td><td class="cmd rare">\otimes</td><td>not seen yet, but same family as ⊕</td></tr>
+        <tr><td class="glyph">⊙</td><td class="cmd rare">\odot</td><td>not seen yet — also the standard symbol for "Sun" as in $M_\odot$ (solar mass), which C2 uses inline: $M_\odot$</td></tr>
+        <tr><td class="glyph">▶</td><td class="cmd">\blacktriangleright</td><td>a filled alternative to ▷</td></tr>
+        <tr><td class="glyph">◦</td><td class="cmd">\circ</td><td>a common alternative to the default bullet</td></tr>
+      </table>
+      <div class="tip"><b>Roman-numeral parenthesized top-level labels</b> — C2's "(I) Inner planets / (II) Outer planets" — is <code class="inline">enumerate</code>, not <code class="inline">itemize</code>: <code class="inline">\begin{enumerate}[label=(\Roman*)]</code>. Same braces-gotcha as before applies the moment the label text needs its own command inside it.</div>
+    </section>
+
+    <!-- ============ 04 TABLES ============ -->
+    <section id="tables">
+      <div class="section-head"><span class="section-num">04</span><h2>The Spanning Table Skeleton</h2></div>
+      <p class="lead">Both papers' hardest single item is structurally the <em>same</em> table: a merged category column on the left, a header that splits into two sub-columns in the middle, several body rows sharing one merged category label, and — in C2 — color on top. Learn this one skeleton and both tables become a find-and-replace exercise.</p>
+
+      <div class="subtopic">
+        <h3>The generic skeleton — memorize this shape</h3>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">generic, reusable — swap the placeholder text only</span>
+            <pre class="tex-code"><code>\begin{table}[H]
+\centering
+\rowcolors{3}{gray!8}{white}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\multirow{2}{*}{\textbf{Category}} &
+  \multicolumn{2}{c|}{\textbf{Sub-Header}} &
+  \multirow{2}{*}{\textbf{Note}} \\
+\cline{2-3}
+ & \textbf{Detail A} & \textbf{Detail B} & \\
+\hline
+\multirow{3}{*}{Group One}
+  & row1-A & row1-B & cond1 \\
+ & row2-A & row2-B & cond2 \\
+ & row3-A & row3-B & cond3 \\
+\hline
+\multirow{2}{*}{Group Two}
+  & row4-A & row4-B & cond4 \\
+ & row5-A & row5-B & cond5 \\
+\hline
+\multicolumn{2}{|l|}{\textbf{Special Row Label}}
+  & special-value & special-cond \\
+\hline
+\end{tabular}
+\caption{Generic caption.}
+\label{tab:generic}
+\end{table}</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">rendered shape</span>
+            <table class="demo-table tbl-hlines">
+              <tr><th rowspan="2">Category</th><th colspan="2">Sub-Header</th><th rowspan="2">Note</th></tr>
+              <tr><td>Detail A</td><td>Detail B</td></tr>
+              <tr><td rowspan="3">Group One</td><td>row1-A</td><td>row1-B</td><td>cond1</td></tr>
+              <tr><td>row2-A</td><td>row2-B</td><td>cond2</td></tr>
+              <tr><td>row3-A</td><td>row3-B</td><td>cond3</td></tr>
+              <tr><td rowspan="2">Group Two</td><td>row4-A</td><td>row4-B</td><td>cond4</td></tr>
+              <tr><td>row5-A</td><td>row5-B</td><td>cond5</td></tr>
+              <tr><td colspan="2" style="text-align:left; font-weight:bold;">Special Row Label</td><td>special-value</td><td>special-cond</td></tr>
+            </table>
+          </div>
+        </div>
+        <p>Five techniques, all stacked in one table, exactly as both exams do it:</p>
+        <table class="pkg-table">
+          <tr><th>Line</th><th>Technique</th></tr>
+          <tr><td><code class="inline">\multirow{2}{*}{Category}</code> in row 1</td><td>Top-left header cell spans down through the two-row header, so it isn't repeated.</td></tr>
+          <tr><td><code class="inline">\multicolumn{2}{c|}{Sub-Header}</code></td><td>One header label spans two columns that split into separate sub-headers directly below it.</td></tr>
+          <tr><td><code class="inline">\cline{2-3}</code></td><td>Rules off just the two sub-header columns, leaving the merged Category/Note cells uninterrupted — exactly as covered before.</td></tr>
+          <tr><td><code class="inline">\multirow{3}{*}{Group One}</code> in the body</td><td>One category label spans several data rows — remember every row it spans still needs a blank leading cell.</td></tr>
+          <tr><td><code class="inline">\multicolumn{2}{\vert l\vert}{Special Row Label}</code></td><td>A closing row where two normally-separate columns merge into one wide label — this is the "Unit-step function" row pattern from B1, and the row-color pattern from C2's table.</td></tr>
+        </table>
+        <div class="speed"><b>Speed call for the color requirement:</b> <code class="inline">\rowcolors{3}{gray!8}{white}</code> called once before the <code class="inline">tabular</code> auto-stripes every row from row 3 onward — one line gets you "colored table" credit without hand-coloring individual cells. Only reach for per-cell <code class="inline">\cellcolor{}</code> if the original clearly uses color to mean something specific (status, category) rather than just alternating stripes.</div>
+      </div>
+
+      <div class="subtopic">
+        <h3>Don't hand-count columns under pressure</h3>
+        <p>The #1 time-sink in a table like this is a miscounted <code class="inline">&amp;</code> throwing <code class="inline">Extra alignment tab</code> or <code class="inline">Misplaced alignment tab character &amp;</code>. Build each row by literally counting the header columns first (4, in the skeleton above), writing that many <code class="inline">&amp;</code>-separated slots for <em>every</em> row including merged ones, and only then filling in the <code class="inline">\multirow</code>/<code class="inline">\multicolumn</code> wrapping — never the reverse.</p>
+      </div>
+    </section>
+
+    <!-- ============ 05 FIGURES ============ -->
+    <section id="figures">
+      <div class="section-head"><span class="section-num">05</span><h2>Wrapped, Rotated &amp; Grouped Figures</h2></div>
+      <p class="lead">B1 wants a wrapped-and-possibly-rotated single figure; C2 wants nine subfigures arranged in three visually labelled groups sharing one caption. Different shapes, same underlying subfigure/wrapfigure toolkit from your last two boards.</p>
+
+      <div class="subtopic">
+        <h3>Wrapped + rotated, combined</h3>
+        <pre class="tex-code" style="background:var(--paper); color:var(--ink); padding:14px; border-radius:6px;"><code>\begin{wrapfigure}{r}{0.35\linewidth}
+    \centering
+    \includegraphics[width=\linewidth, angle=15]{diagram.png}
+    \caption{Caption text.}
+    \label{fig:wrapped}
+\end{wrapfigure}</code></pre>
+        <p class="small-note">Just the two techniques from your earlier boards stacked in one <code class="inline">\includegraphics</code> call — <code class="inline">angle=</code> inside the same options list as <code class="inline">width=</code>. Nothing new syntactically; the only real risk is spending time guessing the right angle value. Any visible rotation captures the mark — don't hunt for the exact original degree.</p>
+      </div>
+
+      <div class="subtopic">
+        <h3>Grouped subfigures sharing one caption — the fast skeleton</h3>
+        <p>C2's real challenge: nine subfigures, lettered (a) through (i) continuously, but visually clustered under three bold un-numbered group titles ("Star," then a row of four, then a row of four). The key fact that makes this fast: <b>subfigure lettering only tracks the order <code class="inline">\begin{subfigure}</code> blocks appear in — plain text or spacing between them never resets or interrupts the sequence.</b></p>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">generic skeleton — three groups, one figure, one caption</span>
+            <pre class="tex-code"><code>\begin{figure}[H]
+\centering
+
+\textbf{\large Group One}\par\vspace{4pt}
+\begin{subfigure}{0.3\linewidth}
+    \centering\includegraphics[width=\linewidth]{a}
+    \caption{Item A}
+\end{subfigure}
+
+\vspace{10pt}
+\textbf{\large Group Two}\par\vspace{4pt}
+\begin{subfigure}{0.22\linewidth}
+    \centering\includegraphics[width=\linewidth]{b}
+    \caption{Item B}
+\end{subfigure}\hfill
+\begin{subfigure}{0.22\linewidth}
+    \centering\includegraphics[width=\linewidth]{c}
+    \caption{Item C}
+\end{subfigure}\hfill
+\begin{subfigure}{0.22\linewidth}
+    \centering\includegraphics[width=\linewidth]{d}
+    \caption{Item D}
+\end{subfigure}
+
+\caption{Overall caption for all subfigures together.}
+\label{fig:grouped}
+\end{figure}</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">rendered shape</span>
+            <div class="fig-group-title">Group One</div>
+            <div class="fig-row" style="justify-content:center;">
+              <div><div class="fig-box" style="width:80px; height:60px;">a</div><div class="fig-cap">(a) Item A</div></div>
+            </div>
+            <div class="fig-group-title" style="margin-top:14px;">Group Two</div>
+            <div class="fig-row" style="justify-content:center;">
+              <div><div class="fig-box" style="width:70px; height:50px;">b</div><div class="fig-cap">(b) Item B</div></div>
+              <div><div class="fig-box" style="width:70px; height:50px;">c</div><div class="fig-cap">(c) Item C</div></div>
+              <div><div class="fig-box" style="width:70px; height:50px;">d</div><div class="fig-cap">(d) Item D</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="callout"><b>The rule you must not break, restated:</b> a blank line between two subfigures meant for the <em>same row</em> forces an unwanted break. But a blank line (or <code class="inline">\vspace</code>) between the <em>last</em> subfigure of one group and the group title of the next is exactly what you want — that's a deliberate row/section break, not an accident. The difference is intent, not the presence of a blank line itself.</div>
+        <p class="small-note"><code class="inline">\textbf{\large Group Name}\par\vspace{4pt}</code> is doing double duty: <code class="inline">\par</code> ends that line as its own paragraph without leaving a true blank-line gap before the subfigure row starts, and <code class="inline">\vspace{4pt}</code> nudges a small visual gap in without triggering the same-row-break problem.</p>
+      </div>
+    </section>
+
+    <!-- ============ 06 ARSENAL ============ -->
+    <section id="arsenal">
+      <div class="section-head"><span class="section-num">06</span><h2>The Math Symbol Arsenal</h2></div>
+      <p class="lead">Organized by <em>what you're trying to say</em>, not alphabetically — under time pressure you know the concept before you know the command name. Symbols shaded <span style="background:#fdeaa0; padding:1px 6px; border-radius:3px; color:#201D17;">yellow</span> are the ones people genuinely forget exist, including at least one pulled directly from C2 that most students have never typed before.</p>
+
+      <div class="subtopic">
+        <h3>Limits &amp; growth</h3>
+        <table class="sym-table">
+          <tr><th>Command</th><th>Renders</th><th>Note</th></tr>
+          <tr><td class="cmd">\lim_{x \to a}</td><td class="glyph">lim, x→a stacked below</td><td>Only stacks below in <em>display</em> math; inline it squeezes to the side.</td></tr>
+          <tr><td class="cmd">\limsup, \liminf</td><td class="glyph">lim sup, lim inf</td><td>Built-in roman operators, no <code>\text{}</code> needed.</td></tr>
+          <tr><td class="cmd">\to, \rightarrow</td><td class="glyph">→</td><td>Interchangeable; <code>\to</code> is just shorter to type.</td></tr>
+          <tr><td class="cmd rare">\nearrow, \searrow</td><td class="glyph">↗ ↘</td><td>Rare — monotone increasing/decreasing notation.</td></tr>
+          <tr><td class="cmd">\infty</td><td class="glyph">∞</td><td>—</td></tr>
+          <tr><td class="cmd rare">\sim, \asymp</td><td class="glyph">∼ ≍</td><td>Asymptotic equivalence — different from <code>\approx</code> (≈).</td></tr>
+          <tr><td class="cmd">\propto</td><td class="glyph">∝</td><td>Proportional to — used directly in C2 (Kepler's third law).</td></tr>
+        </table>
+      </div>
+
+      <div class="subtopic">
+        <h3>Derivatives</h3>
+        <table class="sym-table">
+          <tr><th>Command</th><th>Renders</th><th>Note</th></tr>
+          <tr><td class="cmd">\frac{d}{dx}, \frac{dy}{dx}</td><td class="glyph">d/dx form</td><td>Ordinary derivative.</td></tr>
+          <tr><td class="cmd">\frac{\partial f}{\partial x}</td><td class="glyph">∂f/∂x</td><td>Partial derivative — <code>\partial</code>, not <code>d</code>. Used in B1 (transfer function derivation).</td></tr>
+          <tr><td class="cmd">\dot{x}, \ddot{x}</td><td class="glyph">ẋ, ẍ</td><td>Newton's dot notation — time derivatives, common in physics.</td></tr>
+          <tr><td class="cmd">\frac{d^2 y}{dx^2}</td><td class="glyph">d²y/dx²</td><td>Second (or nth) order — square the "d" and the variable both.</td></tr>
+          <tr><td class="cmd rare">\nabla</td><td class="glyph">∇</td><td>Gradient/del operator — appears in C2's geodesic equation context.</td></tr>
+          <tr><td class="cmd rare">\nabla^2, \Delta</td><td class="glyph">∇², Δ</td><td>Laplacian — two common notations for the same operator.</td></tr>
+        </table>
+      </div>
+
+      <div class="subtopic">
+        <h3>Integrals</h3>
+        <table class="sym-table">
+          <tr><th>Command</th><th>Renders</th><th>Note</th></tr>
+          <tr><td class="cmd">\int_0^\infty e^{-st} f(t)\,dt</td><td class="glyph">definite integral, bounds 0 to ∞</td><td>The Laplace-transform integral itself, from B1 — memorize this exact shape.</td></tr>
+          <tr><td class="cmd">\int f(x)\,dx</td><td class="glyph">indefinite integral</td><td>No bounds — remember the <code>\,</code> thin space before <code>dx</code>.</td></tr>
+          <tr><td class="cmd">\iint, \iiint</td><td class="glyph">double, triple integral</td><td>Surface / volume integrals.</td></tr>
+          <tr><td class="cmd rare">\oint</td><td class="glyph">∮</td><td>Closed-loop / contour integral — physics circuit and field-theory contexts.</td></tr>
+          <tr><td class="cmd">\Big[ \cdots \Big]_0^\infty</td><td class="glyph">auto-sized evaluation brackets</td><td>The "evaluated between bounds" notation from B1's worked integral — <code>\Big[</code>/<code>\Big]</code>, subscript/superscript for the bounds go directly on the closing bracket.</td></tr>
+        </table>
+      </div>
+
+      <div class="subtopic">
+        <h3>Fractions &amp; roots</h3>
+        <table class="sym-table">
+          <tr><th>Command</th><th>Renders</th><th>Note</th></tr>
+          <tr><td class="cmd">\frac{a}{b}</td><td class="glyph">a/b, auto-sized</td><td>Default — shrinks inline, full-size in display.</td></tr>
+          <tr><td class="cmd">\dfrac{a}{b}</td><td class="glyph">forced display size</td><td>Use inline when a fraction is the main point of the expression.</td></tr>
+          <tr><td class="cmd rare">\tfrac{a}{b}</td><td class="glyph">forced inline (small) size</td><td>The opposite of <code>\dfrac</code> — genuinely rare, useful for keeping a display equation's line height compact.</td></tr>
+          <tr><td class="cmd rare">\cfrac{a}{b + \cfrac{c}{d}}</td><td class="glyph">continued fraction</td><td>Stacks correctly without <code>\dfrac</code> hacks at each level — rare but occasionally exactly what's needed.</td></tr>
+          <tr><td class="cmd">\sqrt{x}, \sqrt[n]{x}</td><td class="glyph">√x, ⁿ√x</td><td>Optional bracket argument is the root index.</td></tr>
+          <tr><td class="cmd">x^{3/2}</td><td class="glyph">fractional exponent</td><td>Used directly in C2 (Earth–Mars period ratio) — just a normal superscript containing a fraction.</td></tr>
+        </table>
+      </div>
+
+      <div class="subtopic">
+        <h3>Piecewise &amp; conditionals</h3>
+        <table class="sym-table">
+          <tr><th>Command</th><th>Note</th></tr>
+          <tr><td class="cmd">\begin{cases} v_1 &amp; \text{cond}_1 \\ v_2 &amp; \text{cond}_2 \end{cases}</td><td>Standard piecewise — as many rows as needed, syntax doesn't change.</td></tr>
+          <tr><td class="cmd rare">\begin{dcases} ... \end{dcases}</td><td>Forces display-style sizing inside each branch even when used inline — rarer sibling of <code>cases</code>.</td></tr>
+        </table>
+      </div>
+
+      <div class="subtopic">
+        <h3>Rare letters &amp; physics symbols</h3>
+        <table class="sym-table">
+          <tr><th>Glyph</th><th>Command</th><th>Meaning / where it matters</th></tr>
+          <tr><td class="glyph rare">ϖ</td><td class="cmd rare">\varpi</td><td>Variant pi — used in C2 for orbital precession (<code>\Delta\varpi</code>). <b>Not</b> the same command as <code>\pi</code>; easy to miss entirely if you don't already know it exists.</td></tr>
+          <tr><td class="glyph rare">ℏ</td><td class="cmd rare">\hbar</td><td>Reduced Planck constant — a distinct glyph, not just <code>\bar{h}</code>.</td></tr>
+          <tr><td class="glyph rare">℘</td><td class="cmd rare">\wp</td><td>Weierstrass p — rare, but the command name ("wp") gives no hint of the glyph, so worth just knowing by sight.</td></tr>
+          <tr><td class="glyph rare">ℜ, ℑ</td><td class="cmd rare">\Re, \Im</td><td>Real part / imaginary part of a complex number.</td></tr>
+          <tr><td class="glyph">ℵ</td><td class="cmd">\aleph</td><td>Aleph — cardinality of infinite sets.</td></tr>
+          <tr><td class="glyph">⊙</td><td class="cmd">\odot</td><td>Also the standard symbol for the Sun's mass, $M_\odot$ — appears in C2's Newtonian form of Kepler's third law.</td></tr>
+          <tr><td class="glyph">∎</td><td class="cmd">\blacksquare</td><td>Alternate QED tombstone if you want to override amsthm's default.</td></tr>
+          <tr><td class="glyph rare">□</td><td class="cmd rare">\Box</td><td>D'Alembertian operator (relativistic wave equation) — different symbol from the QED square above.</td></tr>
+        </table>
+      </div>
+
+      <div class="subtopic">
+        <h3>Multi-level indices &amp; tensor notation</h3>
+        <p>C2's general-relativity block (Einstein field equations, the geodesic equation) is really just ordinary sub/superscripts pushed further than usual — the syntax doesn't change, only the density of it does.</p>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">source</span>
+            <pre class="tex-code"><code>G_{\mu\nu} + \Lambda g_{\mu\nu} =
+  \frac{8\pi G}{c^4} T_{\mu\nu}
+
+\frac{d^2 x^\mu}{d\tau^2} +
+  \Gamma^{\mu}_{\alpha\beta}
+  \frac{dx^\alpha}{d\tau}
+  \frac{dx^\beta}{d\tau} = 0</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">how to read it</span>
+            <div class="rendered" style="font-size:0.86rem;">
+              <code style="background:#eee; padding:0 3px;">G_{\mu\nu}</code> — a two-index (rank-2 tensor) subscript; both Greek letters go inside one pair of braces, comma-free.<br><br>
+              <code style="background:#eee; padding:0 3px;">\Gamma^{\mu}_{\alpha\beta}</code> — one superscript index and two subscript indices on the <em>same</em> symbol (Christoffel symbol) — type the superscript group and the subscript group as two separate <code style="background:#eee; padding:0 3px;">^{...}</code>/<code style="background:#eee; padding:0 3px;">_{...}</code> blocks immediately after the base symbol, order doesn't matter to LaTeX.<br><br>
+              <code style="background:#eee; padding:0 3px;">x^\mu</code> next to <code style="background:#eee; padding:0 3px;">d\tau^2</code> — a superscript index on a variable is not multiplication or an exponent conceptually, just visually identical syntax; LaTeX doesn't need to know the difference, you do.
+            </div>
+          </div>
+        </div>
+        <p class="small-note">Greek letters for indices: <code class="inline">\mu \nu \alpha \beta \gamma \sigma \tau</code> are the standard set — all already in your first board's Greek table.</p>
+      </div>
+
+      <div class="subtopic">
+        <h3>Relations, arrows &amp; logic</h3>
+        <table class="sym-table">
+          <tr><th>Glyph</th><th>Command</th><th>Note</th></tr>
+          <tr><td class="glyph">⇒</td><td class="cmd">\implies</td><td>Used <em>inline within a single equation</em> in C2, not just as an align connector — <code>$A \implies B$</code> is valid on one line.</td></tr>
+          <tr><td class="glyph">⟺</td><td class="cmd">\iff</td><td>If and only if.</td></tr>
+          <tr><td class="glyph">≈</td><td class="cmd">\approx</td><td>Approximately equal — different from <code>\sim</code> (asymptotic).</td></tr>
+          <tr><td class="glyph">≠</td><td class="cmd">\neq</td><td>—</td></tr>
+          <tr><td class="glyph rare">↪</td><td class="cmd rare">\hookrightarrow</td><td>Rare — "embeds into," set/map theory.</td></tr>
+          <tr><td class="glyph rare">↠</td><td class="cmd rare">\twoheadrightarrow</td><td>Rare — surjective map, needs <code>amssymb</code>.</td></tr>
+          <tr><td class="glyph">⊥</td><td class="cmd">\perp</td><td>Perpendicular.</td></tr>
+          <tr><td class="glyph">∀, ∃, ∄</td><td class="cmd">\forall, \exists, \nexists</td><td>—</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============ 07 DERIVATIONS ============ -->
+    <section id="derivations">
+      <div class="section-head"><span class="section-num">07</span><h2>Fast Multi-Step Derivations</h2></div>
+      <p class="lead">B1's transfer-function derivation uses implication arrows (⇒) as the connector between lines instead of an equals sign — a small but easy-to-fumble variant of the <code class="inline">align</code> pattern from your earlier boards.</p>
+      <div class="demo-grid">
+        <div class="note note-code">
+          <span class="note-label">generic skeleton</span>
+          <pre class="tex-code"><code>\begin{align}
+    &amp; \text{starting expression} \\
+    \implies\ & \text{step two} \\
+    \implies\ & \text{step three, final form}
+\end{align}</code></pre>
+        </div>
+        <div class="note note-output">
+          <span class="note-label">what to notice</span>
+          <div class="rendered" style="font-size:0.87rem;">
+            The <code style="background:#eee; padding:0 3px;">&amp;</code> still marks the alignment column, exactly as before — it just now sits right after <code style="background:#eee; padding:0 3px;">\implies</code> instead of right before an <code style="background:#eee; padding:0 3px;">=</code>, so every line's implication arrow stacks in one column instead of every line's equals sign.<br><br>
+            A thin space <code style="background:#eee; padding:0 3px;">\ </code> (backslash-space) directly after <code style="background:#eee; padding:0 3px;">\implies</code> is a small polish detail, not a requirement — skip it if you're racing the clock, it costs nothing structurally to leave out.
+          </div>
+        </div>
+      </div>
+      <div class="speed"><b>Speed call:</b> for a right-hand-side-only continuation line (like B1's three-line block where every line ends in <code class="inline">= V_\text{in}(s)</code>), you don't need to retype the left-hand side each time — leave the space before <code class="inline">&amp;</code> empty on continuation lines, exactly as your second board's quadratic-formula example already showed.</div>
+    </section>
+
+    <!-- ============ 08 THEOREM ============ -->
+    <section id="theorem">
+      <div class="section-head"><span class="section-num">08</span><h2>Proposition/Proof, Numbered Per Section</h2></div>
+      <p class="lead">C2 labels its result "Proposition 3.1" — section number, dot, running counter — which is specifically the <code class="inline">[section]</code> reset pattern flagged as easy to confuse with the counter-sharing pattern in your earlier board. This is the one to have pre-declared, not derived live.</p>
+      <div class="demo-grid">
+        <div class="note note-code">
+          <span class="note-label">preamble (already in §01's block)</span>
+          <pre class="tex-code"><code>\newtheorem{proposition}{Proposition}[section]</code></pre>
+        </div>
+        <div class="note note-output">
+          <span class="note-label">usage</span>
+          <pre class="tex-code" style="color:#201D17;"><code>\begin{proposition}[Short Title]
+    \label{prop:example}
+    Statement of the proposition.
+\end{proposition}
+
+\begin{proof}
+    Proof text here.
+\end{proof}</code></pre>
+        </div>
+      </div>
+      <p class="small-note">The <code class="inline">[section]</code> at the very end of the <code class="inline">\newtheorem</code> line — not <code class="inline">[theorem]</code> right after the environment name — is what produces "3.1" instead of a plain running "1, 2, 3." Get this backwards and the numbering compiles fine but doesn't match the original at all, which is an easy silent point-loss under time pressure.</p>
+    </section>
+
+    <!-- ============ 09 CITE ============ -->
+    <section id="cite">
+      <div class="section-head"><span class="section-num">09</span><h2>Citations Without the BibTeX Tax</h2></div>
+      <p class="lead">Both papers use plain numeric <code class="inline">[1]</code>, <code class="inline">[2]</code>, <code class="inline">[3]</code> references — worth exactly 1 mark. Under a 50-minute clock, running the full <code class="inline">pdflatex → bibtex → pdflatex → pdflatex</code> cycle from your earlier board, or getting a filename wrong between your <code class="inline">.tex</code> and a separate <code class="inline">.bib</code>, is a real risk for one mark. There's a faster, equally correct alternative.</p>
+      <div class="demo-grid">
+        <div class="note note-code">
+          <span class="note-label">thebibliography — one pdflatex pass, no .bib file</span>
+          <pre class="tex-code"><code>As discussed in \cite{ref1}, ...
+
+\begin{thebibliography}{9}
+\bibitem{ref1} A. Author, \textit{Title of the Book},
+  Xth ed. Publisher, Year.
+\bibitem{ref2} B. Author, ``Title of the Paper,''
+  \textit{Journal Name}, Year.
+\end{thebibliography}</code></pre>
+        </div>
+        <div class="note note-output">
+          <span class="note-label">why this is the right call here</span>
+          <div class="rendered" style="font-size:0.87rem;">
+            Compiles correctly in a <b>single</b> <code style="background:#eee; padding:0 3px;">pdflatex</code> run — no separate <code style="background:#eee; padding:0 3px;">.bib</code> file, no bibtex step, no risk of a filename mismatch under pressure.<br><br>
+            <code style="background:#eee; padding:0 3px;">\cite{ref1}</code> still works exactly as before and, with <code style="background:#eee; padding:0 3px;">hyperref</code> loaded, is still automatically clickable.<br><br>
+            Numbers are assigned in the order the <code style="background:#eee; padding:0 3px;">\bibitem</code>s are listed — so list them in the same order the original numbers them, and the output matches without any extra thought.<br><br>
+            The <code style="background:#eee; padding:0 3px;">{9}</code> is just a width hint for the label column — it doesn't need to be exact, just roughly the right order of magnitude (use <code style="background:#eee; padding:0 3px;">{99}</code> if you have 10 or more references).
+          </div>
+        </div>
+      </div>
+      <div class="speed"><b>Speed call:</b> this is the single highest-leverage strategic swap in this whole board relative to how little it costs to learn. It converts a 1-mark item with real compile risk under time pressure into a 1-mark item with almost none.</div>
+    </section>
+
+    <!-- ============ 10 CHEAP ============ -->
+    <section id="cheap">
+      <div class="section-head"><span class="section-num">10</span><h2>Footnotes &amp; Hyperlinks — Cheap Points</h2></div>
+      <p class="lead">Two more 1-mark items. Both are a single command. Do them last, do them fast, don't overthink either.</p>
+      <div class="demo-grid">
+        <div class="note note-code">
+          <span class="note-label">both, back to back</span>
+          <pre class="tex-code"><code>...as discussed by MathWorld\footnote{Additional
+context or a source note goes here.}.
+
+See the \href{https://example.com}{MathWorld}
+page for details, or the raw address:
+\url{https://example.com}.</code></pre>
+        </div>
+        <div class="note note-output">
+          <span class="note-label">rendered</span>
+          <div class="rendered">
+            ...as discussed by MathWorld<sup>1</sup>.<br><br>
+            See the <span style="color:blue; text-decoration:underline;">MathWorld</span> page for details, or the raw address: <span style="color:magenta;">https://example.com</span>.
+          </div>
+        </div>
+      </div>
+      <p class="small-note">Any real-looking URL satisfies the hyperlink mark — it doesn't need to resolve to a live page during grading of a reproduction exercise focused on markup, though matching the original's actual link text is safest if you remember it.</p>
+    </section>
+
+    <!-- ============ 11 LISTINGS ============ -->
+    <section id="listings">
+      <div class="section-head"><span class="section-num">11</span><h2>Code Listings, Fast</h2></div>
+      <p class="lead">B1 imports an external <code class="inline">.py</code> file rather than retyping it. If the file is provided (as it was here — <code class="inline">rc_response.py</code>), always import it rather than retype it: faster, and zero risk of a transcription typo breaking the "successful compilation" requirement.</p>
+      <pre class="tex-code" style="background:var(--paper); color:var(--ink); padding:14px; border-radius:6px;"><code>\lstinputlisting[language=Python,
+  caption={Computing samples of the RC step response.},
+  label={lst:rc-response}]{rc_response.py}</code></pre>
+      <p class="small-note">Path is relative to your <code class="inline">.tex</code> file, exactly like an image path. The <code class="inline">\lstset{}</code> defaults already sitting in §01's preamble (monospace, framed, line-wrapping) are enough on their own — don't spend exam time hand-tuning colors for a 5-mark item when the content and structure are what's actually being graded.</p>
+    </section>
+
+    <!-- ============ 12 CHECKLIST ============ -->
+    <section id="checklist">
+      <div class="section-head"><span class="section-num">12</span><h2>Final 5-Minute Checklist</h2></div>
+      <p class="lead">With the clock running out, run this exact list top to bottom rather than re-reading the whole document.</p>
+      <table class="pkg-table">
+        <tr><th>Check</th><th>Fix if wrong</th></tr>
+        <tr><td>Does it compile at all, right now, from a clean run?</td><td>A partially-wrong document that compiles beats a perfect-looking one that doesn't — comment out (<code class="inline">%</code>, or wrap in <code class="inline">\iffalse ... \fi</code>) anything actively broken rather than leave a fatal error in.</td></tr>
+        <tr><td>Every <code class="inline">\begin{X}</code> has a matching <code class="inline">\end{X}</code>?</td><td>Work outward to inward on any "Runaway argument" or unexpected <code class="inline">\end{document}</code> error.</td></tr>
+        <tr><td>Every table row has the same cell count as the column spec?</td><td>Recount against the declared <code class="inline">{|c|c|c|c|}</code> — see §04.</td></tr>
+        <tr><td>Compiled twice (for TOC/refs) or four times (only if you kept real BibTeX)?</td><td>If using <code class="inline">thebibliography</code> from §09, one extra compile is enough for cross-refs; you don't need the bibtex cycle at all.</td></tr>
+        <tr><td>Footnote, hyperlink, citation all present?</td><td>Three single-line items, §09–§10 — cheap to add in the last minute if skipped earlier.</td></tr>
+        <tr><td>Title, all sections, all required floats present — even roughly?</td><td>Presence and resemblance are the stated standard, not pixel-perfect placement.</td></tr>
+      </table>
+    </section>
+
+    <footer>
+      <div class="sign">— go get your 80%. Fast.</div>
+      <p>Want a timed mock run? Tell me which pattern to drill — the spanning table, the grouped subfigures, or the symbol arsenal — and I'll generate fresh practice problems against the clock.</p>
+    </footer>
+  </main>
+</div>
+
+<script>
+  function highlightTex(raw){
+    return raw.split('\n').map(function(line){
+      var commentIdx = -1;
+      for (var i=0;i<line.length;i++){
+        if (line[i] === '%' && line[i-1] !== '\\'){ commentIdx = i; break; }
+      }
+      var codePart = commentIdx >= 0 ? line.slice(0, commentIdx) : line;
+      var commentPart = commentIdx >= 0 ? line.slice(commentIdx) : '';
+      codePart = codePart.replace(/(\\[a-zA-Z]+\*?)/g, '<span class="tex-cmd">$1</span>');
+      codePart = codePart.replace(/([{}\[\]])/g, '<span class="tex-brace">$1</span>');
+      if (commentPart) commentPart = '<span class="tex-comment">' + commentPart + '</span>';
+      return codePart + commentPart;
+    }).join('\n');
+  }
+  document.querySelectorAll('pre.tex-code code').forEach(function(el){
+    el.innerHTML = highlightTex(el.textContent);
+  });
+
+  var sections = Array.from(document.querySelectorAll('section[id]'));
+  var links = Array.from(document.querySelectorAll('.toc a'));
+  function onScroll(){
+    var pos = window.scrollY + 120;
+    var current = sections[0];
+    sections.forEach(function(s){ if (s.offsetTop <= pos) current = s; });
+    links.forEach(function(l){
+      l.classList.toggle('active', l.getAttribute('href') === '#' + current.id);
+    });
+  }
+  window.addEventListener('scroll', onScroll);
+  onScroll();
+
+  links.forEach(function(l){
+    l.addEventListener('click', function(){
+      document.querySelector('.sidebar').classList.remove('open');
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The LaTeX Board II — CSE200 Advanced Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Literata:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --board:#182922;
+    --board-2:#1f3229;
+    --board-edge:#0f1d17;
+    --chalk:#F1EEE4;
+    --chalk-dim:#C7D1C9;
+    --chalk-yellow:#EFCB53;
+    --chalk-blue:#9BCBE0;
+    --chalk-pink:#E39AAE;
+    --paper:#FBF8EF;
+    --paper-2:#F3EFE1;
+    --ink:#201D17;
+    --ink-soft:#4a4636;
+    --rule:#d8d2bd;
+    --accent:#8B1E3F;
+    --mono:'JetBrains Mono', monospace;
+    --serif:'Literata', serif;
+    --chalkfont:'Caveat', cursive;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--board);
+    color:var(--chalk);
+    font-family:var(--serif);
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(255,255,255,0.02), transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(255,255,255,0.02), transparent 40%);
+    pointer-events:none;
+    z-index:0;
+  }
+  a{color:var(--chalk-blue);}
+
+  .wrap{display:flex; min-height:100vh; position:relative; z-index:1;}
+  .sidebar{
+    width:280px; flex:0 0 280px;
+    background:var(--board-edge);
+    border-right:2px dashed rgba(241,238,228,0.15);
+    padding:28px 20px 40px;
+    position:sticky; top:0; height:100vh; overflow-y:auto;
+  }
+  .sidebar-title{
+    font-family:var(--chalkfont); color:var(--chalk-yellow);
+    font-size:1.7rem; margin:0 0 4px; letter-spacing:0.5px;
+  }
+  .sidebar-sub{color:var(--chalk-dim); font-size:0.78rem; margin:0 0 22px; line-height:1.5;}
+  .toc{list-style:none; margin:0; padding:0;}
+  .toc li{margin-bottom:2px;}
+  .toc a{
+    display:flex; gap:10px; align-items:baseline;
+    text-decoration:none; color:var(--chalk-dim);
+    font-size:0.84rem; padding:7px 10px; border-radius:4px;
+    border-left:2px solid transparent;
+  }
+  .toc a:hover, .toc a.active{
+    color:var(--chalk); background:rgba(241,238,228,0.07);
+    border-left:2px solid var(--chalk-yellow);
+  }
+  .toc .n{font-family:var(--mono); color:var(--chalk-yellow); font-size:0.72rem;}
+  .toc .flag{ color:var(--chalk-pink); font-size:0.68rem; margin-left:auto; font-family:var(--mono); }
+
+  main{flex:1; min-width:0; padding:0 0 80px;}
+
+  .hero{
+    padding:64px 56px 48px; border-bottom:2px dashed rgba(241,238,228,0.15);
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+  }
+  .hero-eyebrow{font-family:var(--mono); color:var(--chalk-blue); font-size:0.8rem; letter-spacing:2px; text-transform:uppercase;}
+  .hero h1{
+    font-family:var(--chalkfont); font-weight:700; color:var(--chalk);
+    font-size:3.4rem; margin:8px 0 6px; line-height:1;
+  }
+  .hero p.lede{color:var(--chalk-dim); max-width:680px; font-size:1.05rem; margin:0 0 20px;}
+  .hero-tags{display:flex; flex-wrap:wrap; gap:8px;}
+  .tag{
+    font-family:var(--mono); font-size:0.72rem; color:var(--board);
+    background:var(--chalk-yellow); padding:4px 10px; border-radius:20px;
+  }
+  .tag.req{ background:var(--chalk-pink); }
+
+  section{padding:52px 56px; border-bottom:2px dashed rgba(241,238,228,0.13); scroll-margin-top:16px;}
+  .section-head{display:flex; align-items:baseline; gap:16px; margin-bottom:6px;}
+  .section-num{font-family:var(--mono); color:var(--chalk-yellow); font-size:1rem; opacity:0.85;}
+  section h2{font-family:var(--chalkfont); font-size:2.3rem; color:var(--chalk); margin:0;}
+  .req-badge{
+    font-family:var(--mono); font-size:0.7rem; letter-spacing:1px; text-transform:uppercase;
+    background:var(--chalk-pink); color:var(--board); padding:3px 10px; border-radius:20px; margin-left:6px;
+  }
+  p.lead{color:var(--chalk-dim); max-width:800px; margin:0 0 30px; font-size:1rem;}
+  .subtopic{margin:34px 0 46px;}
+  .subtopic h3{
+    color:var(--chalk-yellow); font-size:1.18rem; margin:0 0 10px;
+    font-family:var(--serif); font-weight:600;
+  }
+  .subtopic h4{color:var(--chalk); font-size:1rem; margin:22px 0 8px; font-weight:600;}
+  .subtopic p{color:var(--chalk); max-width:820px; margin:0 0 14px; font-size:0.98rem;}
+  .subtopic p.small-note{color:var(--chalk-dim); font-size:0.87rem;}
+
+  .callout{
+    border-left:3px solid var(--chalk-pink); background:rgba(227,154,174,0.10);
+    padding:12px 16px; margin:16px 0; font-size:0.89rem; color:var(--chalk); max-width:800px; border-radius:0 6px 6px 0;
+  }
+  .callout b{color:var(--chalk-pink);}
+  .tip{
+    border-left:3px solid var(--chalk-blue); background:rgba(155,203,224,0.10);
+    padding:12px 16px; margin:16px 0; font-size:0.89rem; color:var(--chalk); max-width:800px; border-radius:0 6px 6px 0;
+  }
+  .tip b{color:var(--chalk-blue);}
+  .mistake{
+    border-left:3px solid #E88A5A; background:rgba(232,138,90,0.10);
+    padding:12px 16px; margin:16px 0; font-size:0.89rem; color:var(--chalk); max-width:800px; border-radius:0 6px 6px 0;
+  }
+  .mistake b{color:#E88A5A;}
+  .bugfound{
+    border-left:3px solid #ff6b6b; background:rgba(255,107,107,0.12);
+    padding:12px 16px; margin:16px 0; font-size:0.89rem; color:var(--chalk); max-width:800px; border-radius:0 6px 6px 0;
+  }
+  .bugfound b{color:#ff8f8f;}
+
+  .demo-grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:22px;
+    margin:16px 0 8px; align-items:start;
+  }
+  @media (max-width:900px){ .demo-grid{grid-template-columns:1fr;} }
+
+  .note{
+    position:relative; border-radius:3px; padding:22px 18px 18px;
+    box-shadow:0 10px 22px rgba(0,0,0,0.35), 0 2px 0 rgba(0,0,0,0.15);
+    margin-bottom:6px;
+  }
+  .note::before{
+    content:""; position:absolute; top:-9px; left:50%; transform:translateX(-50%);
+    width:16px; height:16px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #ff8a8a, var(--accent) 65%);
+    box-shadow:0 3px 5px rgba(0,0,0,0.4);
+  }
+  .note-label{
+    font-family:var(--mono); font-size:0.68rem; letter-spacing:1.5px;
+    text-transform:uppercase; margin-bottom:10px; display:inline-block;
+    padding:2px 8px; border-radius:3px;
+  }
+  .note-code{ background:var(--paper); transform:rotate(-0.5deg); }
+  .note-code .note-label{ background:var(--ink); color:var(--chalk-yellow); }
+  .note-output{ background:#ffffff; transform:rotate(0.4deg); }
+  .note-output .note-label{ background:#e8e8e8; color:var(--accent); }
+  @media (max-width:900px){
+    .note-code, .note-output{ transform:none; }
+  }
+
+  pre.tex-code{
+    margin:0; font-family:var(--mono); font-size:0.8rem; color:var(--ink);
+    white-space:pre-wrap; word-break:break-word; line-height:1.55;
+  }
+  .tex-cmd{color:#8B1E3F; font-weight:600;}
+  .tex-brace{color:#146b66; font-weight:600;}
+  .tex-comment{color:#6b6552; font-style:italic;}
+
+  .rendered{ color:var(--ink); font-family:var(--serif); font-size:0.92rem; }
+  .rendered h4{margin:0 0 8px; font-size:1rem; color:var(--ink);}
+
+  table.demo-table{ border-collapse:collapse; width:100%; font-size:0.85rem; background:#ffffff; color:#201D17; }
+  table.demo-table td, table.demo-table th{ padding:6px 10px; text-align:center; color:#201D17; }
+  .tbl-hlines td, .tbl-hlines th{ border:1px solid #201D17; }
+  .tbl-booktabs th{ border-top:1.6px solid #201D17; border-bottom:1px solid #201D17; }
+  .tbl-booktabs td.bottom-rule{ border-bottom:1.6px solid #201D17; }
+  .cap{ text-align:center; font-size:0.8rem; margin-top:8px; color:var(--ink-soft); }
+
+  .fig-row{ display:flex; gap:14px; align-items:flex-end; flex-wrap:wrap; }
+  .fig-box{
+    position:relative; background:#c7c7c7; border:1px solid #7c7c7c;
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--serif); font-weight:700; color:#2b2b2b;
+    background-image:
+      linear-gradient(45deg, transparent 48%, #9a9a9a 49%, #9a9a9a 51%, transparent 52%),
+      linear-gradient(-45deg, transparent 48%, #9a9a9a 49%, #9a9a9a 51%, transparent 52%);
+  }
+  .fig-cap{ text-align:center; font-size:0.78rem; color:var(--ink-soft); margin-top:4px; }
+
+  code.inline{ font-family:var(--mono); background:rgba(241,238,228,0.10); color:var(--chalk-yellow); padding:1px 6px; border-radius:4px; font-size:0.88em;}
+
+  .grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+  @media (max-width:900px){ .grid-2{grid-template-columns:1fr;} }
+
+  .pkg-table{ width:100%; border-collapse:collapse; margin:18px 0; font-size:0.87rem; max-width:840px;}
+  .pkg-table th{ text-align:left; color:var(--chalk-yellow); font-family:var(--mono); font-weight:500; font-size:0.74rem; text-transform:uppercase; letter-spacing:1px; padding:9px 12px; border-bottom:1px dashed rgba(241,238,228,0.3); background:rgba(241,238,228,0.04);}
+  .pkg-table td{ padding:10px 12px; border-bottom:1px dashed rgba(241,238,228,0.15); color:var(--chalk); vertical-align:top;}
+  .pkg-table tr:nth-child(even) td{ background:rgba(241,238,228,0.035); }
+  .pkg-table code.inline{ white-space:nowrap; }
+  .table-scroll{ overflow-x:auto; }
+
+  .sym-table{ width:100%; border-collapse:collapse; margin:14px 0 22px; font-size:0.86rem; background:#ffffff; color:#201D17; max-width:840px;}
+  .sym-table th{ background:#201D17; color:#F1EEE4; text-align:left; padding:8px 12px; font-family:var(--mono); font-size:0.72rem; letter-spacing:1px; text-transform:uppercase;}
+  .sym-table td{ padding:7px 12px; border-bottom:1px solid #e4e0d0; color:#201D17;}
+  .sym-table tr:nth-child(even) td{ background:#f7f4e9; }
+  .sym-table .cmd{ font-family:var(--mono); color:#8B1E3F; }
+  .sym-table .glyph{ font-size:1.05rem; text-align:center; }
+
+  .term-box{ background:#0f1a15; border:1px solid rgba(241,238,228,0.15); border-radius:6px; padding:16px; font-family:var(--mono); font-size:0.8rem; color:#9be69b; white-space:pre-wrap; max-width:820px; margin:14px 0;}
+  .term-box .err{ color:#ff8f8f; }
+
+  footer{ padding:44px 56px; text-align:center; color:var(--chalk-dim); font-size:0.85rem; }
+  footer .sign{ font-family:var(--chalkfont); font-size:1.4rem; color:var(--chalk-yellow); }
+
+  .nav-toggle{ display:none; }
+  @media (max-width:820px){
+    .sidebar{
+      position:fixed; left:0; top:0; height:100vh; z-index:20;
+      transform:translateX(-100%); transition:transform 0.25s ease; width:78vw; max-width:300px;
+    }
+    .sidebar.open{ transform:translateX(0); }
+    .nav-toggle{
+      display:flex; align-items:center; gap:8px; position:fixed; top:14px; left:14px; z-index:21;
+      background:var(--chalk-yellow); color:var(--board); border:none; border-radius:20px;
+      padding:8px 14px; font-family:var(--mono); font-size:0.78rem; cursor:pointer;
+    }
+    .hero, section, footer{ padding-left:24px; padding-right:24px; }
+    .hero{ padding-top:70px; }
+    .hero h1{ font-size:2.4rem; }
+  }
+  @media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto;} .sidebar{transition:none;} }
+</style>
+</head>
+<body>
+
+<button class="nav-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰ Topics</button>
+
+<div class="wrap">
+  <nav class="sidebar">
+    <div class="sidebar-title">The LaTeX Board II</div>
+    <p class="sidebar-sub">Companion guide, built from four more of your files: <code class="inline">lab_practice.tex</code>, <code class="inline">main.tex</code>, <code class="inline">sadat_sir.tex</code>, and <code class="inline">second_class.tex</code>.</p>
+    <ul class="toc" id="toc">
+      <li><a href="#kit"><span class="n">00</span> Package Starter Kit II</a></li>
+      <li><a href="#text"><span class="n">01</span> Text Formatting — New &amp; Traps</a></li>
+      <li><a href="#lists"><span class="n">02</span> Lists — More Custom Labels</a></li>
+      <li><a href="#tables"><span class="n">03</span> Tables — Multi-line Cells &amp; a Live Bug</a></li>
+      <li><a href="#figures"><span class="n">04</span> Figures — Wrapped &amp; Subfigure Rules</a></li>
+      <li><a href="#crossref"><span class="n">05</span> hyperref, nameref, autoref</a></li>
+      <li><a href="#math"><span class="n">06</span> Math — Custom Operators &amp; Real Formulas</a></li>
+      <li><a href="#verbatim"><span class="n">07</span> Footnotes, Verbatim &amp; Typewriter Text <span class="flag">★ asked</span></a></li>
+      <li><a href="#cite"><span class="n">08</span> Citations — Full natbib Family</a></li>
+      <li><a href="#algo"><span class="n">09</span> Algorithms &amp; Pseudocode</a></li>
+      <li><a href="#listings"><span class="n">10</span> Code Listings — Python <span class="flag">★ asked</span></a></li>
+      <li><a href="#twocol"><span class="n">11</span> Two-Column Documents</a></li>
+      <li><a href="#debug"><span class="n">12</span> The Preamble Bug &amp; Debugging Checklist</a></li>
+      <li><a href="#templates"><span class="n">13</span> Your Teacher's Templates II</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <header class="hero">
+      <div class="hero-eyebrow">CSE200 · Companion Board · Part II</div>
+      <h1>Deeper Chalk Marks</h1>
+      <p class="lede">Four new files, four new angles: your own practice file, a second draft of <code class="inline">main.tex</code>, a full tutorial from Mohammad Sadat Hossain, and a "second class" file that — usefully — contains two genuine bugs worth studying on purpose. Two items were explicitly requested in comments at the very end of <code class="inline">sadat_sir.tex</code>; they're flagged <span class="flag" style="position:static;">★ asked</span> in the sidebar so you can find them immediately.</p>
+      <div class="hero-tags">
+        <span class="tag">wrapfig</span>
+        <span class="tag">shortstack</span>
+        <span class="tag">natbib full family</span>
+        <span class="tag">algorithm / algpseudocode</span>
+        <span class="tag req">\texttt — asked</span>
+        <span class="tag req">\verbatim — asked</span>
+        <span class="tag req">Python \lstlisting — asked</span>
+      </div>
+    </header>
+
+    <!-- ============ 00 KIT ============ -->
+    <section id="kit">
+      <div class="section-head"><span class="section-num">00</span><h2>Package Starter Kit II</h2></div>
+      <p class="lead">A second preamble, layered on top of the one from your first guide — these are the packages that showed up across these four new files and weren't in the original kit.</p>
+      <div class="demo-grid" style="grid-template-columns:1fr;">
+        <div class="note note-code" style="transform:none;">
+          <span class="note-label">preamble-additions.tex</span>
+          <pre class="tex-code"><code>\usepackage[margin=1in]{geometry}   % page margins
+\usepackage{wrapfig}                % text-wrapped figures
+\usepackage{caption}                % caption styling (subcaption depends on it)
+\usepackage{array}                  % extra column types: m{}, b{}
+\usepackage{titlesec}               % customizing section-heading appearance
+\usepackage{listings}               % code listings, e.g. Python snippets
+\usepackage{algorithm}              % floating wrapper for pseudocode
+\usepackage{algpseudocode}          % the \State \While \If ... vocabulary
+\usepackage{comment}                % block-comment a whole region
+\usepackage[numbers]{natbib}        % or [authoryear,round] — see \S 08</code></pre>
+        </div>
+      </div>
+      <table class="pkg-table">
+        <tr><th>Package</th><th>Unlocks</th></tr>
+        <tr><td><code class="inline">geometry</code></td><td>Sets page margins directly as a package option — <code class="inline">[margin=1in]</code> is far less fiddly than manually redefining <code class="inline">\textwidth</code>, <code class="inline">\topmargin</code>, etc.</td></tr>
+        <tr><td><code class="inline">wrapfig</code></td><td>The <code class="inline">wrapfigure</code> environment — lets body text flow around a small image instead of the image forcing a full-width break.</td></tr>
+        <tr><td><code class="inline">array</code></td><td>Adds the <code class="inline">m{width}</code> (vertically centered) and <code class="inline">b{width}</code> (vertically bottom-aligned) column types alongside base LaTeX's top-aligned <code class="inline">p{width}</code>.</td></tr>
+        <tr><td><code class="inline">titlesec</code></td><td>Lets you restyle what <code class="inline">\section</code>/<code class="inline">\subsection</code> headings actually look like — font, spacing, numbering format. Loading it doesn't change anything by itself; it only matters once you call its customization commands.</td></tr>
+        <tr><td><code class="inline">listings</code></td><td>Typesets source code with a monospace font, optional syntax highlighting, line numbers, and framing — the tool for <code class="inline">\lstlisting</code>, covered in §10.</td></tr>
+        <tr><td><code class="inline">algorithm</code> + <code class="inline">algpseudocode</code></td><td>Together they give you a numbered, captioned, cross-referenceable pseudocode block — §09.</td></tr>
+        <tr><td><code class="inline">comment</code></td><td>Adds a <code class="inline">\begin{comment}...\end{comment}</code> block that hides an entire region at once, instead of prefixing every single line with <code class="inline">%</code>.</td></tr>
+      </table>
+      <div class="tip"><b>On <code class="inline">titlesec</code> specifically:</b> your teacher's file loads it but never calls any of its commands — that's not a wasted line, it's simply "available if needed." A typical use once you do need it: <code class="inline">\titleformat{\section}{\normalfont\Large\bfseries}{\thesection}{1em}{}</code> to redefine exactly how every section heading in the document is drawn.</div>
+    </section>
+
+    <!-- ============ 01 TEXT ============ -->
+    <section id="text">
+      <div class="section-head"><span class="section-num">01</span><h2>Text Formatting — New Commands &amp; Old Traps</h2></div>
+      <p class="lead">Beyond bold/italic/underline from your first guide, these four files add three more commands worth knowing by name, plus two real formatting bugs sitting directly in the source you can learn to spot.</p>
+
+      <div class="subtopic">
+        <h3>Three commands you haven't met yet</h3>
+        <table class="pkg-table">
+          <tr><th>Command</th><th>What it does</th><th>Where it showed up</th></tr>
+          <tr><td><code class="inline">\textsc{...}</code></td><td>Small caps — renders lowercase letters as smaller capital letters while true capitals stay full-size. Commonly used for author-name bylines and presentation-style headers.</td><td><code class="inline">main.tex</code></td></tr>
+          <tr><td><code class="inline">\textunderscore</code></td><td>Prints a literal underscore character <code class="inline">_</code> in ordinary text. A bare <code class="inline">_</code> typed directly in text mode is undefined outside math (it means "subscript" only inside math mode) and throws an error — <code class="inline">\textunderscore</code> (or the shorter <code class="inline">\_</code>) is how you actually get the character on the page.</td><td><code class="inline">lab_practice.tex</code></td></tr>
+          <tr><td><code class="inline">\uline{...}</code></td><td>From <code class="inline">ulem</code> — underlines text, but unlike base LaTeX's <code class="inline">\underline</code>, it breaks correctly across a line wrap instead of drawing one continuous rule that overruns the margin.</td><td><code class="inline">lab_practice.tex</code></td></tr>
+        </table>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">source</span>
+            <pre class="tex-code"><code>\textsc{Some Text in TextSC. Looks
+good for presentation.}
+
+The file is named data\textunderscore{}v2.csv.
+
+This is normal \uline{text} blended
+with \emph{emphasised} text.</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">rendered</span>
+            <div class="rendered">
+              <div style="font-variant:small-caps;">Some Text in TextSC. Looks good for presentation.</div>
+              <div style="margin-top:8px;">The file is named data_v2.csv.</div>
+              <div style="margin-top:8px;">This is normal <span style="text-decoration:underline;">text</span> blended with <i>emphasised</i> text.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="subtopic">
+        <h3>Nesting <code class="inline">\emph</code> — it toggles, it doesn't just stack</h3>
+        <p>Your first guide covered that a single <code class="inline">\emph</code> flips to upright when nested inside already-italic text. <code class="inline">main.tex</code> pushes this one level further with a double nesting, and the result is a genuinely useful thing to see worked out explicitly: each additional <code class="inline">\emph</code> layer <em>toggles</em> the shape relative to its immediate surroundings, rather than every <code class="inline">\emph</code> unconditionally meaning "italic." Two nested <code class="inline">\emph</code>s inside plain text therefore end up back at italic for the innermost word, having flipped twice.</p>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">source</span>
+            <pre class="tex-code"><code>Some text with \emph{emphasis and
+\emph{nested} content}.
+
+Some text in \textit{italic and
+\textit{nested} content}.</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">rendered</span>
+            <div class="rendered">
+              <div>Some text with <i>emphasis and <span style="font-style:normal;">nested</span> content</i>.</div>
+              <div style="margin-top:8px;">Some text in <i>italic and <i>nested</i> content</i>.</div>
+            </div>
+          </div>
+        </div>
+        <p class="small-note">Notice the contrast in the second line: <code class="inline">\textit</code> nested inside <code class="inline">\textit</code> stays italic the whole way through — no toggling — because <code class="inline">\textit</code> always means "italic," full stop, regardless of context. <code class="inline">\emph</code>'s context-awareness is precisely what makes it the right choice when you might nest emphasis; <code class="inline">\textit</code>'s stubbornness is exactly why it's the wrong choice for that same situation.</p>
+      </div>
+
+      <div class="mistake"><b>Real bug, straight from <code class="inline">main.tex</code>:</b> <code class="inline">Some text in\textbf{bold and \textit{nested} content}.</code> — look closely at "in<code class="inline">\textbf</code>": there is no space between the word "in" and the command. Because <code class="inline">\textbf{...}</code> starts immediately with a brace, not a letter, LaTeX doesn't get a chance to treat it as a separate word boundary, and the rendered output reads "in<b>bold</b> and..." with no gap — visually merging into "inbold." This is different from the well-known "commands ending in a letter eat the following space" gotcha (e.g. <code class="inline">\LaTeX is great</code> rendering as "LaTeXis great") — here the problem is a <em>missing</em> space typed by the author, not one silently consumed by LaTeX. Always leave a normal space before a command exactly as you would before any other word.</div>
+    </section>
+
+    <!-- ============ 02 LISTS ============ -->
+    <section id="lists">
+      <div class="section-head"><span class="section-num">02</span><h2>Lists — More Custom Labels</h2></div>
+      <p class="lead"><code class="inline">sadat_sir.tex</code> and <code class="inline">second_class.tex</code> both push <code class="inline">enumitem</code> considerably further than the basics — one-off symbol markers mixed into an otherwise auto-numbered list, and label patterns that need an extra layer of braces to parse correctly.</p>
+
+      <div class="subtopic">
+        <h3>One-off markers layered on top of an auto-numbered list</h3>
+        <p>You don't have to choose between "every item gets a custom symbol" (<code class="inline">enumitem</code>'s <code class="inline">label=</code>) and "every item auto-numbers." <code class="inline">\item[symbol]</code> overrides <em>one</em> item's marker while every other <code class="inline">\item</code> in the same list keeps auto-numbering normally — this is base LaTeX behaviour (as covered in your first guide), and it composes cleanly with an <code class="inline">enumitem</code>-customized list too.</p>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">source</span>
+            <pre class="tex-code"><code>\begin{enumerate}[label=\arabic*.]
+    \item System Setup
+    \begin{itemize}
+        \item Install software packages
+        \item Configure hardware
+        \item[!] Verify connections
+    \end{itemize}
+
+    \item Simulation Steps
+    \begin{enumerate}[label=(\alph*)]
+        \item Initialize parameters
+        \item Run simulation
+        \begin{itemize}[label=-]
+            \item Monitor CPU usage
+            \item[$\rightarrow$] Record intermediate results
+        \end{itemize}
+        \item Analyze outputs
+    \end{enumerate}
+\end{enumerate}</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">rendered</span>
+            <div class="rendered" style="font-size:0.87rem;">
+              1. System Setup
+              <ul style="margin:2px 0 6px; padding-left:18px;">
+                <li>Install software packages</li>
+                <li>Configure hardware</li>
+                <li>! Verify connections</li>
+              </ul>
+              2. Simulation Steps
+              <div style="margin-left:14px;">
+                (a) Initialize parameters<br>
+                (b) Run simulation
+                <ul style="margin:2px 0 6px; padding-left:18px; list-style:none;">
+                  <li>&mdash; Monitor CPU usage</li>
+                  <li>→ Record intermediate results</li>
+                </ul>
+                (c) Analyze outputs
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="small-note">Markers can be symbols pulled straight from math mode — <code class="inline">\item[$\rightarrow$]</code> needs the dollar signs even inside the square brackets, because <code class="inline">\rightarrow</code> only exists as a math command; forgetting the <code class="inline">$...$</code> here throws <code class="inline">Undefined control sequence</code>.</p>
+      </div>
+
+      <div class="subtopic">
+        <h3>The braces-around-a-label gotcha</h3>
+        <p>Plain labels like <code class="inline">label=\arabic*.</code> or <code class="inline">label=(\alph*)</code> work without any extra wrapping. The moment your label text itself contains a command that needs its <em>own</em> braces — like bolding part of the label — you must wrap the <em>entire</em> label value in one more pair of outer braces, or <code class="inline">enumitem</code>'s option-parser gets confused about where the label value ends and the next option begins.</p>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">source</span>
+            <pre class="tex-code"><code>\begin{enumerate}[label={Step \textbf{\arabic*}:}]
+    \item Parse the graphic dataset.
+    \item Compile the vector graphics.
+\end{enumerate}
+
+\begin{enumerate}[label=[\Roman*]]
+    \item First main objective
+    \item Second main objective
+\end{enumerate}
+
+\begin{itemize}[label=$\diamond$]
+    \item Specialized Diffuse Shading technique
+    \item Specular Highlighting behavior
+\end{itemize}</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">rendered</span>
+            <div class="rendered">
+              <div>Step <b>1</b>: Parse the graphic dataset.<br>Step <b>2</b>: Compile the vector graphics.</div>
+              <div style="margin-top:8px;">[I] First main objective<br>[II] Second main objective</div>
+              <div style="margin-top:8px;">◇ Specialized Diffuse Shading technique<br>◇ Specular Highlighting behavior</div>
+            </div>
+          </div>
+        </div>
+        <p class="small-note">The rule of thumb: if what you're writing after <code class="inline">label=</code> contains a brace-taking command (<code class="inline">\textbf{}</code>, <code class="inline">\underline{}</code>, ...) or would otherwise be ambiguous to parse, wrap the whole thing in <code class="inline">{ }</code> — <code class="inline">label={Step \textbf{\arabic*}:}</code>, not <code class="inline">label=Step \textbf{\arabic*}:</code>. Note also that <code class="inline">[\Roman*]</code> here isn't "square-bracket syntax for roman numerals" as a special feature — the literal <code class="inline">[</code> and <code class="inline">]</code> characters are just part of the label text you asked for, exactly like the literal <code class="inline">(</code> and <code class="inline">)</code> in <code class="inline">(\alph*)</code> elsewhere.</p>
+      </div>
+    </section>
+
+    <!-- ============ 03 TABLES ============ -->
+    <section id="tables">
+      <div class="section-head"><span class="section-num">03</span><h2>Tables — Multi-line Cells, Status Color &amp; a Live Bug</h2></div>
+      <p class="lead">On top of multirow/multicolumn from your first guide, these files add: stacking multiple lines inside one cell, coloring a whole table's rows automatically, using color to mean something rather than just decorate — and one table that compiles perfectly while quietly rendering the wrong thing.</p>
+
+      <div class="subtopic">
+        <h3><code class="inline">tabular</code> alone vs. <code class="inline">table</code> + <code class="inline">tabular</code> together</h3>
+        <p><code class="inline">main.tex</code> uses a bare <code class="inline">tabular</code> with no surrounding <code class="inline">table</code> environment at all — worth being explicit about why that's a meaningfully different (and sometimes entirely appropriate) choice, not a shortcut someone forgot to finish. <code class="inline">tabular</code> by itself is just a grid of content — it has no caption, no number, no ability to float to a better page position, and nothing to <code class="inline">\ref</code>. Wrapping it in <code class="inline">\begin{table}[htbp] ... \end{table}</code> is what upgrades it into a numbered, captioned, cross-referenceable, page-repositionable object. Use bare <code class="inline">tabular</code> for a small grid that's genuinely part of the surrounding paragraph flow and doesn't need its own number; reach for the <code class="inline">table</code> wrapper the moment you want to write "as shown in Table 2" anywhere in your document.</p>
+        <pre class="tex-code" style="background:var(--paper); color:var(--ink); padding:16px; border-radius:6px;"><code>\begin{tabular}{|l|l|l|}
+    \hline
+    \textbf{Animal} & \textbf{Food} & \textbf{Size}\\ \hline
+    dog & meat & large \\ \hline
+    cat & fish & small \\ \hline
+    frog & flies & small \\ \hline
+\end{tabular}</code></pre>
+      </div>
+
+      <div class="subtopic">
+        <h3>Multiple lines inside a single cell: <code class="inline">\shortstack</code></h3>
+        <p>An ordinary table cell can only hold one line of text — try to force a line break inside one with <code class="inline">\\</code> and you'll break the whole row's structure instead. <code class="inline">\shortstack[pos]{line one \\ line two}</code> is the fix, and it's worth knowing it needs <em>no package at all</em> — it's built into core LaTeX. The optional <code class="inline">[pos]</code> (<code class="inline">l</code>/<code class="inline">c</code>/<code class="inline">r</code>) controls how the stacked lines align relative to each other.</p>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">source</span>
+            <pre class="tex-code"><code>\begin{tabular}{|l|l|c|}
+    \hline
+    \textbf{Method} & \textbf{Accuracy} & \textbf{Time} \\ \hline
+    Rasterization & Medium & $O(n)$ \\ \hline
+    Ray Tracing &
+      \shortstack[l]{High \\ Very High} &
+      \shortstack[c]{$O(n^2)$ \\ $O(n^3)$} \\ \hline
+    Hybrid Method & & $O(n^2)$ \\ \hline
+\end{tabular}</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">rendered</span>
+            <table class="demo-table tbl-hlines">
+              <tr><th>Method</th><th>Accuracy</th><th>Time</th></tr>
+              <tr><td>Rasterization</td><td>Medium</td><td>O(n)</td></tr>
+              <tr><td>Ray Tracing</td><td style="text-align:left;">High<br>Very High</td><td>O(n²)<br>O(n³)</td></tr>
+              <tr><td>Hybrid Method</td><td></td><td>O(n²)</td></tr>
+            </table>
+          </div>
+        </div>
+        <p class="small-note">The bottom row's empty middle cell (<code class="inline">Hybrid Method & & $O(n^2)$</code>) is intentional, valid syntax — a genuinely blank cell, exactly as your first guide covered.</p>
+      </div>
+
+      <div class="subtopic">
+        <h3>Whole-table auto-alternating colors: <code class="inline">\rowcolors</code></h3>
+        <p>Your first guide covered <code class="inline">\rowcolor{}</code> — one command call, one row tinted. <code class="inline">\rowcolors{start}{color-odd}{color-even}</code> (note the extra <b>s</b>) is a different, table-wide tool: called <em>once</em>, immediately before the <code class="inline">tabular</code>, it automatically alternates the two given colors across every subsequent row without you touching each row individually. The <code class="inline">start</code> argument is which row number the alternation begins at — <code class="inline">2</code> is the usual choice, so the header row (row 1) stays untinted while the data rows alternate starting from row 2.</p>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">source (from sadat_sir.tex)</span>
+            <pre class="tex-code"><code>\begin{table}[H]
+    \centering
+    \rowcolors{2}{gray!10}{white}
+    \begin{tabular}{lll}
+        \toprule
+        Item & Result & Comment \\
+        \midrule
+        Figure reference & \cellcolor{softgreen}Correct &
+          Label placed after caption \\
+        Image size & \cellcolor{softred}Needs work &
+          Width too large \\
+        Citation & \cellcolor{softgreen}Correct &
+          Source appears in bibliography \\
+        \bottomrule
+    \end{tabular}
+    \caption{Color used to communicate status in a table.}
+\end{table}</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">rendered</span>
+            <table class="demo-table tbl-booktabs">
+              <tr><th>Item</th><th>Result</th><th>Comment</th></tr>
+              <tr style="background:#eeeeee; color:#201D17;"><td style="color:#201D17;">Figure reference</td><td style="background:#dff5e6; color:#201D17;">Correct</td><td style="color:#201D17;">Label placed after caption</td></tr>
+              <tr><td>Image size</td><td style="background:#ffe4e4; color:#201D17;">Needs work</td><td>Width too large</td></tr>
+              <tr style="background:#eeeeee; color:#201D17;"><td class="bottom-rule" style="color:#201D17;">Citation</td><td class="bottom-rule" style="background:#dff5e6; color:#201D17;">Correct</td><td class="bottom-rule" style="color:#201D17;">Source appears in bibliography</td></tr>
+            </table>
+          </div>
+        </div>
+        <div class="tip"><b>Color with a purpose, not just a look:</b> this table is a good model for using color <em>semantically</em> — green consistently means "correct," red consistently means "needs attention" — rather than decoratively. A grader or a teammate reading the table can extract the verdict from color alone before reading a single word, which is the actual point of using color in a technical document at all.</div>
+      </div>
+
+      <div class="subtopic">
+        <h3>Spot the bug: a table that compiles clean and still renders wrong</h3>
+        <p>Every table mistake in your first guide threw a visible compile error — a miscounted <code class="inline">&amp;</code>, a missing <code class="inline">\\</code>. This one from <code class="inline">second_class.tex</code> is a different, quieter species of bug: it compiles with <b>zero errors or warnings</b>, and still produces the wrong output.</p>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">source, as written (buggy)</span>
+            <pre class="tex-code"><code>\begin{tabular}{|c|c|c|}
+    \hline
+    c11 & c12 & c13 \\
+    \hline
+    \multirow{2}{*}{c23} & c22 & c23 \\
+    \cline{2-3}
+     crash& c32 & c33 \\
+    \hline
+\end{tabular}</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">what should be there instead</span>
+            <pre class="tex-code" style="color:#201D17;"><code>     & c32 & c33 \\</code></pre>
+            <div class="rendered" style="font-size:0.85rem; margin-top:10px;">
+              A merged cell from <code style="background:#eee; padding:0 3px;">\multirow</code> still needs an empty placeholder in every row it spans — as your first guide covered. The word <code style="background:#eee; padding:0 3px;">crash</code> was typed into that placeholder by mistake.
+            </div>
+          </div>
+        </div>
+        <div class="bugfound"><b>Why this one is worth internalizing:</b> the table declares exactly 3 columns, and the buggy row (<code class="inline">crash & c32 & c33</code>) still has exactly 3 cell-slots — so LaTeX's column-count check, which is what normally catches multirow mistakes, has nothing to object to. The word "crash" isn't an extra column; it's <em>content sitting where blank space was supposed to be</em>, directly underneath the merged <code class="inline">c23</code> cell above it. The lesson: not every LaTeX bug throws an error message. Some just quietly produce the wrong PDF, which is exactly why comparing your compiled output against what you actually intended — not just checking "did it compile" — has to be part of every table you build.</div>
+      </div>
+    </section>
+
+    <!-- ============ 04 FIGURES ============ -->
+    <section id="figures">
+      <div class="section-head"><span class="section-num">04</span><h2>Figures — Wrapped Figures &amp; the Subfigure Line-Break Rule</h2></div>
+      <p class="lead"><code class="inline">sadat_sir.tex</code> is the most disciplined of all your files about figures — it comes with its own teaching-note table for float placement and an explicit, bolded, red-text warning about the single most common subfigure mistake.</p>
+
+      <div class="subtopic">
+        <h3>Text-wrapped figures: <code class="inline">wrapfigure</code></h3>
+        <p>Every figure you've seen so far claims the full paragraph width, forcing text to stop, the image to appear, then text to resume below it. <code class="inline">wrapfigure</code> (from the <code class="inline">wrapfig</code> package) does something structurally different: it lets body text flow around a small image sitting in the margin of the same paragraph, the way a magazine or newspaper column often does.</p>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">source</span>
+            <pre class="tex-code"><code>\begin{wrapfigure}{r}{0.36\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{padma_river.jpg}
+    \caption{Wrapped image.}
+    \label{fig:wrapped-padma}
+\end{wrapfigure}
+
+A wrapped figure lets text flow beside
+an image...</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">what the two arguments mean</span>
+            <div class="rendered" style="font-size:0.88rem;">
+              <b>First argument (<code style="background:#eee; padding:0 3px;">r</code>):</b> which side of the text the image sits on — <code style="background:#eee; padding:0 3px;">r</code> right, <code style="background:#eee; padding:0 3px;">l</code> left (also <code style="background:#eee; padding:0 3px;">i</code>/<code style="background:#eee; padding:0 3px;">o</code> for "inside/outside" in double-sided documents that print on both faces of the page).<br><br>
+              <b>Second argument (<code style="background:#eee; padding:0 3px;">0.36\linewidth</code>):</b> how wide the wrapped box is — this is <em>not</em> optional the way a plain figure's width is, since text needs to know exactly how much horizontal space to leave.
+            </div>
+          </div>
+        </div>
+        <div class="tip"><b>Practical sizing advice, straight from the source file:</b> keep a wrapped image between roughly <code class="inline">0.25\linewidth</code> and <code class="inline">0.40\linewidth</code>. Too narrow and the wrapped text column becomes an unreadable sliver; too wide and there's no room left for text to actually wrap around. Also leave enough body text <em>after</em> the wrapped figure — if the paragraph ends too soon, the next section's heading can end up awkwardly close to, or overlapping, the tail end of the image.</div>
+      </div>
+
+      <div class="subtopic">
+        <h3>The subfigure rule your teacher put in bold red text</h3>
+        <p>This is emphatic enough in the source material that it deserves the same treatment here. Building on the "blank line starts a new row" mechanic from your first guide's asymmetric-layout example — that mechanic is a deliberate <em>tool</em> when you want it, and an accidental <em>trap</em> when you don't.</p>
+        <div class="callout" style="border-left-color:#ff6b6b; background:rgba(255,107,107,0.12);"><b>WARNING (verbatim from the source):</b> "Do not put a blank line between subfigures. It starts a new paragraph, and forces the next subfigure onto a new line, no matter the sizes." Two subfigures set to <code class="inline">0.45\linewidth</code> each, separated only by <code class="inline">\hfill</code> with no blank line between them, sit side by side correctly. The exact same two subfigures with an accidental blank line between them — often just an extra press of Enter while editing — silently break onto two separate rows instead, even though their widths would have fit comfortably side by side. Because this produces no error at all, it's a purely visual bug you only catch by actually looking at the compiled PDF.</div>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">source — a 2×2 subfigure grid</span>
+            <pre class="tex-code"><code>\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.45\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{bd_satellite.jpg}
+        \caption{Country scale}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.45\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{padma_river.jpg}
+        \caption{River scale}
+    \end{subfigure}
+    \vspace{0.35cm}
+    \begin{subfigure}{0.45\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{hubble_cluster.jpg}
+        \caption{Space scale}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.45\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{smoke_satellite.png}
+        \caption{Atmospheric view}
+    \end{subfigure}
+    \caption{Four subfigures arranged as a two-by-two grid.}
+\end{figure}</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">rendered</span>
+            <div class="fig-row" style="justify-content:center;">
+              <div><div class="fig-box" style="width:100px; height:70px;">A</div><div class="fig-cap">(a) Country</div></div>
+              <div><div class="fig-box" style="width:100px; height:70px;">B</div><div class="fig-cap">(b) River</div></div>
+            </div>
+            <div class="fig-row" style="justify-content:center; margin-top:12px;">
+              <div><div class="fig-box" style="width:100px; height:70px;">C</div><div class="fig-cap">(c) Space</div></div>
+              <div><div class="fig-box" style="width:100px; height:70px;">D</div><div class="fig-cap">(d) Atmosphere</div></div>
+            </div>
+            <div class="cap">Figure: four subfigures, 2×2</div>
+          </div>
+        </div>
+        <p class="small-note">Notice the second row uses <code class="inline">\vspace{0.35cm}</code>, not a blank line, precisely to control the row break <em>without</em> accidentally starting a new paragraph — this is the deliberate, controlled version of the same mechanic the warning above is protecting you from doing by accident.</p>
+      </div>
+
+      <div class="subtopic">
+        <h3>The full placement-letter reference, in one table</h3>
+        <p>Your first guide covered <code class="inline">[H]</code> vs. the lowercase hints conceptually; here's <code class="inline">sadat_sir.tex</code>'s own condensed reference table for all six, worth having in one place.</p>
+        <table class="pkg-table">
+          <tr><th>Option</th><th>Meaning</th><th>Teaching note</th></tr>
+          <tr><td><code class="inline">h</code></td><td>here</td><td>Try to place the float near this point — a suggestion, not a guarantee.</td></tr>
+          <tr><td><code class="inline">t</code></td><td>top</td><td>Allow placement at the top of a page.</td></tr>
+          <tr><td><code class="inline">b</code></td><td>bottom</td><td>Allow placement at the bottom of a page.</td></tr>
+          <tr><td><code class="inline">p</code></td><td>page</td><td>Allow a separate page containing only floats.</td></tr>
+          <tr><td><code class="inline">!</code></td><td>override</td><td>Relax some internal restrictions such as float-area limits. It does <b>not</b> mean "force exactly here."</td></tr>
+          <tr><td><code class="inline">H</code></td><td>exactly here</td><td>Requires <code class="inline">\usepackage{float}</code>; useful for demos and drafts, but shouldn't be overused in polished writing.</td></tr>
+        </table>
+        <p class="small-note">There are no capital <code class="inline">T</code> or <code class="inline">B</code> variants for ordinary floats — <code class="inline">H</code> from the <code class="inline">float</code> package is the only capital-letter placement option you'll use in a normal article.</p>
+      </div>
+    </section>
+
+    <!-- ============ 05 CROSSREF ============ -->
+    <section id="crossref">
+      <div class="section-head"><span class="section-num">05</span><h2>hyperref, nameref &amp; autoref</h2></div>
+      <p class="lead"><code class="inline">lab_practice.tex</code> exercises a noticeably richer cross-referencing vocabulary than plain <code class="inline">\ref</code> — plus, right at the top, a genuine duplicate-label bug worth learning to recognize.</p>
+
+      <div class="subtopic">
+        <h3><code class="inline">\hyperref[label]{custom text}</code> — a clickable link with your own wording</h3>
+        <p>Plain <code class="inline">\ref{}</code> only ever gives you a bare number. When you want a clickable cross-reference whose visible text is something other than just that number — "Akif's legendary GOAT status" instead of "Figure 1" — <code class="inline">\hyperref[label]{text}</code> (square brackets around the label, curly braces around your custom text) is the tool, and it needs <code class="inline">hyperref</code> loaded.</p>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">source</span>
+            <pre class="tex-code"><code>Here you can check out
+\hyperref[fig:akif_cg_4]{Akif's legendary
+GOAT status} from a different place.</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">rendered</span>
+            <div class="rendered">Here you can check out <span style="color:blue; text-decoration:underline;">Akif's legendary GOAT status</span> from a different place.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="subtopic">
+        <h3><code class="inline">\nameref{}</code> — the section's actual title, not its number</h3>
+        <p><code class="inline">\nameref{label}</code> prints the <em>title text</em> of whatever sectioning unit that label points to, rather than a number — useful for "jump back to the X guide" phrasing where the number alone ("see Section 2") is less helpful to a reader than the words ("see the Modifying Texts guide").</p>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">source</span>
+            <pre class="tex-code"><code>\section{Modifying Texts}\label{sec:mod-texts}
+...
+
+If you forgot about modifying texts,
+jump back to the \nameref{sec:mod-texts}
+guide.</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">rendered</span>
+            <div class="rendered">If you forgot about modifying texts, jump back to the <span style="color:blue; text-decoration:underline;">Modifying Texts</span> guide.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="subtopic">
+        <h3><code class="inline">\autoref{}</code> — the reference labels itself for you</h3>
+        <p>Writing "Figure~\ref{fig:x}" or "Equation~\eqref{eq:y}" by hand every single time means typing the right noun yourself and keeping it consistent across a whole document. <code class="inline">\autoref{}</code> inspects what <em>kind</em> of thing the label points to — figure, section, equation, table — and automatically prepends the matching word for you, so <code class="inline">\autoref{fig:trump}</code> alone produces "figure 3," no manual "Figure~" needed.</p>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">source</span>
+            <pre class="tex-code"><code>In \autoref{fig:trump}, we can see...
+\autoref{eq:euler} is Euler's identity.</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">rendered</span>
+            <div class="rendered">In figure 3, we can see... equation 1 is Euler's identity.</div>
+          </div>
+        </div>
+        <div class="mistake"><b>The gotcha almost everyone hits:</b> <code class="inline">\autoref</code>'s built-in names are lowercase by default — "figure 3," not "Figure 3" — which surprises people expecting a capital letter, especially at the start of a sentence. Fix it once, globally, in the preamble by redefining the specific autoref-name command for each type you care about: <code class="inline">\renewcommand{\figureautorefname}{Figure}</code>, <code class="inline">\renewcommand{\equationautorefname}{Equation}</code>, and so on (the pattern is always <code class="inline">\&lt;type&gt;autorefname</code>).</div>
+      </div>
+
+      <div class="subtopic">
+        <h3>Spot the bug: a label defined twice</h3>
+        <p><code class="inline">lab_practice.tex</code> has this exact line appearing <em>twice</em>, once in §2 and again, verbatim, in §5:</p>
+        <pre class="tex-code" style="background:var(--paper); color:var(--ink); padding:14px; border-radius:6px;"><code>Here you can see we can refer \ref{fig:akif_cg_4}\label{Picture}
+from a different place</code></pre>
+        <div class="term-box">! LaTeX Warning: Label `Picture' multiply defined.</div>
+        <p>Every <code class="inline">\label</code> in a document must be unique — it's how LaTeX knows which single numbered thing you mean when you later <code class="inline">\ref</code> it. Defining <code class="inline">Picture</code> twice doesn't stop the document from compiling, but it does mean any later <code class="inline">\ref{Picture}</code> resolves to whichever one of the two definitions happened to be processed last, silently — LaTeX warns you in the compile log, but says nothing in the actual PDF, so this is exactly the kind of bug that survives unnoticed in a final submission unless you actually read your compile warnings.</p>
+        <p class="small-note">Also worth noticing: this particular <code class="inline">\label{Picture}</code> is attached to a <em>sentence</em>, not to a figure, table, or section — so even correctly used and made unique, it wouldn't have a meaningful number to report; <code class="inline">\label</code> only captures a number from the most recently updated counter, and plain body text doesn't update any counter at all.</p>
+      </div>
+    </section>
+
+    <!-- ============ 06 MATH ============ -->
+    <section id="math">
+      <div class="section-head"><span class="section-num">06</span><h2>Math — Custom Operators &amp; Real-World Formulas</h2></div>
+      <p class="lead"><code class="inline">second_class.tex</code>'s math section reads like a mini reference sheet for physics and engineering notation, and <code class="inline">sadat_sir.tex</code> adds one more tool your first guide's Math sections didn't cover: defining your own named operator.</p>
+
+      <div class="subtopic">
+        <h3>Defining a custom operator: <code class="inline">\DeclareMathOperator</code></h3>
+        <p>Your first guide's §07 covered the built-in roman-type operators (<code class="inline">\sin</code>, <code class="inline">\lim</code>, <code class="inline">\det</code>, ...) — upright text, correctly spaced, instead of a cramped italic product of letters. <code class="inline">\argmax</code> isn't one of the built-ins, but you're not stuck writing it by hand every time either: <code class="inline">amsmath</code>'s <code class="inline">\DeclareMathOperator</code> lets you register your own, in the preamble, once.</p>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">preamble</span>
+            <pre class="tex-code"><code>\DeclareMathOperator*{\argmax}{arg\,max}</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">breakdown</span>
+            <div class="rendered" style="font-size:0.88rem;">
+              <code style="background:#eee; padding:0 3px;">\argmax</code> — the new command name you're creating.<br><br>
+              <code style="background:#eee; padding:0 3px;">arg\,max</code> — the upright text it prints; the <code style="background:#eee; padding:0 3px;">\,</code> thin space keeps "arg" and "max" from crowding together the way two touching words normally would in upright math text.<br><br>
+              The <b>star</b> on <code style="background:#eee; padding:0 3px;">\DeclareMathOperator*</code> is the whole point here: it makes a subscript like <code style="background:#eee; padding:0 3px;">\argmax_{x}</code> stack <em>directly underneath</em> the operator in display math — exactly like <code style="background:#eee; padding:0 3px;">\max</code> or <code style="background:#eee; padding:0 3px;">\lim</code> do — instead of squeezing to the side as a small subscript. Drop the star and you get the side-squeezed version instead.
+            </div>
+          </div>
+        </div>
+        <div class="mistake"><b>Common mistake:</b> calling <code class="inline">\DeclareMathOperator</code> inside the document body, or worse, inside a math environment itself. It's a preamble-only declaration — like <code class="inline">\newcommand</code> or <code class="inline">\newtheorem</code>, it defines a new command for later use and must be issued before <code class="inline">\begin{document}</code>.</div>
+      </div>
+
+      <div class="subtopic">
+        <h3>A reference sheet of real formulas</h3>
+        <p><code class="inline">second_class.tex</code>'s math section is genuinely useful precisely because it's not abstract — every construct is anchored in a real formula from physics, calculus, or statistics, which is a good way to remember the syntax: tie each command to the one equation you'll always associate it with.</p>
+        <table class="pkg-table">
+          <tr><th>Formula</th><th>Commands it exercises</th></tr>
+          <tr><td>$E = mc^2$, wavefunction $\psi(x,t) = Ae^{i(kx-\omega t)}$</td><td>Basic superscripts, subscripts, Greek letters, auto-sizing exponents.</td></tr>
+          <tr><td>$\displaystyle\lim_{h\to 0}\frac{f(x+h)-f(x)}{h} = \frac{df}{dx}$</td><td><code class="inline">\lim_{h \to 0}</code>, stacking the limit condition directly under "lim" — this is the built-in operator behaving exactly like the starred custom operator above.</td></tr>
+          <tr><td>Ampère–Maxwell law: $\oint_C \mathbf{B}\cdot d\mathbf{l} = \mu_0\iint_S \mathbf{J}\cdot d\mathbf{A} + ...$</td><td><code class="inline">\oint</code> (closed-loop/contour integral), <code class="inline">\iint</code> (surface/double integral), <code class="inline">\mathbf{}</code> (bold vector notation), <code class="inline">\partial</code> (partial derivative).</td></tr>
+          <tr><td>Newton's second law as a matrix equation, $\vec F = m\vec a$ expanded</td><td><code class="inline">\vec{}</code>, <code class="inline">\hat{}</code>, a <code class="inline">bmatrix</code> multiplying another <code class="inline">bmatrix</code> — three separate matrices in one <code class="inline">equation</code>.</td></tr>
+          <tr><td>Piecewise $p(t)$ with three conditions instead of two</td><td><code class="inline">cases</code>, extended to more than two branches — the syntax doesn't change, you just add more <code class="inline">value &amp; condition \\</code> rows.</td></tr>
+        </table>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">the three-branch piecewise example</span>
+            <pre class="tex-code"><code>p(t) = \begin{cases}
+    0, &amp; t &lt; 0 \\
+    e^{-\lambda t}, &amp; 0 \le t &lt; 3 \\
+    \ln(t - 2), &amp; t \ge 3
+\end{cases}</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">rendered</span>
+            <div class="rendered" style="font-size:0.9rem; line-height:1.9;">
+              p(t) = { &nbsp; 0, &nbsp;&nbsp; if t &lt; 0<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; e<sup>−λt</sup>, &nbsp;&nbsp; if 0 ≤ t &lt; 3<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ln(t − 2), &nbsp;&nbsp; if t ≥ 3
+            </div>
+          </div>
+        </div>
+        <p class="small-note">Here the conditions (<code class="inline">t &lt; 0</code>, etc.) are written directly as math, without <code class="inline">\text{}</code> — that's fine specifically because they're symbolic inequalities, not English words; <code class="inline">\text{}</code> only matters once you introduce actual prose like "if" into the condition column, as your first guide's cases example did.</p>
+      </div>
+
+      <div class="subtopic">
+        <h3>More symbols worth adding to your reference table</h3>
+        <table class="sym-table">
+          <tr><th>Symbol</th><th>Command</th><th>Meaning</th></tr>
+          <tr><td class="glyph">⟹</td><td class="cmd">\implies</td><td>Logical implication</td></tr>
+          <tr><td class="glyph">⟺</td><td class="cmd">\iff</td><td>If and only if</td></tr>
+          <tr><td class="glyph">∝</td><td class="cmd">\propto</td><td>Proportional to</td></tr>
+          <tr><td class="glyph">∇</td><td class="cmd">\nabla</td><td>Gradient / del operator</td></tr>
+          <tr><td class="glyph">∞</td><td class="cmd">\infty</td><td>Infinity</td></tr>
+          <tr><td class="glyph">→</td><td class="cmd">\to</td><td>Maps to / tends to (as in <code class="inline">h \to 0</code>)</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============ 07 VERBATIM / TEXTTT ============ -->
+    <section id="verbatim">
+      <div class="section-head"><span class="section-num">07</span><h2>Footnotes, Verbatim &amp; Typewriter Text <span class="req-badge">requested</span></h2></div>
+      <p class="lead">The last two lines of <code class="inline">sadat_sir.tex</code> are comments asking directly for this: <em>"please teach me how to use <code class="inline">\texttt</code> ... also teach me how to use <code class="inline">\verbatim</code>."</em> Both, plus a neat footnote-reuse trick from the same file, are here.</p>
+
+      <div class="subtopic">
+        <h3><code class="inline">\texttt{}</code> — typewriter text, in depth <span class="req-badge">requested</span></h3>
+        <p>Your first guide introduced <code class="inline">\texttt{}</code> in one line as part of the font-family trio (<code class="inline">\textrm</code>/<code class="inline">\textsf</code>/<code class="inline">\texttt</code>); here's the fuller picture. <code class="inline">\texttt{...}</code> switches the enclosed text to a fixed-width (monospace) font — every character occupies the same horizontal space, the way code actually looks in an editor. It does <em>not</em> disable LaTeX's interpretation of special characters the way verbatim commands do — <code class="inline">\texttt{}</code> is purely a font change, and its argument is still ordinary LaTeX text, meaning a stray <code class="inline">%</code> or <code class="inline">_</code> inside it still needs the usual escaping (<code class="inline">\%</code>, <code class="inline">\_</code>) or it will still break.</p>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">source</span>
+            <pre class="tex-code"><code>Image insertion needs the
+\texttt{graphicx} package. A path
+might look like \texttt{images/fig1.png}.
+
+\% and \_ still need escaping even
+inside \texttt{}: \texttt{50\% done,
+file\_name.py}</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">rendered</span>
+            <div class="rendered">
+              Image insertion needs the <code style="font-family:monospace;">graphicx</code> package. A path might look like <code style="font-family:monospace;">images/fig1.png</code>.<br><br>
+              % and _ still need escaping even inside <code style="font-family:monospace;">\texttt{}</code>: <code style="font-family:monospace;">50% done, file_name.py</code>
+            </div>
+          </div>
+        </div>
+        <p class="small-note">Typical uses: package names, file names and paths, command names in running prose (as this whole guide does with <code class="inline">\texttt{}</code>-style spans throughout), directory structures, or any short technical token you want to visually distinguish from ordinary prose without necessarily making it "code" in the fuller sense that <code class="inline">\verb</code> or <code class="inline">\lstlisting</code> imply.</p>
+      </div>
+
+      <div class="subtopic">
+        <h3><code class="inline">\verb|...|</code> — inline literal text <span class="req-badge">requested</span></h3>
+        <p>The problem <code class="inline">\verb</code> solves: sometimes you want to show LaTeX <em>source code itself</em> as text on the page — <code class="inline">\textbf{...}</code>, backslashes and all — without LaTeX actually interpreting it as a command. Wrapping <code class="inline">\textbf{...}</code> in <code class="inline">\texttt{}</code> doesn't achieve this; <code class="inline">\textbf</code> would still be executed as a real bolding command, it would just be typeset in monospace font while doing so. <code class="inline">\verb</code> is fundamentally different: it disables LaTeX interpretation entirely for its argument and prints the exact characters you typed, verbatim, in typewriter font.</p>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">source</span>
+            <pre class="tex-code"><code>Use \verb|\textbf{...}| to make
+text bold.
+
+You can also delimit with a
+different character, e.g.
+\verb!100% correct!, if your
+content itself contains a
+vertical bar.</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">rendered</span>
+            <div class="rendered">
+              Use <code style="font-family:monospace;">\textbf{...}</code> to make text bold.<br><br>
+              You can also delimit with a different character, e.g. <code style="font-family:monospace;">100% correct</code>, if your content itself contains a vertical bar.
+            </div>
+          </div>
+        </div>
+        <p><code class="inline">\verb</code> takes its delimiter from whatever character immediately follows it — almost always <code class="inline">|</code> by convention, but any character not appearing inside the content works, which matters the moment your snippet itself contains a literal <code class="inline">|</code>. Two hard rules: the opening and closing delimiter must match, and <code class="inline">\verb</code> is "fragile" — it cannot be used inside the argument of most other commands (for instance, directly inside a <code class="inline">\footnote{}</code> or a section title) without special handling, because those commands process their arguments in a way that conflicts with <code class="inline">\verb</code>'s own special character-reading mode.</p>
+      </div>
+
+      <div class="subtopic">
+        <h3><code class="inline">\begin{verbatim}</code> — the block-level version <span class="req-badge">requested</span></h3>
+        <p>Same underlying idea as <code class="inline">\verb</code>, extended to multiple lines: everything between <code class="inline">\begin{verbatim}</code> and <code class="inline">\end{verbatim}</code> is printed exactly as typed — line breaks, spacing, indentation, and all special characters included — with zero LaTeX interpretation. This is the environment your first guide's Package Starter Kit blocks and every code-ish snippet in these two guides are actually built from, structurally.</p>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">source</span>
+            <pre class="tex-code"><code>\begin{verbatim}
+def greet(name):
+    return f"Hello, {name}!"
+\end{verbatim}</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">rendered</span>
+            <pre style="font-family:monospace; color:#201D17; margin:0; font-size:0.85rem; background:#f4f4f4; padding:10px; border-radius:4px;">def greet(name):
+    return f"Hello, {name}!"</pre>
+          </div>
+        </div>
+        <table class="pkg-table">
+          <tr><th>Tool</th><th>Scope</th><th>Best for</th></tr>
+          <tr><td><code class="inline">\texttt{}</code></td><td>Inline, interprets LaTeX normally</td><td>Short technical tokens (filenames, package names) inside a sentence.</td></tr>
+          <tr><td><code class="inline">\verb|...|</code></td><td>Inline, disables interpretation</td><td>Showing a short piece of literal LaTeX/code source mid-sentence.</td></tr>
+          <tr><td><code class="inline">verbatim</code></td><td>Block, disables interpretation</td><td>A whole multi-line code snippet on its own.</td></tr>
+          <tr><td><code class="inline">lstlisting</code> (§10)</td><td>Block, disables interpretation, plus features</td><td>Real source code that should also get syntax highlighting, line numbers, or a caption/label.</td></tr>
+        </table>
+        <div class="tip"><b>Which one to actually reach for:</b> if you just need a plain, undecorated block of literal text or simple code, <code class="inline">verbatim</code> is completely sufficient and needs no extra package. The moment you want color-coded keywords, line numbers, or a numbered caption you can <code class="inline">\ref</code> — as you will for any real Python code in an assignment — that's exactly the gap <code class="inline">lstlisting</code> (§10) exists to fill.</div>
+      </div>
+
+      <div class="subtopic">
+        <h3>Bonus: citing the same footnote twice</h3>
+        <p>Not requested in the comments, but a genuinely useful trick sitting right next to them in the same file. An ordinary <code class="inline">\footnote{}</code> always creates a <em>new</em> numbered note. To point a second reference back at a footnote you already wrote, give that footnote its own <code class="inline">\label</code> and reuse the number with <code class="inline">\footnotemark</code>:</p>
+        <pre class="tex-code" style="background:var(--paper); color:var(--ink); padding:16px; border-radius:6px;"><code>First mention.\footnote{\label{fn:tool}A repeated note.}
+Second mention.\footnotemark[\ref{fn:tool}]</code></pre>
+        <p class="small-note">The first line both prints the note text <em>and</em> labels its number. The second line prints only a matching superscript number — no new note text at the bottom of the page — pointing back at the same footnote via <code class="inline">\ref</code>.</p>
+      </div>
+    </section>
+
+    <!-- ============ 08 CITATIONS ============ -->
+    <section id="cite">
+      <div class="section-head"><span class="section-num">08</span><h2>Citations — The Full natbib Command Family</h2></div>
+      <p class="lead">Your earlier guide covered <code class="inline">\citet</code>/<code class="inline">\citep</code> and the style-switching machinery in depth. <code class="inline">sadat_sir.tex</code> rounds that out with the rest of the command family and a precise style-name reference table.</p>
+
+      <div class="subtopic">
+        <h3>The full command set</h3>
+        <table class="pkg-table">
+          <tr><th>Command</th><th>Use when...</th><th>Example result</th></tr>
+          <tr><td><code class="inline">\citet{key}</code></td><td>the author name is part of the sentence</td><td>Vaswani et al. (2017) introduced the Transformer.</td></tr>
+          <tr><td><code class="inline">\citep{key}</code></td><td>the citation is parenthetical supporting evidence</td><td>Residual learning became standard (He et al., 2016).</td></tr>
+          <tr><td><code class="inline">\citep{key1,key2}</code></td><td>citing several sources together</td><td>(Krizhevsky et al., 2012; He et al., 2016)</td></tr>
+          <tr><td><code class="inline">\citeauthor{key}</code></td><td>only the author name is needed</td><td>He et al.</td></tr>
+          <tr><td><code class="inline">\citeyear{key}</code></td><td>only the year is needed</td><td>2016</td></tr>
+          <tr><td><code class="inline">\nocite{key}</code></td><td>a source must appear in the bibliography without being cited anywhere in the text</td><td>(prints nothing at the point it's called)</td></tr>
+          <tr><td><code class="inline">\nocite{*}</code></td><td>every entry in the .bib file should be listed</td><td>Useful for a bibliography demo; usually too broad for a real report.</td></tr>
+        </table>
+        <div class="mistake"><b>Common mix-up:</b> using <code class="inline">\citep</code> where a sentence actually names the author directly — "\citep{he2016deep} proposed residual learning" reads as "(He et al., 2016) proposed residual learning," an awkward parenthetical subject. The fix is <code class="inline">\citet</code>: "\citet{he2016deep} proposed residual learning" reads correctly as "He et al. (2016) proposed residual learning."</div>
+      </div>
+
+      <div class="subtopic">
+        <h3>Bibliography style names, precisely</h3>
+        <table class="pkg-table">
+          <tr><th>Style</th><th>What it produces</th></tr>
+          <tr><td><code class="inline">plainnat</code></td><td>natbib-friendly; works for both numeric and author-year modes depending on your <code class="inline">natbib</code> package options.</td></tr>
+          <tr><td><code class="inline">plain</code></td><td>Numeric labels, entries sorted alphabetically by author.</td></tr>
+          <tr><td><code class="inline">abbrv</code></td><td>Like <code class="inline">plain</code>, but with abbreviated first names and journal names.</td></tr>
+          <tr><td><code class="inline">unsrt</code></td><td>Numeric labels, ordered by first appearance in the text rather than alphabetically.</td></tr>
+          <tr><td><code class="inline">ieeetr</code></td><td>IEEE-style numeric citations, common in engineering writing.</td></tr>
+          <tr><td><code class="inline">apalike</code></td><td>Author-year style suitable for simple reports, without needing full <code class="inline">natbib</code> machinery.</td></tr>
+        </table>
+        <p class="small-note">Choosing between the <code class="inline">[numbers]</code> and <code class="inline">[authoryear,round]</code> <code class="inline">natbib</code> package options (from your first guide's §10) and choosing a <code class="inline">\bibliographystyle</code> are two separate decisions that need to agree with each other — pairing <code class="inline">[authoryear]</code> with a purely numeric style like <code class="inline">unsrt</code>, for instance, produces inconsistent-looking output where the in-text citations and the reference list disagree in format.</p>
+      </div>
+    </section>
+
+    <!-- ============ 09 ALGORITHMS ============ -->
+    <section id="algo">
+      <div class="section-head"><span class="section-num">09</span><h2>Algorithms &amp; Pseudocode</h2></div>
+      <p class="lead">Not in your first guide at all — <code class="inline">sadat_sir.tex</code> demonstrates a full binary search written as properly numbered, captioned pseudocode. This is the standard way to present an algorithm in a CSE report rather than pasting real code and calling it pseudocode.</p>
+
+      <div class="subtopic">
+        <h3>Two packages, two jobs</h3>
+        <p><code class="inline">algorithm</code> and <code class="inline">algpseudocode</code> divide the work the same way <code class="inline">table</code> and <code class="inline">tabular</code> do. <code class="inline">algorithm</code> provides the <em>outer float</em> — numbering, a caption, a label, the ability to <code class="inline">\ref</code> it, and placement specifiers exactly like a figure or table. <code class="inline">algpseudocode</code> provides the <em>inner vocabulary</em> — the actual keywords (<code class="inline">\State</code>, <code class="inline">\While</code>, <code class="inline">\If</code>, ...) used inside an <code class="inline">algorithmic</code> block to write the steps themselves.</p>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">source</span>
+            <pre class="tex-code"><code>\begin{algorithm}[H]
+    \caption{Binary Search}
+    \label{alg:binary-search}
+    \begin{algorithmic}[1]
+        \Require Sorted array $A$, target value $x$
+        \Ensure Index of $x$, or $-1$ if not found
+        \State $low \gets 1$, $high \gets n$
+        \While{$low \leq high$}
+            \State $mid \gets \lfloor (low + high)/2 \rfloor$
+            \If{$A[mid] = x$}
+                \State \Return $mid$
+            \ElsIf{$A[mid] &lt; x$}
+                \State $low \gets mid + 1$
+            \Else
+                \State $high \gets mid - 1$
+            \EndIf
+        \EndWhile
+        \State \Return $-1$
+    \end{algorithmic}
+\end{algorithm}</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">what each piece means</span>
+            <div class="rendered" style="font-size:0.86rem;">
+              <b>[H]</b> on <code style="background:#eee; padding:0 3px;">algorithm</code> — same placement specifier as figures/tables (§04), requires <code style="background:#eee; padding:0 3px;">float</code>.<br><br>
+              <b>[1]</b> on <code style="background:#eee; padding:0 3px;">algorithmic</code> — turns on line numbers, numbering every line (a <code style="background:#eee; padding:0 3px;">[5]</code> here would number every 5th line instead).<br><br>
+              <code style="background:#eee; padding:0 3px;">\Require</code>/<code style="background:#eee; padding:0 3px;">\Ensure</code> — the algorithm's stated pre- and post-conditions, printed as a labelled header block before the steps begin.<br><br>
+              <code style="background:#eee; padding:0 3px;">\gets</code> — renders as ← (assignment), the pseudocode convention distinguishing "assign" from mathematical equality.<br><br>
+              <code style="background:#eee; padding:0 3px;">\State</code> — a generic single step; everything that isn't a control-flow keyword is wrapped in one of these.<br><br>
+              <code style="background:#eee; padding:0 3px;">\While{...}...\EndWhile</code>, <code style="background:#eee; padding:0 3px;">\If{...}...\ElsIf{...}...\Else...\EndIf</code> — control structures; every opener needs its matching <code style="background:#eee; padding:0 3px;">\End...</code>, the same discipline as <code style="background:#eee; padding:0 3px;">\begin</code>/<code style="background:#eee; padding:0 3px;">\end</code> for environments.
+            </div>
+          </div>
+        </div>
+        <p class="small-note">Once wrapped in the <code class="inline">algorithm</code> float, it's referenceable exactly like any other numbered object: <code class="inline">Algorithm~\ref{alg:binary-search}</code> in running prose, same mechanism as a figure or table reference.</p>
+      </div>
+
+      <div class="subtopic">
+        <h3>The rest of the control-flow vocabulary</h3>
+        <table class="pkg-table">
+          <tr><th>Command</th><th>Produces</th></tr>
+          <tr><td><code class="inline">\For{...} ... \EndFor</code></td><td>A for-loop block, e.g. <code class="inline">\For{$i = 1$ to $n$}</code>.</td></tr>
+          <tr><td><code class="inline">\ForAll{...} ... \EndFor</code></td><td>A "for all" loop, common in set/array-processing pseudocode.</td></tr>
+          <tr><td><code class="inline">\Function{Name}{args} ... \EndFunction</code></td><td>Defines a named sub-procedure block, callable from elsewhere in the same or another algorithm.</td></tr>
+          <tr><td><code class="inline">\Comment{text}</code></td><td>An inline pseudocode comment, visually distinguished from actual steps.</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============ 10 LISTINGS ============ -->
+    <section id="listings">
+      <div class="section-head"><span class="section-num">10</span><h2>Code Listings — Importing Python Code <span class="req-badge">requested</span></h2></div>
+      <p class="lead">The other half of your <code class="inline">sadat_sir.tex</code> comment request: <em>"import a python code as \listing."</em> The <code class="inline">listings</code> package is exactly this tool — a source-code-aware version of <code class="inline">verbatim</code> with syntax highlighting, line numbers, and float-like captioning built in.</p>
+
+      <div class="subtopic">
+        <h3>Step 1 — configure the look once, in the preamble</h3>
+        <p><code class="inline">\lstset{...}</code>, called once in the preamble, sets the <em>default</em> appearance for every <code class="inline">lstlisting</code> block in the whole document, so you don't repeat the same styling options at every single code block.</p>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">preamble (from sadat_sir.tex)</span>
+            <pre class="tex-code"><code>\usepackage{listings}
+\usepackage{xcolor}   % for the custom colors below
+
+\definecolor{customblue}{RGB}{0, 76, 153}
+
+\lstset{
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{customblue}\bfseries,
+    commentstyle=\color{teal!70!black},
+    stringstyle=\color{red!70!black},
+    frame=single,
+    breaklines=true,
+    showstringspaces=false,
+    columns=fullflexible
+}</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">what each option controls</span>
+            <div class="rendered" style="font-size:0.85rem;">
+              <code style="background:#eee; padding:0 3px;">basicstyle</code> — the font for ordinary code text (monospace, small, here).<br><br>
+              <code style="background:#eee; padding:0 3px;">keywordstyle</code>/<code style="background:#eee; padding:0 3px;">commentstyle</code>/<code style="background:#eee; padding:0 3px;">stringstyle</code> — separate colors/weights for language keywords, <code style="background:#eee; padding:0 3px;">#</code> comments, and string literals — this is where the syntax-highlighting colors actually come from.<br><br>
+              <code style="background:#eee; padding:0 3px;">frame=single</code> — draws a box around the whole listing.<br><br>
+              <code style="background:#eee; padding:0 3px;">breaklines=true</code> — wraps long lines instead of letting them run off the page edge.<br><br>
+              <code style="background:#eee; padding:0 3px;">showstringspaces=false</code> — stops <code style="background:#eee; padding:0 3px;">listings</code> from visually marking spaces inside string literals with a special glyph, which looks noisy for ordinary prose-like strings.<br><br>
+              <code style="background:#eee; padding:0 3px;">columns=fullflexible</code> — a spacing-metric option that generally makes monospaced text look less cramped/uneven.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="subtopic">
+        <h3>Step 2 — write the actual listing</h3>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">source</span>
+            <pre class="tex-code"><code>\begin{lstlisting}[language=Python,
+  caption={A small Python function.},
+  label={lst:python-square}]
+def greet_user(name):
+    # Create a greeting message
+    message = f"Hello, {name}! Welcome to Python."
+
+    # Print the greeting message
+    print(message)
+
+    return message
+
+
+user_name = "Alice"
+greet_user(user_name)
+\end{lstlisting}</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">rendered</span>
+            <pre style="font-family:monospace; color:#201D17; margin:0; font-size:0.82rem; background:#fafafa; border:1px solid #999; padding:10px;"><span style="color:#004c99; font-weight:bold;">def</span> greet_user(name):
+    <span style="color:#00806b;"># Create a greeting message</span>
+    message = <span style="color:#cc0000;">f"Hello, {name}! Welcome to Python."</span>
+
+    <span style="color:#00806b;"># Print the greeting message</span>
+    print(message)
+
+    <span style="color:#004c99; font-weight:bold;">return</span> message
+
+
+user_name = <span style="color:#cc0000;">"Alice"</span>
+greet_user(user_name)</pre>
+            <div class="cap">Listing 1: A small Python function.</div>
+          </div>
+        </div>
+        <p><code class="inline">language=Python</code> is what tells <code class="inline">listings</code> which keyword set to actually highlight — <code class="inline">def</code>, <code class="inline">return</code>, <code class="inline">import</code>, and so on all get <code class="inline">keywordstyle</code>'s color specifically because <code class="inline">listings</code> recognises them as Python syntax; the same source with <code class="inline">language=C</code> would highlight a completely different keyword set. Notice <code class="inline">caption</code> and <code class="inline">label</code> are given <em>directly</em> as options to <code class="inline">lstlisting</code> itself, not via a separate outer float environment the way a table needs <code class="inline">\begin{table}...\end{table}</code> around a <code class="inline">tabular</code> — <code class="inline">lstlisting</code> is self-floating, and immediately referenceable afterward as <code class="inline">Listing~\ref{lst:python-square}</code>.</p>
+        <div class="tip"><b>A note on alternatives:</b> you may also encounter the <code class="inline">minted</code> package, which uses the external Pygments highlighter and generally produces nicer-looking output than <code class="inline">listings</code>. The trade-off is that <code class="inline">minted</code> requires <code class="inline">-shell-escape</code> to be explicitly enabled at compile time (it shells out to a Python program), which many shared or restricted LaTeX environments — including a typical classroom Overleaf setup — don't allow by default. <code class="inline">listings</code> needs nothing beyond the package itself and compiles anywhere, which is exactly why it's the safer default for coursework.</div>
+      </div>
+
+      <div class="subtopic">
+        <h3>Inserting an <em>existing</em> .py file directly, without retyping it</h3>
+        <p>If your Python code already exists as its own file rather than being typed inline, <code class="inline">listings</code> can pull it in directly rather than you copy-pasting (and risking a transcription mistake):</p>
+        <pre class="tex-code" style="background:var(--paper); color:var(--ink); padding:16px; border-radius:6px;"><code>\lstinputlisting[language=Python,
+  caption={Imported from an external file.},
+  label={lst:external}]{code/my_script.py}</code></pre>
+        <p class="small-note">The path is relative to your <code class="inline">.tex</code> file's location, exactly like an image path in <code class="inline">\includegraphics</code>. This is the single most reliable way to guarantee the code shown in your report exactly matches a script you actually ran — there's no manual retyping step where a copy error could sneak in.</p>
+      </div>
+    </section>
+
+    <!-- ============ 11 TWO-COLUMN ============ -->
+    <section id="twocol">
+      <div class="section-head"><span class="section-num">11</span><h2>Two-Column Documents</h2></div>
+      <p class="lead">Mentioned in <code class="inline">sadat_sir.tex</code> as a separate companion demo rather than shown inline — the concept is short enough to cover fully here.</p>
+      <div class="subtopic">
+        <pre class="tex-code" style="background:var(--paper); color:var(--ink); padding:16px; border-radius:6px;"><code>\documentclass[twocolumn]{article}
+...
+\begin{figure*}[t]
+    \centering
+    \includegraphics[width=0.9\textwidth]{wide_diagram.png}
+    \caption{A figure spanning both columns.}
+\end{figure*}</code></pre>
+        <p><code class="inline">[twocolumn]</code> as a document-class option switches the <em>entire</em> document to a two-column layout — text automatically flows down the first column, then continues at the top of the second, the way a newspaper or a conference paper is typically laid out. An ordinary <code class="inline">figure</code> or <code class="inline">table</code> inside a two-column document is confined to the width of just one column, which is often too narrow for a wide diagram. The starred variants, <code class="inline">figure*</code> and <code class="inline">table*</code>, break out of that constraint and span the full page width across both columns — at the cost of only accepting <code class="inline">t</code> or <code class="inline">b</code> placement (top/bottom of a page), never <code class="inline">h</code>, since a full-width float physically cannot sit "here" in the middle of one narrow column.</p>
+      </div>
+    </section>
+
+    <!-- ============ 12 DEBUG ============ -->
+    <section id="debug">
+      <div class="section-head"><span class="section-num">12</span><h2>The Preamble Bug &amp; a Debugging Checklist</h2></div>
+      <p class="lead">The single most instructive bug across all eight files you've shared so far is sitting in <code class="inline">second_class.tex</code>'s opening lines — worth its own section rather than a quick callout.</p>
+
+      <div class="subtopic">
+        <h3>Content before <code class="inline">\begin{document}</code></h3>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">source, exactly as written (buggy)</span>
+            <pre class="tex-code"><code>\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+
+\maketitle
+\newpage
+\tableofcontents
+\newpage
+\begin{document}
+
+\section{Introduction}
+    ...</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">what actually happens</span>
+            <div class="term-box">! LaTeX Error: Missing \begin{document}.</div>
+            <p style="color:#201D17; font-size:0.85rem; margin-top:10px;">This is one of the most instantly recognizable error messages in LaTeX, and it means exactly what it says.</p>
+          </div>
+        </div>
+        <p>The distinction that matters: the <b>preamble</b> — everything between <code class="inline">\documentclass{}</code> and <code class="inline">\begin{document}</code> — is only allowed to contain <em>declarations</em> — things that configure or define, but don't themselves produce visible output. <code class="inline">\usepackage{}</code>, <code class="inline">\title{}</code>/<code class="inline">\author{}</code>/<code class="inline">\date{}</code> (which only <em>store</em> values, as your first guide's §03 covered), <code class="inline">\definecolor{}</code>, <code class="inline">\newcommand{}</code>, and <code class="inline">\newtheorem{}</code> all genuinely belong here — none of them puts a single mark on a page by itself. <code class="inline">\maketitle</code>, <code class="inline">\tableofcontents</code>, and <code class="inline">\newpage</code> are a fundamentally different category: they <em>typeset</em> — they produce actual content and page breaks — and typesetting can only happen once <code class="inline">\begin{document}</code> has run its internal setup (initializing the page-building machinery, applying the base font size, establishing the output routine). Move all four lines below <code class="inline">\begin{document}</code>, in the same relative order, and the error disappears.</p>
+        <div class="mistake"><b>Why this specific mistake is common:</b> in an earlier, simpler file (or a different day's practice), it's easy to build the habit of writing <code class="inline">\maketitle</code> and <code class="inline">\tableofcontents</code> "near the top" of the file without consciously tracking whether that's above or below <code class="inline">\begin{document}</code> — especially once <code class="inline">\newtheorem</code> declarations (which genuinely <em>do</em> belong in the preamble) are sitting right next to them, creating the illusion that everything in that opening block is preamble material.</div>
+      </div>
+
+      <div class="subtopic">
+        <h3>A debugging checklist, adapted from <code class="inline">sadat_sir.tex</code></h3>
+        <table class="pkg-table">
+          <tr><th>Symptom</th><th>Likely fix</th></tr>
+          <tr><td>A reference shows as <code class="inline">??</code></td><td>Compile again — LaTeX needs a second pass to resolve labels (§05, and your first guide's §03/§09).</td></tr>
+          <tr><td>A citation shows as <code class="inline">?</code></td><td>Check the citation key spelling against the <code class="inline">.bib</code> file, and confirm the full <code class="inline">pdflatex → bibtex → pdflatex → pdflatex</code> cycle actually ran.</td></tr>
+          <tr><td>An image is missing</td><td>Check the file name, extension, and folder path exactly — these are case-sensitive on most systems even when your OS isn't.</td></tr>
+          <tr><td>A float has drifted far from where you placed it</td><td>Try <code class="inline">[!htbp]</code> before reaching straight for <code class="inline">[H]</code> — §04.</td></tr>
+          <tr><td>A subfigure row overflows the page width</td><td>Reduce each subfigure's width fraction first, before adding manual spacing — two subfigures should sum to noticeably less than 1 (§04, and your first guide's §05).</td></tr>
+          <tr><td>Colored table cells don't work</td><td>Confirm <code class="inline">\usepackage[table]{xcolor}</code> specifically — plain <code class="inline">xcolor</code> without the <code class="inline">table</code> option won't recognise <code class="inline">\rowcolor</code>/<code class="inline">\cellcolor</code> (§00, and your first guide's §00/§04).</td></tr>
+          <tr><td><code class="inline">! LaTeX Error: Missing \begin{document}.</code></td><td>Something that typesets — <code class="inline">\maketitle</code>, <code class="inline">\tableofcontents</code>, a stray sentence, a figure — is sitting above <code class="inline">\begin{document}</code>. Move it below.</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============ 13 TEMPLATES ============ -->
+    <section id="templates">
+      <div class="section-head"><span class="section-num">13</span><h2>Your Teacher's Templates II</h2></div>
+      <p class="lead">A quick map of what each of the four new files is actually for, so you know which one to reopen when you need a specific example again.</p>
+      <table class="pkg-table">
+        <tr><th>File</th><th>What it's best used for</th></tr>
+        <tr><td><code class="inline">main.tex</code></td><td>The leanest of the four — nested emphasis commands, a bare (unwrapped) <code class="inline">tabular</code>, and a minimal figure/table/math skeleton. Good as a blank-slate starting point for a brand-new assignment.</td></tr>
+        <tr><td><code class="inline">lab_practice.tex</code></td><td>The richest cross-referencing demo — <code class="inline">\hyperref</code>, <code class="inline">\nameref</code>, <code class="inline">\autoref</code> all in one file, plus a full step-by-step quadratic-formula derivation shown two different ways (<code class="inline">$$...$$</code> chain vs. <code class="inline">align*</code>).</td></tr>
+        <tr><td><code class="inline">sadat_sir.tex</code></td><td>The most complete single reference of the four — text formatting through algorithms, code listings, and a full citation workflow, each introduced with its own "Package note" explaining exactly what's required. Closest thing you have to an instructor-written manual.</td></tr>
+        <tr><td><code class="inline">second_class.tex</code></td><td>The most advanced <code class="inline">enumitem</code> label examples (braces-wrapped labels, bracketed roman numerals, math-symbol bullets) and a dense, formula-anchored math reference section — plus two genuine bugs (§03, §12) worth re-reading once you can spot them instantly.</td></tr>
+      </table>
+      <div class="tip"><b>Both requested extras, in one place:</b> <code class="inline">\texttt{}</code> is covered in §07 alongside <code class="inline">\verb</code> and <code class="inline">verbatim</code> so you can see all three typewriter-text tools side by side; importing Python code as a listing is covered in §10, including how to pull in an existing <code class="inline">.py</code> file directly with <code class="inline">\lstinputlisting</code> instead of retyping it.</div>
+    </section>
+
+    <footer>
+      <div class="sign">— same offer as always.</div>
+      <p>Tell me which topic to drill first — from either board — and I'll generate fresh practice problems in that exact exam style.</p>
+    </footer>
+  </main>
+</div>
+
+<script>
+  function highlightTex(raw){
+    return raw.split('\n').map(function(line){
+      var commentIdx = -1;
+      for (var i=0;i<line.length;i++){
+        if (line[i] === '%' && line[i-1] !== '\\'){ commentIdx = i; break; }
+      }
+      var codePart = commentIdx >= 0 ? line.slice(0, commentIdx) : line;
+      var commentPart = commentIdx >= 0 ? line.slice(commentIdx) : '';
+      codePart = codePart.replace(/(\\[a-zA-Z]+\*?)/g, '<span class="tex-cmd">$1</span>');
+      codePart = codePart.replace(/([{}\[\]])/g, '<span class="tex-brace">$1</span>');
+      if (commentPart) commentPart = '<span class="tex-comment">' + commentPart + '</span>';
+      return codePart + commentPart;
+    }).join('\n');
+  }
+  document.querySelectorAll('pre.tex-code code').forEach(function(el){
+    el.innerHTML = highlightTex(el.textContent);
+  });
+
+  var sections = Array.from(document.querySelectorAll('section[id]'));
+  var links = Array.from(document.querySelectorAll('.toc a'));
+  function onScroll(){
+    var pos = window.scrollY + 120;
+    var current = sections[0];
+    sections.forEach(function(s){ if (s.offsetTop <= pos) current = s; });
+    links.forEach(function(l){
+      l.classList.toggle('active', l.getAttribute('href') === '#' + current.id);
+    });
+  }
+  window.addEventListener('scroll', onScroll);
+  onScroll();
+
+  links.forEach(function(l){
+    l.addEventListener('click', function(){
+      document.querySelector('.sidebar').classList.remove('open');
+    });
+  });
+</script>
+</body>
+</html>

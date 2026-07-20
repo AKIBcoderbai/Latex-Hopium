@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSE200 Master LaTeX Field Guide — Exam Revision Board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-main: #0b1120;
+    --bg-sidebar: #060b14;
+    --bg-card: #151e32;
+    --bg-code: #1e293b;
+    --text-main: #f8fafc;
+    --text-muted: #cbd5e1;
+    --accent-blue: #38bdf8;
+    --accent-yellow: #facc15;
+    --accent-emerald: #34d399;
+    --accent-pink: #f43f5e;
+    --pdf-bg: #ffffff;
+    --pdf-text: #0f172a;
+    --pdf-rule: #cbd5e1;
+    --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-serif: 'Lora', Georgia, serif;
+    --font-mono: 'Fira Code', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg-main);
+    color: var(--text-main);
+    font-family: var(--font-sans);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------- Layout Structure ---------- */
+  .layout { display: flex; min-height: 100vh; }
+  
+  .sidebar {
+    width: 280px; flex: 0 0 280px;
+    background: var(--bg-sidebar);
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 30px 20px;
+    position: sticky; top: 0; height: 100vh; overflow-y: auto;
+  }
+  .sidebar h1 {
+    font-size: 1.3rem; font-weight: 700; color: var(--accent-blue);
+    letter-spacing: -0.5px; margin-bottom: 8px;
+  }
+  .sidebar p { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 24px; line-height: 1.4; }
+  
+  .toc { list-style: none; }
+  .toc li { margin-bottom: 4px; }
+  .toc a {
+    display: flex; align-items: baseline; gap: 10px;
+    text-decoration: none; color: var(--text-muted);
+    font-size: 0.88rem; font-weight: 500; padding: 8px 12px;
+    border-radius: 6px; transition: all 0.2s ease;
+  }
+  .toc a:hover, .toc a.active {
+    color: var(--text-main); background: rgba(56, 189, 248, 0.15);
+    border-left: 3px solid var(--accent-blue);
+  }
+  .toc .num { font-family: var(--font-mono); color: var(--accent-yellow); font-size: 0.75rem; }
+
+  main { flex: 1; min-width: 0; padding: 40px 60px 100px; max-width: 1300px; margin: 0 auto; }
+
+  /* ---------- Hero Header ---------- */
+  .hero {
+    padding: 40px 40px; background: var(--bg-card);
+    border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px;
+    margin-bottom: 50px;
+  }
+  .hero-tag {
+    font-family: var(--font-mono); font-size: 0.75rem; color: var(--bg-main);
+    background: var(--accent-yellow); padding: 4px 10px; border-radius: 20px;
+    font-weight: 600; text-transform: uppercase; letter-spacing: 1px;
+  }
+  .hero h2 { font-size: 2.5rem; font-weight: 700; color: var(--text-main); margin: 16px 0 10px; }
+  .hero p { color: var(--text-muted); font-size: 1.05rem; max-width: 800px; }
+
+  /* ---------- Sections ---------- */
+  section { margin-bottom: 60px; scroll-margin-top: 40px; }
+  .sec-header { display: flex; align-items: baseline; gap: 14px; margin-bottom: 8px; }
+  .sec-num { font-family: var(--font-mono); color: var(--accent-yellow); font-size: 1.2rem; font-weight: 600; }
+  section h3 { font-size: 1.8rem; font-weight: 700; color: var(--text-main); }
+  .sec-desc { color: var(--text-muted); font-size: 1rem; margin-bottom: 24px; max-width: 850px; }
+
+  .subtopic { margin-top: 36px; }
+  .subtopic h4 { font-size: 1.2rem; color: var(--accent-blue); margin-bottom: 10px; font-weight: 600; }
+  .subtopic p { color: var(--text-main); font-size: 0.95rem; margin-bottom: 14px; }
+
+  /* ---------- Callout Boxes (High Visibility) ---------- */
+  .callout, .tip {
+    padding: 16px 20px; border-radius: 8px; margin: 18px 0; font-size: 0.92rem;
+    line-height: 1.5;
+  }
+  .callout {
+    background: rgba(244, 63, 94, 0.15); border-left: 4px solid var(--accent-pink);
+    color: #ffd1d9;
+  }
+  .callout strong { color: #ffffff; }
+  
+  .tip {
+    background: rgba(52, 211, 153, 0.15); border-left: 4px solid var(--accent-emerald);
+    color: #d1fae5;
+  }
+  .tip strong { color: #ffffff; }
+
+  /* ---------- Side-by-Side Comparison Grid ---------- */
+  .demo-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+    margin: 16px 0 24px; align-items: stretch;
+  }
+  @media (max-width: 950px) { .demo-grid { grid-template-columns: 1fr; } }
+
+  .card {
+    border-radius: 10px; overflow: hidden; display: flex; flex-direction: column;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+  .card-header {
+    padding: 8px 16px; font-family: var(--font-mono); font-size: 0.75rem;
+    font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+  }
+  .code-card .card-header { background: #0f172a; color: var(--accent-blue); border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .pdf-card .card-header { background: #e2e8f0; color: #475569; border-bottom: 1px solid #cbd5e1; }
+
+  /* Code Panel */
+  pre.code-body {
+    background: var(--bg-code); padding: 18px; flex: 1; overflow-x: auto;
+    font-family: var(--font-mono); font-size: 0.85rem; color: #f1f5f9;
+    line-height: 1.6; white-space: pre-wrap; word-break: break-word;
+  }
+  .tex-cmd { color: var(--accent-blue); font-weight: 600; }
+  .tex-brace { color: #f43f5e; font-weight: 600; }
+  .tex-comment { color: var(--accent-emerald); font-style: italic; }
+
+  /* Rendered PDF Simulation Panel */
+  .pdf-body {
+    background: var(--pdf-bg); color: var(--pdf-text);
+    font-family: var(--font-serif); font-size: 0.95rem; padding: 22px;
+    flex: 1; line-height: 1.6;
+  }
+  .pdf-body b, .pdf-body strong { font-weight: 700; color: #000; }
+  .pdf-body i, .pdf-body em { font-style: italic; }
+  
+  /* Tables inside PDF Simulation */
+  table.pdf-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; margin: 10px 0; }
+  table.pdf-table th, table.pdf-table td { padding: 6px 10px; text-align: center; }
+  .tbl-grid th, .tbl-grid td { border: 1px solid var(--pdf-text); }
+  .tbl-booktabs th { border-top: 2px solid var(--pdf-text); border-bottom: 1px solid var(--pdf-text); font-weight: 700; }
+  .tbl-booktabs td.bottom-rule { border-bottom: 2px solid var(--pdf-text); }
+  .pdf-caption { text-align: center; font-size: 0.8rem; color: #64748b; margin-top: 6px; font-family: var(--font-sans); }
+
+  /* Subfigure boxes inside PDF Simulation */
+  .fig-row { display: flex; gap: 14px; align-items: flex-end; justify-content: center; flex-wrap: wrap; margin: 10px 0; }
+  .fig-box {
+    background: #f1f5f9; border: 1.5px solid #94a3b8; display: flex; align-items: center;
+    justify-content: center; font-family: var(--font-sans); font-weight: 700; color: #475569;
+    background-image: linear-gradient(45deg, transparent 48%, #cbd5e1 49%, #cbd5e1 51%, transparent 52%),
+                      linear-gradient(-45deg, transparent 48%, #cbd5e1 49%, #cbd5e1 51%, transparent 52%);
+  }
+  .fig-cap { text-align: center; font-size: 0.8rem; color: #475569; margin-top: 4px; font-family: var(--font-sans); }
+
+  /* Math Cases Simulation */
+  .cases-wrap { display: flex; align-items: center; gap: 8px; font-family: var(--font-serif); }
+  .cases-brace { font-size: 2.8rem; font-weight: 300; color: #000; line-height: 1; transform: scaleX(0.6); }
+  .cases-rows { display: flex; flex-direction: column; gap: 4px; }
+  .cases-rows .row { display: flex; gap: 20px; }
+  .cases-rows .cond { color: #475569; font-style: italic; }
+
+  /* Package Table */
+  .pkg-table { width: 100%; border-collapse: collapse; margin: 20px 0; background: var(--bg-card); border-radius: 8px; overflow: hidden; }
+  .pkg-table th { background: #1e293b; text-align: left; padding: 12px 16px; color: var(--accent-yellow); font-family: var(--font-mono); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; }
+  .pkg-table td { padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.92rem; }
+  code.inline { font-family: var(--font-mono); background: rgba(56, 189, 248, 0.15); color: var(--accent-blue); padding: 2px 6px; border-radius: 4px; font-size: 0.85em; }
+
+  /* Footer */
+  footer { margin-top: 80px; padding-top: 40px; border-top: 1px solid rgba(255,255,255,0.1); text-align: center; color: var(--text-muted); }
+  footer h4 { color: var(--accent-yellow); font-size: 1.2rem; margin-bottom: 8px; }
+
+  /* Mobile Nav Button */
+  .nav-btn { display: none; }
+  @media (max-width: 850px) {
+    .sidebar { position: fixed; left: -300px; z-index: 100; transition: left 0.3s ease; }
+    .sidebar.open { left: 0; }
+    .nav-btn {
+      display: block; position: fixed; bottom: 20px; right: 20px; z-index: 101;
+      background: var(--accent-blue); color: #000; font-weight: 700; border: none;
+      padding: 12px 20px; border-radius: 30px; box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      cursor: pointer; font-family: var(--font-mono);
+    }
+    main { padding: 20px; }
+    .hero { padding: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<button class="nav-btn" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰ MENU</button>
+
+<div class="layout">
+  <aside class="sidebar">
+    <h1>LaTeX Board</h1>
+    <p>CSE200 Level 2, Term 1 &amp; 2<br>Complete High-Contrast Exam Guide</p>
+    <ul class="toc">
+      <li><a href="#kit"><span class="num">00</span> Preamble Starter Kit</a></li>
+      <li><a href="#text"><span class="num">01</span> Text &amp; Font Styling</a></li>
+      <li><a href="#lists"><span class="num">02</span> Lists &amp; enumitem</a></li>
+      <li><a href="#structure"><span class="num">03</span> Document Structure</a></li>
+      <li><a href="#tables"><span class="num">04</span> Advanced Tables</a></li>
+      <li><a href="#figures"><span class="num">05</span> Figures &amp; Subfigures</a></li>
+      <li><a href="#math"><span class="num">06</span> Math &amp; Piecewise Engine</a></li>
+      <li><a href="#refs"><span class="num">07</span> Cross-Refs &amp; Hyperlinks</a></li>
+      <li><a href="#cite"><span class="num">08</span> Citations &amp; BibTeX Pipeline</a></li>
+      <li><a href="#traps"><span class="num">09</span> Exam Traps &amp; Loose Ends</a></li>
+    </ul>
+  </aside>
+
+  <main>
+    <header class="hero">
+      <span class="hero-tag">High Visibility Edition</span>
+      <h2>Chalk, Braces &amp; Bibliographies</h2>
+      <p>This master guide merges every technique taught across your Online-1 lab papers (Leap Year, Stirling Numbers, Image Synthesis, Document Structure) and our debugging sessions. Every example features high-contrast LaTeX source code on the left and a pristine white PDF simulation on the right.</p>
+    </header>
+
+    <section id="kit">
+      <div class="sec-header"><span class="sec-num">00</span><h3>Preamble Starter Kit</h3></div>
+      <p class="sec-desc">Every technical document begins here. If an advanced command like <code class="inline">\multirow</code> or <code class="inline">\sout</code> fails to compile, check this checklist first to ensure you haven't forgotten its package.</p>
+      
+      <div class="card code-card" style="margin-bottom: 24px;">
+        <div class="card-header">universal_preamble.tex</div>
+        <pre class="code-body"><code>\documentclass[10pt,a4paper]{article}
+
+% --- MATH & ENCODING ---
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb, amsfonts} % cases, align*, \mathcal, \mathbb
+
+% --- GRAPHICS & FLOATS ---
+\usepackage{graphicx}                   % \includegraphics
+\usepackage{subcaption}                 % subfigure environments
+\usepackage{float}                      % [H] absolute float placement
+
+% --- TABLES & COLORS ---
+\usepackage{booktabs}                   % \toprule, \midrule, \bottomrule
+\usepackage{multirow}                   % \multirow cell merging
+\usepackage[table]{xcolor}              % text colors + \rowcolor, \cellcolor
+
+% --- LISTS & TEXT STYLING ---
+\usepackage{enumitem}                   % custom enumerate/itemize labels
+\usepackage[normalem]{ulem}             % \sout strikethrough (normalem preserves \emph)
+
+% --- REFERENCES & CITATIONS ---
+\usepackage[numbers]{natbib}            % [numbers] for [1], [authoryear] for (Author, 2026)
+\usepackage{hyperref}                   % LOAD LAST: clickable links & colored references
+\hypersetup{colorlinks=true, linkcolor=blue, urlcolor=magenta, citecolor=green}</code></pre>
+      </div>
+
+      <table class="pkg-table">
+        <tr><th>Package</th><th>What It Unlocks For You</th></tr>
+        <tr><td><code class="inline">amsmath, amsfonts</code></td><td><code class="inline">\begin{align*}</code>, <code class="inline">\begin{cases}</code>, <code class="inline">\text{}</code> inside math, calligraphic <code class="inline">\mathcal{N}</code>, and matrices.</td></tr>
+        <tr><td><code class="inline">multirow</code></td><td>Allows table cells to merge vertically across multiple rows using <code class="inline">\multirow{rows}{width}{text}</code>.</td></tr>
+        <tr><td><code class="inline">booktabs</code></td><td>Professional table horizontal rules (<code class="inline">\toprule</code>, <code class="inline">\midrule</code>, <code class="inline">\bottomrule</code>) with proper padding.</td></tr>
+        <tr><td><code class="inline">xcolor [table]</code></td><td>Text colors (<code class="inline">\textcolor</code>), highlights (<code class="inline">\colorbox</code>), and table cell shading (<code class="inline">\rowcolor</code>, <code class="inline">\cellcolor</code>).</td></tr>
+        <tr><td><code class="inline">enumitem</code></td><td>Custom list labels like <code class="inline">[label=(\alph*)]</code>, <code class="inline">[label=\Roman*.]</code>, or geometric symbols.</td></tr>
+        <tr><td><code class="inline">subcaption</code></td><td>Creates side-by-side or asymmetric sub-images with distinct <code class="inline">(a), (b), (c)</code> tags inside one figure.</td></tr>
+        <tr><td><code class="inline">ulem [normalem]</code></td><td>Enables <code class="inline">\sout{strikethrough}</code>. Always use <code class="inline">[normalem]</code> so it doesn't accidentally change italics into underlines!</td></tr>
+        <tr><td><code class="inline">natbib</code></td><td>Allows seamless toggling between numeric citations <code class="inline">[1]</code> and author-year citations <code class="inline">(Author, 2026)</code>.</td></tr>
+        <tr><td><code class="inline">hyperref</code></td><td>Turns references, citations, and URLs into clickable links. <strong>Always import this package absolute last!</strong></td></tr>
+      </table>
+    </section>
+
+    <section id="text">
+      <div class="sec-header"><span class="sec-num">01</span><h3>Text &amp; Font Styling</h3></div>
+      <p class="sec-desc">From Online C2: Mastering inline text weights, strikethroughs, colors, and font hierarchies.</p>
+
+      <div class="subtopic">
+        <h4>Weights, Emphasis, and Strikethrough</h4>
+        <div class="demo-grid">
+          <div class="card code-card">
+            <div class="card-header">LaTeX Source</div>
+            <pre class="code-body"><code>This sentence contains \textbf{bold},
+\textit{italic}, \emph{emphasized},
+and \underline{underlined} text.
+
+We can blend \textbf{\textit{bold italic}}
+or use \sout{strikethrough text} when
+the ulem package is loaded.</code></pre>
+          </div>
+          <div class="card pdf-card">
+            <div class="card-header">Rendered PDF Output</div>
+            <div class="pdf-body">
+              This sentence contains <b>bold</b>, <i>italic</i>, <i>emphasized</i>, and <span style="text-decoration: underline;">underlined</span> text.<br><br>
+              We can blend <b><i>bold italic</i></b> or use <span style="text-decoration: line-through;">strikethrough text</span> when the ulem package is loaded.
+            </div>
+          </div>
+        </div>
+        <div class="tip"><strong>Pro-Tip on \emph vs \textit:</strong> <code class="inline">\emph{}</code> is smart! If you use it inside a sentence that is already italicized (like a theorem), it automatically flips the text back to upright roman font so it still stands out. <code class="inline">\textit{}</code> will stay italic no matter what.</div>
+      </div>
+
+      <div class="subtopic">
+        <h4>Font Sizes &amp; Families</h4>
+        <div class="demo-grid">
+          <div class="card code-card">
+            <div class="card-header">LaTeX Source</div>
+            <pre class="code-body"><code>{\tiny tiny} {\small small} 
+{\normalsize normal} {\large large} 
+{\Large Large} {\LARGE LARGE} 
+{\huge huge} {\Huge Huge}
+
+\textrm{Serif font} \quad 
+\textsf{Sans-serif font} \quad 
+\texttt{Monospace code}</code></pre>
+          </div>
+          <div class="card pdf-card">
+            <div class="card-header">Rendered PDF Output</div>
+            <div class="pdf-body">
+              <span style="font-size: 0.65rem;">tiny</span> <span style="font-size: 0.8rem;">small</span> <span style="font-size: 0.95rem;">normal</span> <span style="font-size: 1.1rem;">large</span> <span style="font-size: 1.25rem;">Large</span> <span style="font-size: 1.4rem;">LARGE</span> <span style="font-size: 1.6rem;">huge</span> <span style="font-size: 1.85rem;">Huge</span><br><br>
+              <span style="font-family: var(--font-serif);">Serif font</span> &nbsp;&nbsp;&nbsp;&nbsp; <span style="font-family: var(--font-sans);">Sans-serif font</span> &nbsp;&nbsp;&nbsp;&nbsp; <span style="font-family: var(--font-mono);">Monospace code</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="subtopic">
+        <h4>Colors and Highlights</h4>
+        <div class="demo-grid">
+          <div class="card code-card">
+            <div class="card-header">LaTeX Source</div>
+            <pre class="code-body"><code>\definecolor{buetBlue}{HTML}{1B4F72}
+
+\textcolor{red}{Critical Error Warn.}
+\textcolor{buetBlue}{Custom BUET Blue.}
+\colorbox{yellow}{Highlighted phrase.}
+\fcolorbox{black}{yellow}{Framed box.}</code></pre>
+          </div>
+          <div class="card pdf-card">
+            <div class="card-header">Rendered PDF Output</div>
+            <div class="pdf-body">
+              <div style="color: #dc2626; font-weight: 600; margin-bottom: 4px;">Critical Error Warn.</div>
+              <div style="color: #1B4F72; font-weight: 600; margin-bottom: 8px;">Custom BUET Blue.</div>
+              <span style="background: #fef08a; padding: 2px 6px;">Highlighted phrase.</span><br><br>
+              <span style="background: #fef08a; border: 1.5px solid #000; padding: 2px 6px;">Framed box.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="lists">
+      <div class="sec-header"><span class="sec-num">02</span><h3>Lists &amp; Labelling</h3></div>
+      <p class="sec-desc">From Online A2 &amp; C2: Controlling numbering systems, geometric bullets, and creating inline bold "mini-headers" within nested hierarchies.</p>
+
+      <div class="subtopic">
+        <h4>Custom Enumerate Counters (Using enumitem)</h4>
+        <div class="demo-grid">
+          <div class="card code-card">
+            <div class="card-header">LaTeX Source</div>
+            <pre class="code-body"><code>\begin{enumerate}[label=(\alph*)]
+    \item Divisible by 4 and not 100
+    \item Or divisible by 400
+\end{enumerate}
+
+\begin{enumerate}[label=\Roman*.]
+    \item Primary Rays
+    \item Secondary Rays
+\end{enumerate}
+
+\begin{enumerate}[label={Step \textbf{\arabic*}:}]
+    \item Parse dataset
+    \item Render graphics
+\end{enumerate}</code></pre>
+          </div>
+          <div class="card pdf-card">
+            <div class="card-header">Rendered PDF Output</div>
+            <div class="pdf-body">
+              (a) Divisible by 4 and not 100<br>(b) Or divisible by 400<br><br>
+              I. Primary Rays<br>II. Secondary Rays<br><br>
+              Step <b>1</b>: Parse dataset<br>Step <b>2</b>: Render graphics
+            </div>
+          </div>
+        </div>
+        <div class="callout"><strong>The Dynamic Asterisk Rule:</strong> When customizing labels, putting an asterisk <code class="inline">*</code> after the counter (<code class="inline">\alph*</code>, <code class="inline">\roman*</code>, <code class="inline">\arabic*</code>) tells LaTeX: <em>"Increment this value automatically for each new item!"</em></div>
+      </div>
+
+      <div class="subtopic">
+        <h4>Nested Lists &amp; Inline Bold Headers</h4>
+        <div class="demo-grid">
+          <div class="card code-card">
+            <div class="card-header">LaTeX Source</div>
+            <pre class="code-body"><code>\begin{itemize}
+    \item Scene Definition
+    \item Camera Configuration
+    \item \textbf{Important} Shading Model
+    \begin{itemize}[label=$\diamond$]
+        \item Diffuse Shading
+        \item Specular Highlights
+    \end{itemize}
+\end{itemize}</code></pre>
+          </div>
+          <div class="card pdf-card">
+            <div class="card-header">Rendered PDF Output</div>
+            <div class="pdf-body">
+              <ul style="padding-left: 20px; list-style-type: disc;">
+                <li>Scene Definition</li>
+                <li>Camera Configuration</li>
+                <li><b>Important</b> Shading Model
+                  <ul style="padding-left: 20px; list-style-type: none; margin-top: 4px;">
+                    <li>◇ Diffuse Shading</li>
+                    <li>◇ Specular Highlights</li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="structure">
+      <div class="sec-header"><span class="sec-num">03</span><h3>Document Structure &amp; Table of Contents</h3></div>
+      <p class="sec-desc">Every exam paper relies on clean structural hierarchy and proper metadata generation.</p>
+
+      <div class="demo-grid">
+        <div class="card code-card">
+          <div class="card-header">Title &amp; Section Hierarchy</div>
+          <pre class="code-body"><code>\title{Mathematical Foundations of Image Synthesis}
+\author{Your Name (Student ID: 123456)}
+\date{January 4, 2026}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Introduction}
+\subsection{Rendering Pipeline}
+\subsubsection{Ray Evaluation}
+\paragraph{Note on precision:} Small numerical errors...
+
+% Unnumbered section added manually to TOC:
+\section*{Disclaimer}
+\addcontentsline{toc}{section}{Disclaimer}
+\end{document}</code></pre>
+        </div>
+        <div class="card pdf-card">
+          <div class="card-header">Rendered PDF Output</div>
+          <div class="pdf-body" style="text-align: center;">
+            <div style="font-size: 1.2rem; font-weight: 700; margin-bottom: 4px;">Mathematical Foundations of Image Synthesis</div>
+            <div style="font-size: 0.9rem; color: #475569;">Your Name (Student ID: 123456)<br>January 4, 2026</div>
+            <hr style="margin: 16px 0; border: none; border-top: 1px solid #cbd5e1;">
+            <div style="text-align: left;">
+              <b style="font-size: 1.05rem;">1 &nbsp;Introduction</b><br>
+              &nbsp;&nbsp;&nbsp;&nbsp;<b>1.1 &nbsp;Rendering Pipeline</b><br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>1.1.1 &nbsp;Ray Evaluation</i><br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Note on precision:</b> Small numerical errors...<br><br>
+              <b style="font-size: 1.05rem;">Disclaimer</b> (No section number assigned)
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tip"><strong>The Two-Compile Law:</strong> Commands like <code class="inline">\tableofcontents</code>, <code class="inline">\label{}</code>, and bibliography lists write their data to auxiliary files during the first compile. <strong>You must always compile your document at least twice</strong> to see page numbers and cross-references update properly!</div>
+    </section>
+
+    <section id="tables">
+      <div class="sec-header"><span class="sec-num">04</span><h3>Advanced Tables (multirow &amp; multicolumn)</h3></div>
+      <p class="sec-desc">From Online Leap Year &amp; Image Synthesis: Merging cells horizontally and vertically, handling stacked lines, and applying clean academic booktabs formatting.</p>
+
+      <div class="subtopic">
+        <h4>Cell Merging &amp; Partial Horizontal Lines (\cline)</h4>
+        <div class="demo-grid">
+          <div class="card code-card">
+            <div class="card-header">Leap Year Spanning Table Code</div>
+            <pre class="code-body"><code>\begin{table}[H]
+    \centering
+    \begin{tabular}{|l|c|c|c|c|}
+        \hline
+        \multirow{2}{*}{\textbf{Year}} & \multicolumn{3}{c|}{\textbf{Divisible By}} & \multirow{2}{*}{\textbf{Leap?}} \\
+        \cline{2-4}
+         & \textbf{4?} & \textbf{100?} & \textbf{400?} & \\
+        \hline
+        1900 & Yes & Yes & No  & No  \\ \hline
+        2000 & Yes & Yes & Yes & Yes \\ \hline
+        2024 & Yes & No  & No  & Yes \\ \hline
+    \end{tabular}
+    \caption{Leap Year Calculation Examples}
+    \label{tab:leap_year}
+\end{table}</code></pre>
+          </div>
+          <div class="card pdf-card">
+            <div class="card-header">Rendered PDF Output</div>
+            <div class="pdf-body">
+              <table class="pdf-table tbl-grid">
+                <tr>
+                  <th rowspan="2" style="vertical-align: middle;">Year</th>
+                  <th colspan="3">Divisible By</th>
+                  <th rowspan="2" style="vertical-align: middle;">Leap?</th>
+                </tr>
+                <tr><th>4?</th><th>100?</th><th>400?</th></tr>
+                <tr><td>1900</td><td>Yes</td><td>Yes</td><td>No</td><td>No</td></tr>
+                <tr><td>2000</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+                <tr><td>2024</td><td>Yes</td><td>No</td><td>No</td><td>Yes</td></tr>
+              </table>
+              <div class="pdf-caption">Table 1: Leap Year Calculation Examples</div>
+            </div>
+          </div>
+        </div>
+        <div class="callout"><strong>The Ghost Cell Rule for \multirow:</strong> Look at the second row of headers in the source code: <code class="inline">& \textbf{4?} & \textbf{100?} ...</code> Notice the empty space before the first ampersand! Because <code class="inline">\multirow{2}{*}{Year}</code> drops down from the row above to occupy Column 1, you must leave Column 1 blank on the row below so text doesn't collide.</div>
+      </div>
+
+      <div class="subtopic">
+        <h4>Booktabs, Cell Shading &amp; Multi-line Stacking (\shortstack)</h4>
+        <div class="demo-grid">
+          <div class="card code-card">
+            <div class="card-header">Image Synthesis Performance Table</div>
+            <pre class="code-body"><code>\begin{table}[H]
+    \centering
+    \begin{tabular}{llc}
+        \toprule
+        \textbf{Method} & \textbf{Accuracy} & \textbf{Time} \\
+        \midrule
+        \rowcolor{gray!15} Rasterization & Medium & $O(n)$ \\
+        Ray Tracing & \shortstack[l]{High \\ Very High} & \shortstack[c]{$O(n^2)$ \\ $O(n^3)$} \\
+        Hybrid & \cellcolor{yellow!30}Medium & $O(n^2)$ \\
+        \bottomrule
+    \end{tabular}
+    \caption{Comparison of Techniques}
+\end{table}</code></pre>
+          </div>
+          <div class="card pdf-card">
+            <div class="card-header">Rendered PDF Output</div>
+            <div class="pdf-body">
+              <table class="pdf-table tbl-booktabs">
+                <tr><th style="text-align: left;">Method</th><th style="text-align: left;">Accuracy</th><th>Time</th></tr>
+                <tr style="background: #f1f5f9;"><td style="text-align: left;">Rasterization</td><td style="text-align: left;">Medium</td><td>O(n)</td></tr>
+                <tr><td style="text-align: left;">Ray Tracing</td><td style="text-align: left;">High<br>Very High</td><td>O(n²)<br>O(n³)</td></tr>
+                <tr><td class="bottom-rule" style="text-align: left;">Hybrid</td><td class="bottom-rule" style="background: #fef08a; text-align: left;">Medium</td><td class="bottom-rule">O(n²)</td></tr>
+              </table>
+              <div class="pdf-caption">Table 2: Comparison of Techniques</div>
+            </div>
+          </div>
+        </div>
+        <div class="tip"><strong>Why use \shortstack?</strong> If you try to press <code class="inline">\\</code> inside a regular table cell, LaTeX thinks you want to end the entire row! Wrapping text in <code class="inline">\shortstack[l]{line 1 \\ line 2}</code> safely stacks lines inside a single cell without breaking the grid.</div>
+      </div>
+    </section>
+
+    <section id="figures">
+      <div class="sec-header"><span class="sec-num">05</span><h3>Figures &amp; Subfigures</h3></div>
+      <p class="sec-desc">From Online C2 &amp; Image Synthesis: Managing side-by-side grids and asymmetric multi-row figure layouts.</p>
+
+      <div class="subtopic">
+        <h4>Even Side-by-Side Subfigures</h4>
+        <div class="demo-grid">
+          <div class="card code-card">
+            <div class="card-header">LaTeX Source</div>
+            <pre class="code-body"><code>\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.45\linewidth}
+        \includegraphics[width=\textwidth]{blackhole.jpg}
+        \caption{Blackhole Simulation}
+        \label{subfig:bh}
+    \end{subfigure}
+    \hfill % Invisible spring pushes them apart
+    \begin{subfigure}{0.45\linewidth}
+        \includegraphics[width=\textwidth]{sprite.jpg}
+        \caption{Sprite Render}
+        \label{subfig:sprite}
+    \end{subfigure}
+    \caption{Side-by-side rendering comparison.}
+    \label{fig:comparison}
+\end{figure}</code></pre>
+          </div>
+          <div class="card pdf-card">
+            <div class="card-header">Rendered PDF Output</div>
+            <div class="pdf-body">
+              <div class="fig-row">
+                <div>
+                  <div class="fig-box" style="width: 140px; height: 90px;">IMG 1</div>
+                  <div class="fig-cap">(a) Blackhole Simulation</div>
+                </div>
+                <div>
+                  <div class="fig-box" style="width: 140px; height: 90px;">IMG 2</div>
+                  <div class="fig-cap">(b) Sprite Render</div>
+                </div>
+              </div>
+              <div class="pdf-caption">Figure 1: Side-by-side rendering comparison.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="subtopic">
+        <h4>Asymmetric Multi-Row Layout (One Dominant Top + Two Below)</h4>
+        <div class="demo-grid">
+          <div class="card code-card">
+            <div class="card-header">Online C2 Asymmetric Figure Code</div>
+            <pre class="code-body"><code>\begin{figure}[H]
+    \centering
+    % Row 1: Dominant centered figure
+    \begin{subfigure}{0.60\linewidth}
+        \includegraphics[width=\textwidth]{main_a.jpg}
+        \caption{Main Diagram}
+    \end{subfigure}
+    
+    \\ % <--- HARD LINE BREAK FORCES NEW ROW
+    
+    % Row 2: Two smaller details side by side
+    \begin{subfigure}{0.42\linewidth}
+        \includegraphics[width=\textwidth]{detail_b.jpg}
+        \caption{Detail B}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.42\linewidth}
+        \includegraphics[width=\textwidth]{detail_c.jpg}
+        \caption{Detail C}
+    \end{subfigure}
+    \caption{Asymmetric layout with dominant top figure.}
+\end{figure}</code></pre>
+          </div>
+          <div class="card pdf-card">
+            <div class="card-header">Rendered PDF Output</div>
+            <div class="pdf-body">
+              <div style="text-align: center;">
+                <div class="fig-box" style="width: 180px; height: 100px; margin: 0 auto;">MAIN DIAGRAM A</div>
+                <div class="fig-cap" style="margin-bottom: 12px;">(a) Main Diagram</div>
+                <div class="fig-row" style="margin-bottom: 4px;">
+                  <div><div class="fig-box" style="width: 110px; height: 70px;">DETAIL B</div><div class="fig-cap">(b) Detail B</div></div>
+                  <div><div class="fig-box" style="width: 110px; height: 70px;">DETAIL C</div><div class="fig-cap">(c) Detail C</div></div>
+                </div>
+                <div class="pdf-caption">Figure 2: Asymmetric layout with dominant top figure.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="callout"><strong>Debugging Missing Images:</strong> If your images suddenly disappear and show blank boxes with filenames, check your <code class="inline">\documentclass[...]</code> line! If you accidentally added the word <code class="inline">draft</code>, LaTeX stops rendering images to save compile time. Remove <code class="inline">draft</code> to fix it! Also ensure filenames have <strong>no spaces</strong> (use <code class="inline">akif_goat.png</code> NOT <code class="inline">akif goat.png</code>).</div>
+      </div>
+    </section>
+
+    <section id="math">
+      <div class="sec-header"><span class="sec-num">06</span><h3>Math Engine &amp; Piecewise Functions</h3></div>
+      <p class="sec-desc">From Online A2 &amp; C2: Multi-line algebra alignments, calligraphic probability notations, and the tricky <code class="inline">cases</code> environment.</p>
+
+      <div class="subtopic">
+        <h4>The align* Environment &amp; Operator Limits</h4>
+        <div class="demo-grid">
+          <div class="card code-card">
+            <div class="card-header">LaTeX Source</div>
+            <pre class="code-body"><code>We derive the quadratic root formula:
+\begin{align*}
+    ax^2 + bx + c &= 0 \\
+    \left(x + \frac{b}{2a}\right)^2 &= \frac{b^2 - 4ac}{4a^2} \\
+    x &= \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
+\end{align*}
+
+Variance summation with explicit limits:
+\begin{equation}
+    T = \sum\limits_{i=1}^{n} (x_i - \mu)^2
+\end{equation}
+
+Optimal vertex selection: $\max\limits_{v \in V} f(v)$</code></pre>
+          </div>
+          <div class="card pdf-card">
+            <div class="card-header">Rendered PDF Output</div>
+            <div class="pdf-body" style="font-size: 0.9rem;">
+              We derive the quadratic root formula:
+              <div style="text-align: center; margin: 10px 0; line-height: 2;">
+                ax² + bx + c = 0<br>
+                (x + b/2a)² = (b² − 4ac) / 4a²<br>
+                x = [−b ± √(b² − 4ac)] / 2a
+              </div>
+              Variance summation with explicit limits:
+              <div style="text-align: center; margin: 10px 0;">
+                T = Σ<sub>i=1..n</sub> (xᵢ − μ)² &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (1)
+              </div>
+              Optimal vertex selection: max<sub>v∈V</sub> f(v)
+            </div>
+          </div>
+        </div>
+        <div class="tip"><strong>Why use \limits?</strong> In an inline sentence, LaTeX naturally slants subscripts to the side (<code class="inline">max_v</code>) to save space. Adding <code class="inline">\limits</code> immediately after operators like <code class="inline">\max\limits</code>, <code class="inline">\min\limits</code>, or <code class="inline">\sum\limits</code> forces the variable to sit directly underneath!</div>
+      </div>
+
+      <div class="subtopic">
+        <h4>Calligraphic Symbols &amp; Piecewise Functions (\cases)</h4>
+        <div class="demo-grid">
+          <div class="card code-card">
+            <div class="card-header">Online A2 &amp; C2 Math Code</div>
+            <pre class="code-body"><code>% Calligraphic normal distribution:
+\begin{equation}
+    \mathcal{N}(x_i, \mu, \sigma) = 
+    \frac{1}{\sqrt{2\pi}\sigma} e^{-\frac{(x_i-\mu)^2}{2\sigma^2}}
+\end{equation}
+
+% Piecewise conditional states:
+\begin{equation}
+    f(x_i) = \begin{cases}
+        \frac{x_i^2}{\sigma^2}, & \text{if } x_i \ge 0 \\
+        \frac{|x_i|}{\sigma},  & \text{if } x_i < 0
+    \end{cases}
+\end{equation}</code></pre>
+          </div>
+          <div class="card pdf-card">
+            <div class="card-header">Rendered PDF Output</div>
+            <div class="pdf-body">
+              <div style="text-align: center; margin-bottom: 18px;">
+                <span style="font-family: Georgia, serif; font-style: italic;">N</span>(xᵢ, μ, σ) = [1 / √(2π)σ] · e<sup>−(xᵢ−μ)² / 2σ²</sup> &nbsp;&nbsp;&nbsp; (2)
+              </div>
+              <div class="cases-wrap" style="justify-content: center;">
+                <span>f(xᵢ) =</span>
+                <span class="cases-brace">{</span>
+                <div class="cases-rows">
+                  <div class="row"><span>xᵢ² / σ²,</span><span class="cond">if xᵢ ≥ 0</span></div>
+                  <div class="row"><span>|xᵢ| / σ,</span><span class="cond">if xᵢ &lt; 0</span></div>
+                </div>
+                <span style="margin-left: 20px;">(3)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="callout"><strong>The \text{} Command Trap:</strong> Inside <code class="inline">\begin{cases}</code>, you must wrap words like "if" in <code class="inline">\text{if }</code>! If you type normal text without <code class="inline">\text{}</code>, LaTeX interprets every letter as an algebraic variable, squishing them together in italics without spaces.</div>
+      </div>
+    </section>
+
+    <section id="refs">
+      <div class="sec-header"><span class="sec-num">07</span><h3>Cross-References &amp; Hyperlinks</h3></div>
+      <p class="sec-desc">How to turn raw section and figure numbers into intelligent, colored, clickable links using <code class="inline">hyperref</code>.</p>
+
+      <div class="demo-grid">
+        <div class="card code-card">
+          <div class="card-header">LaTeX Source</div>
+          <pre class="code-body"><code>% 1. Standard number reference:
+See Figure~\ref{fig:comparison} on page~\pageref{fig:comparison}.
+
+% 2. Auto-prefixing (prints "Figure 1" automatically):
+As seen in \autoref{fig:comparison}, outputs vary.
+
+% 3. Title name reference (prints exact section heading):
+Review the rules in \nameref{sec:modifying_texts}.
+
+% 4. Custom link text hiding a label:
+We can inspect \hyperref[subfig:bh]{Akif's GOAT chart}.
+
+% 5. Clickable web URLs and hidden hyperlinks:
+Visit \url{https://buet.ac.bd} or the 
+\href{https://codeforces.com}{Codeforces Portal}.</code></pre>
+        </div>
+        <div class="card pdf-card">
+          <div class="card-header">Rendered PDF Output</div>
+          <div class="pdf-body">
+            See Figure <span style="color: #2563eb;">1</span> on page <span style="color: #2563eb;">3</span>.<br><br>
+            As seen in <span style="color: #2563eb;">Figure 1</span>, outputs vary.<br><br>
+            Review the rules in <span style="color: #2563eb;">Modifying Texts</span>.<br><br>
+            We can inspect <span style="color: #2563eb;">Akif's GOAT chart</span>.<br><br>
+            Visit <span style="color: #db2777;">https://buet.ac.bd</span> or the <span style="color: #2563eb; text-decoration: underline;">Codeforces Portal</span>.
+          </div>
+        </div>
+      </div>
+      <table class="pkg-table">
+        <tr><th>Standard Prefix</th><th>Target Element</th><th>Example Usage</th></tr>
+        <tr><td><code class="inline">sec: / subsec:</code></td><td>Sections and Subsections</td><td><code class="inline">\label{sec:methodology}</code> &rarr; <code class="inline">\autoref{sec:methodology}</code></td></tr>
+        <tr><td><code class="inline">fig: / subfig:</code></td><td>Figures and Subfigures</td><td><code class="inline">\label{fig:flowchart}</code> &rarr; <code class="inline">\autoref{fig:flowchart}</code></td></tr>
+        <tr><td><code class="inline">tab:</code></td><td>Tables</td><td><code class="inline">\label{tab:results}</code> &rarr; <code class="inline">\autoref{tab:results}</code></td></tr>
+        <tr><td><code class="inline">eq:</code></td><td>Equations</td><td><code class="inline">\label{eq:euler}</code> &rarr; <code class="inline">\eqref{eq:euler}</code> (wraps in brackets)</td></tr>
+      </table>
+    </section>
+
+    <section id="cite">
+      <div class="sec-header"><span class="sec-num">08</span><h3>Citations &amp; BibTeX Pipeline (PDF to Reference)</h3></div>
+      <p class="sec-desc">How to extract citation data from an exam PDF, build your database, and switch between numeric <code class="inline">[1]</code> and author-year <code class="inline">(Author, 2026)</code> styles.</p>
+
+      <div class="subtopic">
+        <h4>Step 1 &amp; 2: Creating the references.bib File</h4>
+        <p>When an online exam gives you raw paper details (Author, Title, Journal, Year), create a plain text file named <code class="inline">references.bib</code> and structure it using standard BibTeX syntax:</p>
+        <div class="card code-card" style="margin-bottom: 20px;">
+          <div class="card-header">references.bib</div>
+          <pre class="code-body"><code>@article{meeus1991astronomical,
+    author  = {Meeus, Jean},
+    title   = {Astronomical Algorithms for Planetary Calculation},
+    journal = {Willmann-Bell Review},
+    year    = {1991},
+    volume  = {24},
+    pages   = {15--30}
+}
+
+@book{knuth1994concrete,
+    author    = {Graham, Ronald L. and Knuth, Donald E. and Patashnik, Oren},
+    title     = {Concrete Mathematics: A Foundation for Computer Science},
+    publisher = {Addison-Wesley Longman},
+    year      = {1994},
+    edition   = {2nd}
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="subtopic">
+        <h4>Step 3: Toggling Numeric vs Author-Year in Main Document</h4>
+        <div class="demo-grid">
+          <div class="card code-card">
+            <div class="card-header">main_document.tex</div>
+            <pre class="code-body"><code>% --- PREAMBLE ---
+% Use [numbers] for [1], or [authoryear] for (Author, 1991):
+\usepackage[authoryear]{natbib}
+
+\begin{document}
+% Parenthetical citation \citep gives full brackets:
+Leap years correct accumulated orbital drift \citep{meeus1991astronomical}.
+
+% Textual citation \citet mixes name into sentence:
+According to the foundational proof by \citet{knuth1994concrete}, 
+Stirling numbers scale exponentially.
+
+% --- PRINT REFERENCES AT END ---
+\bibliographystyle{plainnat}
+\bibliography{references}
+\end{document}</code></pre>
+          </div>
+          <div class="card pdf-card">
+            <div class="card-header">Rendered PDF Output (Author-Year Mode)</div>
+            <div class="pdf-body">
+              Leap years correct accumulated orbital drift (<span style="color: #16a34a;">Meeus, 1991</span>).<br><br>
+              According to the foundational proof by <span style="color: #16a34a;">Graham et al. (1994)</span>, Stirling numbers scale exponentially.<br><br>
+              <hr style="margin: 14px 0; border: none; border-top: 1px solid #cbd5e1;">
+              <b style="font-size: 1rem;">References</b><br>
+              <div style="font-size: 0.85rem; padding-left: 16px; text-indent: -16px; margin-top: 6px;">
+                Graham, R. L., Knuth, D. E., and Patashnik, O. (1994). <i>Concrete Mathematics: A Foundation for Computer Science</i>. Addison-Wesley Longman, 2nd edition.<br><br>
+                Meeus, J. (1991). Astronomical algorithms for planetary calculation. <i>Willmann-Bell Review</i>, 24:15–30.
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="callout"><strong>The Mandatory 4-Pass Compile Protocol:</strong> When compiling locally (TeXstudio/VS Code), seeing <code class="inline">[?]</code> question marks means your database hasn't linked! You must run: <strong>pdfLaTeX &rarr; BibTeX &rarr; pdfLaTeX &rarr; pdfLaTeX</strong>. This 4-step chain is required to read the keys, build the bibliography, and link the inline tags.</div>
+      </div>
+    </section>
+
+    <section id="traps">
+      <div class="sec-header"><span class="sec-num">09</span><h3>Exam Traps &amp; Loose Ends</h3></div>
+      <p class="sec-desc">Five specific hidden requirements tested across your four Online-1 papers that cost students easy marks.</p>
+
+      <div class="demo-grid">
+        <div class="card code-card">
+          <div class="card-header">1. The LaTeX Smart Quotes Rule (Online B2)</div>
+          <pre class="code-body"><code>% WRONG (standard keyboard quotes):
+"Don't forget to practice more problems!"
+
+% CORRECT (Two backticks open, two apostrophes close):
+``Don't forget to practice more problems!''</code></pre>
+        </div>
+        <div class="card pdf-card">
+          <div class="card-header">Rendered PDF Output</div>
+          <div class="pdf-body">
+            <span style="color: #dc2626;">Wrong: "Don't forget to practice more problems!"</span> (Ugly flat closing quotes on both sides)<br><br>
+            <span style="color: #16a34a;">Correct: “Don’t forget to practice more problems!”</span> (Professional curved directional quotes)
+          </div>
+        </div>
+      </div>
+
+      <div class="demo-grid">
+        <div class="card code-card">
+          <div class="card-header">2. Matrix Diagonal Header Slant ($n \backslash k$)</div>
+          <pre class="code-body"><code>% Inside Table 1 of Stirling Numbers paper:
+% Typing raw \ breaks compilation! Wrap in math mode:
+\begin{tabular}{|c|c|c|}
+    \hline
+    $n \backslash k$ & 1 & 2 \\ \hline
+    1                & 1 &   \\ \hline
+\end{tabular}</code></pre>
+        </div>
+        <div class="card pdf-card">
+          <div class="card-header">Rendered PDF Output</div>
+          <div class="pdf-body">
+            <table class="pdf-table tbl-grid" style="width: 60%; margin: 0 auto;">
+              <tr><th>n \ k</th><th>1</th><th>2</th></tr>
+              <tr><td>1</td><td>1</td><td>(empty cell)</td></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="demo-grid">
+        <div class="card code-card">
+          <div class="card-header">3. Footnotes &amp; Block Quotes</div>
+          <pre class="code-body"><code>Competitive programming requires runtime speed.%
+\footnote{Check platform rules at \url{https://codeforces.com}.}
+
+\begin{quote}
+    This entire block is indented on both margins,
+    perfect for highlighting closing conclusions.
+\end{quote}</code></pre>
+        </div>
+        <div class="card pdf-card">
+          <div class="card-header">Rendered PDF Output</div>
+          <div class="pdf-body">
+            Competitive programming requires runtime speed.<sup>1</sup><br>
+            <div style="margin: 10px 24px; font-style: italic; color: #334155; border-left: 3px solid #cbd5e1; padding-left: 12px;">
+              This entire block is indented on both margins, perfect for highlighting closing conclusions.
+            </div>
+            <hr style="margin: 14px 0 4px; border: none; border-top: 1px solid #cbd5e1; width: 30%;">
+            <div style="font-size: 0.75rem; color: #64748b;"><sup>1</sup> Check platform rules at https://codeforces.com.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <h4>You are completely ready for this exam.</h4>
+      <p>Every structural layout, math environment, table grid, and citation rule tested in CSE200 is right here on this board.<br>Keep calm, check your closing braces <code class="inline">{}</code>, and trust your training!</p>
+    </footer>
+  </main>
+</div>
+
+<script>
+  // Active Sidebar Highlighting on Scroll
+  const sections = Array.from(document.querySelectorAll('section[id]'));
+  const navLinks = Array.from(document.querySelectorAll('.toc a'));
+
+  function updateActiveNav() {
+    const scrollPos = window.scrollY + 150;
+    let currentSection = sections[0];
+
+    sections.forEach(sec => {
+      if (sec.offsetTop <= scrollPos) {
+        currentSection = sec;
+      }
+    });
+
+    navLinks.forEach(link => {
+      link.classList.toggle('active', link.getAttribute('href') === '#' + currentSection.id);
+    });
+  }
+
+  window.addEventListener('scroll', updateActiveNav);
+  updateActiveNav();
+
+  // Close mobile navigation when a link is clicked
+  navLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      document.querySelector('.sidebar').classList.remove('open');
+    });
+  });
+</script>
+</body>
+</html>

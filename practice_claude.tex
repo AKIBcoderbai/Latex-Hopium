@@ -1,0 +1,197 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{float}
+\usepackage[table]{xcolor}
+\usepackage{enumitem}
+\usepackage{wrapfig}
+\usepackage{listings}
+\usepackage{hyperref}   % load last
+\bibliographystyle{plain} 
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+
+\hypersetup{colorlinks=true, linkcolor=red, citecolor=red, urlcolor=magenta}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  frame=single,
+  showstringspaces=false,
+  keywordstyle=\color{blue}\bfseries,
+  commentstyle=\color{teal!70!black},
+  stringstyle=\color{red!70!black}
+}
+\title{\textbf{Fourier Series and the Analysis of Periodic Signals}}
+\author{%
+ Jean-Baptiste Joseph Fourier\textsuperscript{1}, Leonhard Euler \textsuperscript{2}, and Peter Gustav Lejeune Dirichlet\textsuperscript{3} \\
+  \small
+  \textsuperscript{1} Ecole Polytechnique, Paris, France\\
+\textsuperscript{2}Berlin Academy of Sciences, Berlin, Prussia\\
+\textsuperscript{3}University of Berlin, Berlin, Prussia
+}
+\date{}
+
+% \author{Johannes Kepler\thanks{Imperial Mathematician, Prague}}
+\begin{document}
+\maketitle
+\section{ From Signals to Series}
+\subsection{The Fourier Series}
+Let $f(t)$ be a periodic function with period $T$. Its Fourier series representation is
+\begin{equation}
+    f(t)=a_0+\sum_{n=1}^\infty \left[ a_n \cos(\frac{2\pi nt}{T}) + b_n \sin(\frac{2\pi nt}{T})  \right]
+    \label{eq:1}
+\end{equation}
+where the coefficients are given by
+\begin{equation}
+    a_0=\frac{2}{T}\int _0 ^T f(t) \hspace{10pt}
+     a_n=\frac{2}{T}\int _0 ^T f(t) \cos(\frac{2\pi nt}{T})\,dt ,\hspace{10pt}
+      b_n=\frac{2}{T}\int _0 ^T f(t) \sin(\frac{2\pi nt}{T})\,dt ,
+\end{equation}
+\textcolor{blue}{An even function contains only cosine terms ($b_n$ = 0 for all n)}, whereas \textcolor{red}{an odd function contains
+only sine terms ($a_n$ = 0 for all n)}.\footnote{A function that is neither even nor odd generally requires both families of terms.}
+\subsection{ A Simple Example: the Square Wave}
+For the odd square wave $$f(t) = sgn(\sin(2\pi t/T))$$ of amplitude 1,
+\begin{align}
+    b_n &= \frac{2}{T}\int _0 ^T f(t) \sin(\frac{2\pi nt}{T})\,dt , \notag  \\ 
+    &=\frac{4}{T}\int _0 ^T/2 f(t) \sin(\frac{2\pi nt}{T})\,dt , \notag \\
+    &= 
+    \begin{cases} 
+        \frac{4}{n\pi} & , \; n\; \text{odd} \\
+        0& , \; n\; \text{even}
+    \end{cases}
+    \label{eq:three}
+\end{align}
+so that the series contains only odd harmonics. A concise derivation is available from the \href{https://mathworld.wolfram.com/FourierSeriesSquareWave.html}{Square
+Wave entry on MathWorld}, and the underlying convergence theory is due to Dirichlet.\cite{dirichlet1829} 
+\newpage
+\section{ Common Fourier Series Pairs}
+Table \ref{tab:fourier} lists several frequently used Fourier series pairs.
+\begin{table}[H]
+\centering
+
+\begin{tabular}{|c|c|c|c|}
+\hline
+\multirow{2}{*}{\textbf{Family}} &
+  \multicolumn{2}{c|}{Signal} &
+  \multirow{2}{*}{\textbf{Symmetry}} \\
+\cline{2-3}
+ & \textbf{ Waveform } & \textbf{Fundamental Coefficient} & \\
+\hline
+\multirow{2}{*}{Rectagular}
+  & Square wave & $$b_1=\frac{4}{\pi}$$ & odd \\
+ & Pulse train (duty d) & $$a_0=d$$ & neither \\
+\hline
+\multirow{2}{*}{Group Two}
+  & Triangle wave & $$b_1=\frac{8}{\pi^2}$$ &odd\\
+ & Sawtooth wave & $$b_1=\frac{2}{\pi}$$ & odd \\
+\hline
+\end{tabular}
+\caption{Selected Fourier series pairs and their leading coefficients.}
+\label{tab:fourier}
+\end{table}
+
+\section{Approximating a Square Wave from Harmonics}
+\begin{wrapfigure}{r}{0.36\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{earth.png}
+    \caption{The ideal square}
+    \label{fig:ideal}
+\end{wrapfigure}
+Figure \ref{fig:sq} shows the ideal square wave that Equation \eqref{eq:three} at
+tempts to reconstruct from a finite number of harmonics. Trun
+cating the series in Equation \eqref{eq:1} at N terms gives the partial
+sum
+\begin{equation}
+    s_N(t)=\sum_{n=1}^N \frac{4}{n\pi} \sin \left( \frac{2n\pi t }{T}\right)
+    \label{eq:4}
+\end{equation}
+
+As $N$ increases, $s_N(t)$ converges to $f(t)$ everywhere except at
+the jump discontinuities, near which an overshoot of approxi
+mately 9\% persists no matter how large $N$ becomes.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.2\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{earth.png}
+        \caption{$N=1$}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.2\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{mars.png}
+      \caption{$N=3$}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.2\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{jupiter.png}
+    \caption{$N=9$}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.2\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{saturn.png}
+        \caption{$N=25$}
+    \end{subfigure}
+    \caption{ Partial sums $s_N(t)$ approaching the square wave as $N$ increases. The persistent
+overshoot near each jump is known as the Gibbs phenomenon}
+\end{figure}
+
+\begin{proposition}[Gibbs Overshoot]
+    \label{prop:G}
+    For the square wave par
+tial sum $s_N(t)$ in Equation \eqref{eq:4}, the overshoot near a jump dis
+continuity does not vanish as $N\to \infty$; instead,.
+\begin{equation}
+    \lim _{N \to \infty} s_N \left ( \frac{T}{2N}\right) \approx 1.1789
+\end{equation}
+an overshoot of about 9\% above the jump height of 1.
+\end{proposition}
+
+\begin{proof}
+    Write $s_N(t)$ as an integral of the Dirichlet kernel and evaluate at $t = T/(2N)$; the result
+reduces to the sine integral $Si(\pi)$, which exceeds $\pi/2$ by a fixed amount independent of $N$
+\end{proof} 
+See Proposition \ref{prop:G} for the precise statement of this bound \cite{oppenheim1997}
+\section{Where Fourier Analysis Is Used}
+Fourier analysis appears across a wide range of engineering disciplines:
+\begin{enumerate}[label=$\oplus$]
+    \item Audio and music
+    \begin{enumerate}[label=$\oplus$]
+        \item MP3 and AAC compression discard inaudible high-frequency content;
+        \item  graphic equalizers boost or cut specific frequency bands.
+    \end{enumerate}
+    \item  Image processing
+        \begin{enumerate}[label=$\oplus$]
+        \item JPEG compression uses the related discrete cosine transform
+        \item  edge detection filters operate on high spatial frequencies.
+        \end{enumerate}
+    \item  Communications
+    \begin{enumerate}[label=$\oplus$]
+        \item modulation shifts a signal’s spectrum to a carrier frequency
+        \item  ecommon multiplexing schemes include:
+        \begin{itemize}[label=$\triangleright$]
+                \item frequency-division multiplexing;
+                \item   orthogonal frequency-division multiplexing;
+              \item  wavelength-division multiplexing
+        \end{itemize}
+    \end{enumerate}
+    
+\end{enumerate}
+\section{ A Short Python Implementation}
+Listing \ref{lst:p} evaluates the $N$-term partial sum of the square wave series at a finite set of time
+instants using an external Python file.
+\lstinputlisting[language=Python,
+  caption={Computing samples of a square wave partial sum.},
+  label={lst:p}]{fourier_partial_sum.py}
+Equation \eqref{eq:4} and Listing \ref{lst:p} describe the same computation.
+\bibliography{references}
+\end{document}

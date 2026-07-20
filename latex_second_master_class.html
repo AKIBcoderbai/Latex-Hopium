@@ -1,0 +1,1594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The LaTeX Board — CSE200 Master Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Literata:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --board:#182922;
+    --board-2:#1f3229;
+    --board-edge:#0f1d17;
+    --chalk:#F1EEE4;
+    --chalk-dim:#C7D1C9;
+    --chalk-yellow:#EFCB53;
+    --chalk-blue:#9BCBE0;
+    --chalk-pink:#E39AAE;
+    --paper:#FBF8EF;
+    --paper-2:#F3EFE1;
+    --ink:#201D17;
+    --ink-soft:#4a4636;
+    --rule:#d8d2bd;
+    --accent:#8B1E3F;
+    --mono:'JetBrains Mono', monospace;
+    --serif:'Literata', serif;
+    --chalkfont:'Caveat', cursive;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--board);
+    color:var(--chalk);
+    font-family:var(--serif);
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(255,255,255,0.02), transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(255,255,255,0.02), transparent 40%);
+    pointer-events:none;
+    z-index:0;
+  }
+  a{color:var(--chalk-blue);}
+
+  /* ---------- layout ---------- */
+  .wrap{display:flex; min-height:100vh; position:relative; z-index:1;}
+  .sidebar{
+    width:280px; flex:0 0 280px;
+    background:var(--board-edge);
+    border-right:2px dashed rgba(241,238,228,0.15);
+    padding:28px 20px 40px;
+    position:sticky; top:0; height:100vh; overflow-y:auto;
+  }
+  .sidebar-title{
+    font-family:var(--chalkfont); color:var(--chalk-yellow);
+    font-size:1.7rem; margin:0 0 4px; letter-spacing:0.5px;
+  }
+  .sidebar-sub{color:var(--chalk-dim); font-size:0.78rem; margin:0 0 22px; line-height:1.5;}
+  .toc{list-style:none; margin:0; padding:0;}
+  .toc li{margin-bottom:2px;}
+  .toc a{
+    display:flex; gap:10px; align-items:baseline;
+    text-decoration:none; color:var(--chalk-dim);
+    font-size:0.84rem; padding:7px 10px; border-radius:4px;
+    border-left:2px solid transparent;
+  }
+  .toc a:hover, .toc a.active{
+    color:var(--chalk); background:rgba(241,238,228,0.07);
+    border-left:2px solid var(--chalk-yellow);
+  }
+  .toc .n{font-family:var(--mono); color:var(--chalk-yellow); font-size:0.72rem;}
+
+  main{flex:1; min-width:0; padding:0 0 80px;}
+
+  /* ---------- hero ---------- */
+  .hero{
+    padding:64px 56px 48px; border-bottom:2px dashed rgba(241,238,228,0.15);
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+  }
+  .hero-eyebrow{font-family:var(--mono); color:var(--chalk-blue); font-size:0.8rem; letter-spacing:2px; text-transform:uppercase;}
+  .hero h1{
+    font-family:var(--chalkfont); font-weight:700; color:var(--chalk);
+    font-size:3.4rem; margin:8px 0 6px; line-height:1;
+  }
+  .hero p.lede{color:var(--chalk-dim); max-width:680px; font-size:1.05rem; margin:0 0 20px;}
+  .hero-tags{display:flex; flex-wrap:wrap; gap:8px;}
+  .tag{
+    font-family:var(--mono); font-size:0.72rem; color:var(--board);
+    background:var(--chalk-yellow); padding:4px 10px; border-radius:20px;
+  }
+
+  /* ---------- sections ---------- */
+  section{padding:52px 56px; border-bottom:2px dashed rgba(241,238,228,0.13); scroll-margin-top:16px;}
+  .section-head{display:flex; align-items:baseline; gap:16px; margin-bottom:6px;}
+  .section-num{font-family:var(--mono); color:var(--chalk-yellow); font-size:1rem; opacity:0.85;}
+  section h2{font-family:var(--chalkfont); font-size:2.3rem; color:var(--chalk); margin:0;}
+  p.lead{color:var(--chalk-dim); max-width:800px; margin:0 0 30px; font-size:1rem;}
+  .subtopic{margin:34px 0 46px;}
+  .subtopic h3{
+    color:var(--chalk-yellow); font-size:1.18rem; margin:0 0 10px;
+    font-family:var(--serif); font-weight:600;
+  }
+  .subtopic h4{color:var(--chalk); font-size:1rem; margin:22px 0 8px; font-weight:600;}
+  .subtopic p{color:var(--chalk); max-width:820px; margin:0 0 14px; font-size:0.98rem;}
+  .subtopic p.small-note{color:var(--chalk-dim); font-size:0.87rem;}
+
+  .callout{
+    border-left:3px solid var(--chalk-pink); background:rgba(227,154,174,0.10);
+    padding:12px 16px; margin:16px 0; font-size:0.89rem; color:var(--chalk); max-width:800px; border-radius:0 6px 6px 0;
+  }
+  .callout b{color:var(--chalk-pink);}
+  .tip{
+    border-left:3px solid var(--chalk-blue); background:rgba(155,203,224,0.10);
+    padding:12px 16px; margin:16px 0; font-size:0.89rem; color:var(--chalk); max-width:800px; border-radius:0 6px 6px 0;
+  }
+  .tip b{color:var(--chalk-blue);}
+  .mistake{
+    border-left:3px solid #E88A5A; background:rgba(232,138,90,0.10);
+    padding:12px 16px; margin:16px 0; font-size:0.89rem; color:var(--chalk); max-width:800px; border-radius:0 6px 6px 0;
+  }
+  .mistake b{color:#E88A5A;}
+
+  /* ---------- demo grid: source + rendered "pinned notes" ---------- */
+  .demo-grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:22px;
+    margin:16px 0 8px; align-items:start;
+  }
+  @media (max-width:900px){ .demo-grid{grid-template-columns:1fr;} }
+
+  .note{
+    position:relative; border-radius:3px; padding:22px 18px 18px;
+    box-shadow:0 10px 22px rgba(0,0,0,0.35), 0 2px 0 rgba(0,0,0,0.15);
+    margin-bottom:6px;
+  }
+  .note::before{
+    content:""; position:absolute; top:-9px; left:50%; transform:translateX(-50%);
+    width:16px; height:16px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #ff8a8a, var(--accent) 65%);
+    box-shadow:0 3px 5px rgba(0,0,0,0.4);
+  }
+  .note-label{
+    font-family:var(--mono); font-size:0.68rem; letter-spacing:1.5px;
+    text-transform:uppercase; margin-bottom:10px; display:inline-block;
+    padding:2px 8px; border-radius:3px;
+  }
+  .note-code{ background:var(--paper); transform:rotate(-0.5deg); }
+  .note-code .note-label{ background:var(--ink); color:var(--chalk-yellow); }
+  .note-output{ background:#ffffff; transform:rotate(0.4deg); }
+  .note-output .note-label{ background:#e8e8e8; color:var(--accent); }
+  @media (max-width:900px){
+    .note-code, .note-output{ transform:none; }
+  }
+
+  pre.tex-code{
+    margin:0; font-family:var(--mono); font-size:0.8rem; color:var(--ink);
+    white-space:pre-wrap; word-break:break-word; line-height:1.55;
+  }
+  .tex-cmd{color:#8B1E3F; font-weight:600;}
+  .tex-brace{color:#146b66; font-weight:600;}
+  .tex-comment{color:#6b6552; font-style:italic;}
+
+  .rendered{ color:var(--ink); font-family:var(--serif); font-size:0.92rem; }
+  .rendered h4{margin:0 0 8px; font-size:1rem; color:var(--ink);}
+
+  /* rendered table look — colors are hard-set, never inherited, so nothing can wash out */
+  table.demo-table{ border-collapse:collapse; width:100%; font-size:0.85rem; background:#ffffff; color:#201D17; }
+  table.demo-table td, table.demo-table th{ padding:6px 10px; text-align:center; color:#201D17; }
+  .tbl-hlines td, .tbl-hlines th{ border:1px solid #201D17; }
+  .tbl-booktabs th{ border-top:1.6px solid #201D17; border-bottom:1px solid #201D17; }
+  .tbl-booktabs td.bottom-rule{ border-bottom:1.6px solid #201D17; }
+  .cap{ text-align:center; font-size:0.8rem; margin-top:8px; color:var(--ink-soft); }
+
+  /* placeholder figure boxes echoing the exam PDFs */
+  .fig-row{ display:flex; gap:14px; align-items:flex-end; flex-wrap:wrap; }
+  .fig-box{
+    position:relative; background:#c7c7c7; border:1px solid #7c7c7c;
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--serif); font-weight:700; color:#2b2b2b;
+    background-image:
+      linear-gradient(45deg, transparent 48%, #9a9a9a 49%, #9a9a9a 51%, transparent 52%),
+      linear-gradient(-45deg, transparent 48%, #9a9a9a 49%, #9a9a9a 51%, transparent 52%);
+  }
+  .fig-cap{ text-align:center; font-size:0.78rem; color:var(--ink-soft); margin-top:4px; }
+
+  /* piecewise / cases brace mimic */
+  .cases-wrap{ display:flex; align-items:stretch; gap:8px; font-family:var(--serif); color:#201D17;}
+  .cases-brace{ font-size:2.6rem; color:#201D17; line-height:1; transform:scaleX(0.7); }
+  .cases-rows{ display:flex; flex-direction:column; justify-content:center; gap:6px; font-size:0.92rem;}
+  .cases-rows .row{ display:flex; gap:18px; }
+  .cases-rows .cond{ color:var(--ink-soft); font-style:italic; }
+
+  code.inline{ font-family:var(--mono); background:rgba(241,238,228,0.10); color:var(--chalk-yellow); padding:1px 6px; border-radius:4px; font-size:0.88em;}
+
+  .grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+  @media (max-width:900px){ .grid-2{grid-template-columns:1fr;} }
+
+  .pkg-table{ width:100%; border-collapse:collapse; margin:18px 0; font-size:0.87rem; max-width:840px;}
+  .pkg-table th{ text-align:left; color:var(--chalk-yellow); font-family:var(--mono); font-weight:500; font-size:0.74rem; text-transform:uppercase; letter-spacing:1px; padding:9px 12px; border-bottom:1px dashed rgba(241,238,228,0.3); background:rgba(241,238,228,0.04);}
+  .pkg-table td{ padding:10px 12px; border-bottom:1px dashed rgba(241,238,228,0.15); color:var(--chalk); vertical-align:top;}
+  .pkg-table tr:nth-child(even) td{ background:rgba(241,238,228,0.035); }
+  .pkg-table code.inline{ white-space:nowrap; }
+  .table-scroll{ overflow-x:auto; }
+
+  .sym-table{ width:100%; border-collapse:collapse; margin:14px 0 22px; font-size:0.86rem; background:#ffffff; color:#201D17; max-width:840px;}
+  .sym-table th{ background:#201D17; color:#F1EEE4; text-align:left; padding:8px 12px; font-family:var(--mono); font-size:0.72rem; letter-spacing:1px; text-transform:uppercase;}
+  .sym-table td{ padding:7px 12px; border-bottom:1px solid #e4e0d0; color:#201D17;}
+  .sym-table tr:nth-child(even) td{ background:#f7f4e9; }
+  .sym-table .cmd{ font-family:var(--mono); color:#8B1E3F; }
+  .sym-table .glyph{ font-size:1.05rem; text-align:center; }
+
+  footer{ padding:44px 56px; text-align:center; color:var(--chalk-dim); font-size:0.85rem; }
+  footer .sign{ font-family:var(--chalkfont); font-size:1.4rem; color:var(--chalk-yellow); }
+  footer .res-list{ list-style:none; padding:0; max-width:480px; margin:18px auto; text-align:left; }
+  footer .res-list li{ margin-bottom:10px; font-size:0.88rem; }
+  footer .res-list b{ color:var(--chalk); }
+
+  /* mobile nav toggle */
+  .nav-toggle{ display:none; }
+  @media (max-width:820px){
+    .sidebar{
+      position:fixed; left:0; top:0; height:100vh; z-index:20;
+      transform:translateX(-100%); transition:transform 0.25s ease; width:78vw; max-width:300px;
+    }
+    .sidebar.open{ transform:translateX(0); }
+    .nav-toggle{
+      display:flex; align-items:center; gap:8px; position:fixed; top:14px; left:14px; z-index:21;
+      background:var(--chalk-yellow); color:var(--board); border:none; border-radius:20px;
+      padding:8px 14px; font-family:var(--mono); font-size:0.78rem; cursor:pointer;
+    }
+    .hero, section, footer{ padding-left:24px; padding-right:24px; }
+    .hero{ padding-top:70px; }
+    .hero h1{ font-size:2.4rem; }
+  }
+  @media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto;} .sidebar{transition:none;} }
+</style>
+</head>
+<body>
+
+<button class="nav-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰ Topics</button>
+
+<div class="wrap">
+  <nav class="sidebar">
+    <div class="sidebar-title">The LaTeX Board</div>
+    <p class="sidebar-sub">CSE200 master guide — built from your four Online-1 papers, your teacher's own two demo templates, and Hefferon's math cheat-sheet.</p>
+    <ul class="toc" id="toc">
+      <li><a href="#kit"><span class="n">00</span> Package Starter Kit</a></li>
+      <li><a href="#text"><span class="n">01</span> Text Formatting</a></li>
+      <li><a href="#lists"><span class="n">02</span> Lists &amp; Labelling</a></li>
+      <li><a href="#structure"><span class="n">03</span> Document Structure &amp; Navigation</a></li>
+      <li><a href="#tables"><span class="n">04</span> Tables (multirow/multicolumn)</a></li>
+      <li><a href="#figures"><span class="n">05</span> Figures &amp; Subfigures</a></li>
+      <li><a href="#math"><span class="n">06</span> Math I — Environments</a></li>
+      <li><a href="#mathsym"><span class="n">07</span> Math II — Symbols &amp; Spacing</a></li>
+      <li><a href="#theorems"><span class="n">08</span> Theorems &amp; Proofs</a></li>
+      <li><a href="#refs"><span class="n">09</span> Cross-refs &amp; Hyperlinks</a></li>
+      <li><a href="#cite"><span class="n">10</span> Citations &amp; .bib from a PDF</a></li>
+      <li><a href="#templates"><span class="n">11</span> Your Teacher's Templates</a></li>
+      <li><a href="#extras"><span class="n">12</span> Loose Ends</a></li>
+      <li><a href="#resources"><span class="n">13</span> Resources</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <header class="hero">
+      <div class="hero-eyebrow">CSE200 · Level 2, Term 2 · Master Study Board</div>
+      <h1>Chalk, Braces &amp; Bibliographies</h1>
+      <p class="lede">Built from four angles at once: your four past Online-1 papers, your teacher Sheikh Azizul Hakim's own two demo files (<code class="inline">main-old-version.tex</code> and <code class="inline">main-class-version.tex</code>), Jim Hefferon's math cheat-sheet, and the plain questions students actually get stuck on. Every subtopic explains not just the command, but why it exists, what breaks if you get it wrong, and what LaTeX is doing behind the scenes.</p>
+      <div class="hero-tags">
+        <span class="tag">multirow / multicolumn</span>
+        <span class="tag">enumerate labels</span>
+        <span class="tag">subfigures</span>
+        <span class="tag">cases &amp; matrices</span>
+        <span class="tag">theorems &amp; proofs</span>
+        <span class="tag">Greek &amp; symbols</span>
+        <span class="tag">hyperref</span>
+        <span class="tag">natbib [1] vs (Author, Year)</span>
+        <span class="tag">.bib from a PDF</span>
+      </div>
+    </header>
+
+    <!-- ============ 00 PACKAGE KIT ============ -->
+    <section id="kit">
+      <div class="section-head"><span class="section-num">00</span><h2>Package Starter Kit</h2></div>
+      <p class="lead">Paste this preamble once. Almost every command below depends on one of these lines — if LaTeX says a command "doesn't exist" or "Undefined control sequence" during compilation, this table is the first place to check. LaTeX's core (called <em>LaTeX2e</em>) is deliberately minimal; nearly everything visually interesting — colored text, decent tables, real subfigures — lives in optional packages that you must explicitly load with <code class="inline">\usepackage{}</code> before <code class="inline">\begin{document}</code>.</p>
+      <div class="demo-grid" style="grid-template-columns:1fr;">
+        <div class="note note-code" style="transform:none;">
+          <span class="note-label">preamble.tex</span>
+          <pre class="tex-code"><code>\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb}     % cases, align, matrices, symbols
+\usepackage{amsthm}               % theorem/lemma/proof environments
+\usepackage{graphicx}             % \includegraphics
+\usepackage{subcaption}           % subfigures
+\usepackage{booktabs}             % \toprule \midrule \bottomrule
+\usepackage{multirow}             % \multirow
+\usepackage{float}                % the [H] "exactly here" placement
+\usepackage[table]{xcolor}        % colors + \rowcolor, \cellcolor
+\usepackage[normalem]{ulem}       % \sout strikethrough (keeps \emph italic)
+\usepackage{enumitem}             % custom list labels/spacing
+\usepackage{natbib}               % \citet / \citep author-year
+\usepackage{hyperref}             % load LAST: \url, \href, colored refs</code></pre>
+        </div>
+      </div>
+      <p>A few things worth understanding about this list rather than just memorizing it. First, <b>order occasionally matters</b>: <code class="inline">hyperref</code> redefines a lot of internal LaTeX machinery to make cross-references clickable, so loading anything <em>after</em> it (particularly <code class="inline">amsmath</code>-adjacent packages, or specialised clever-reference tools) risks silent conflicts — the safe habit is "hyperref goes last." Second, <code class="inline">amsmath</code> isn't optional scaffolding you can skip if you "don't need fancy math" — the <code class="inline">cases</code>, <code class="inline">align</code>, and <code class="inline">\text{}</code> constructs you'll use in nearly every assignment all come from it, and omitting it is the single most common reason a piecewise function refuses to compile. Third, <code class="inline">[table]</code> as an option to <code class="inline">xcolor</code> quietly also loads the <code class="inline">colortbl</code> package for you — if you ever see <code class="inline">\rowcolor</code> not being recognised, it usually means someone loaded plain <code class="inline">xcolor</code> without the <code class="inline">table</code> option.</p>
+      <table class="pkg-table">
+        <tr><th>Package</th><th>Unlocks</th></tr>
+        <tr><td><code class="inline">multirow</code></td><td>Merge table cells <i>vertically</i> (a label spanning two rows).</td></tr>
+        <tr><td><code class="inline">booktabs</code></td><td>Clean <code class="inline">\toprule/\midrule/\bottomrule</code> rules instead of a full grid of lines.</td></tr>
+        <tr><td><code class="inline">float</code></td><td>Adds the <code class="inline">[H]</code> placement specifier — forces a figure/table to appear <em>exactly</em> where you wrote it.</td></tr>
+        <tr><td><code class="inline">xcolor</code> (with <code class="inline">table</code> option)</td><td>Text colors, highlight boxes, and colored table rows/cells.</td></tr>
+        <tr><td><code class="inline">enumitem</code></td><td>Change enumerate/itemize labels to (a), i., A), custom symbols, and control spacing.</td></tr>
+        <tr><td><code class="inline">subcaption</code></td><td>Multiple labelled sub-images (a), (b), (c) inside one figure.</td></tr>
+        <tr><td><code class="inline">ulem</code></td><td><code class="inline">\sout{}</code> strikethrough text.</td></tr>
+        <tr><td><code class="inline">amsthm</code></td><td><code class="inline">\newtheorem</code>, and the <code class="inline">theorem</code>/<code class="inline">lemma</code>/<code class="inline">proof</code> environments.</td></tr>
+        <tr><td><code class="inline">hyperref</code></td><td>Clickable <code class="inline">\url</code>, <code class="inline">\href</code>, colored cross-references. Always load last.</td></tr>
+        <tr><td><code class="inline">natbib</code></td><td>Switch citations between numeric <code class="inline">[1]</code> and author-year <code class="inline">(Author, Year)</code>.</td></tr>
+        <tr><td><code class="inline">lipsum</code></td><td>Generates realistic-looking filler paragraphs (<code class="inline">\lipsum[1-3]</code>) so you can test a layout before real content exists.</td></tr>
+      </table>
+      <div class="tip"><b>Reading a compile error:</b> if pdflatex stops with <code class="inline">! Undefined control sequence</code> pointing at a command like <code class="inline">\multirow</code> or <code class="inline">\toprule</code>, the fix is almost never to rewrite the command — it's to check this table for the package you forgot to load. If instead you see <code class="inline">! LaTeX Error: Environment cases undefined</code>, that always means <code class="inline">amsmath</code> is missing.</div>
+    </section>
+
+    <!-- ============ 01 TEXT FORMATTING ============ -->
+    <section id="text">
+      <div class="section-head"><span class="section-num">01</span><h2>Text Formatting</h2></div>
+      <p class="lead">Both the C2 paper and your teacher's own <code class="inline">main-old-version.tex</code> stacked bold, italic, emphasis, and underline in one paragraph, then repeated the exercise with font sizes — treat both as a checklist you should be able to reproduce blind.</p>
+
+      <div class="subtopic">
+        <h3>Weight, slant, emphasis, underline</h3>
+        <p>LaTeX gives you four closely related but genuinely different commands here, and exam answers lose marks specifically for swapping them. <code class="inline">\textbf{}</code> changes the font <em>weight</em> to bold and nothing else. <code class="inline">\textit{}</code> changes the <em>shape</em> to italic and nothing else — it will not become upright again no matter what surrounds it. <code class="inline">\emph{}</code> is semantically different: it means "emphasize this," and LaTeX decides how to render that based on context. Inside normal upright text it renders as italic, exactly like <code class="inline">\textit</code>. But nest an <code class="inline">\emph</code> inside text that is <em>already</em> italicized (a theorem statement, another <code class="inline">\emph</code>, a quotation environment) and it flips back to upright, so the emphasis still stands out. <code class="inline">\textit</code> can never do that — it has no concept of "the surrounding context," it just always means italic.</p>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">source</span>
+            <pre class="tex-code"><code>This sentence has \textbf{bold},
+\textit{italic}, \emph{emphasized},
+and \underline{underlined} text.
+
+\textit{An italic sentence where
+\emph{this part} flips back upright.}</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">rendered</span>
+            <div class="rendered">
+              <div>This sentence has <b>bold</b>, <i>italic</i>, <i>emphasized</i>, and <span style="text-decoration:underline;">underlined</span> text.</div>
+              <div style="margin-top:10px; font-style:italic;">An italic sentence where <span style="font-style:normal;">this part</span> flips back upright.</div>
+            </div>
+          </div>
+        </div>
+        <div class="mistake"><b>Common mistake:</b> writing <code class="inline">\underline{a very long sentence that needs to wrap across two lines}</code>. Base LaTeX's <code class="inline">\underline</code> draws one continuous rule and does <em>not</em> know how to break at a line wrap — the underline will either overrun the margin or look broken. For anything longer than a few words, load <code class="inline">\usepackage{soul}</code> and use <code class="inline">\ul{}</code> instead, which underlines properly across line breaks.</div>
+      </div>
+
+      <div class="subtopic">
+        <h3>Strikethrough (needs a package)</h3>
+        <p>Base LaTeX has no strikethrough command at all — this is a deliberate gap, not an oversight, because "struck-through text" isn't something academic typesetting traditionally needed. You get it from the <code class="inline">ulem</code> package, loaded with the <code class="inline">[normalem]</code> option. That option matters more than it looks: <code class="inline">ulem</code>'s whole reason for existing is to redefine how underlining works, and by default it also hijacks <code class="inline">\emph</code> to mean "underline the text" instead of "italicize it." Loading it plain will silently change the visual meaning of every <code class="inline">\emph</code> already in your document, which is a very confusing bug to track down because nothing throws an error — your emphasized words just stop looking emphasized the way you expect. <code class="inline">[normalem]</code> tells <code class="inline">ulem</code> to leave <code class="inline">\emph</code> alone and only give you the new commands (<code class="inline">\sout</code>, <code class="inline">\uline</code>, <code class="inline">\uwave</code>) without the side effect.</p>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">source</span>
+            <pre class="tex-code"><code>% preamble: \usepackage[normalem]{ulem}
+The old deadline was \sout{March 3}.
+A wavy alternative: \uwave{read carefully}.</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">rendered</span>
+            <div class="rendered">The old deadline was <span style="text-decoration:line-through;">March 3</span>. A wavy alternative: <span style="text-decoration:underline wavy;">read carefully</span>.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="subtopic">
+        <h3>Color: text, highlight boxes, custom colors</h3>
+        <p><code class="inline">\textcolor{name}{text}</code> is the workhorse. LaTeX ships with a handful of built-in names (<code class="inline">red</code>, <code class="inline">blue</code>, <code class="inline">green</code>, <code class="inline">yellow</code>, <code class="inline">cyan</code>, <code class="inline">magenta</code>, <code class="inline">black</code>, <code class="inline">white</code>, <code class="inline">gray</code>) but for anything specific — a university brand color, a precise shade you were given — define it once with <code class="inline">\definecolor{name}{model}{value}</code> and reuse the name everywhere. The three common color models are <code class="inline">RGB</code> (three integers 0–255), <code class="inline">rgb</code> (three decimals 0–1), and <code class="inline">HTML</code> (a six-digit hex code, no leading <code class="inline">#</code>). Once defined, that name behaves exactly like a built-in color everywhere in the document — inside <code class="inline">\textcolor</code>, inside <code class="inline">\colorbox</code>, and later inside table cells too.</p>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">source</span>
+            <pre class="tex-code"><code>\definecolor{buetblue}{HTML}{1B4F72}
+
+\textcolor{red}{Warning text.}
+\textcolor{buetblue}{Custom color text.}
+\colorbox{yellow}{Highlighted text.}
+\fcolorbox{black}{yellow}{Framed highlight.}</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">rendered</span>
+            <div class="rendered">
+              <div style="color:#c0392b; margin-bottom:8px;">Warning text.</div>
+              <div style="color:#1B4F72; margin-bottom:8px;">Custom color text.</div>
+              <div style="margin-bottom:8px;"><span style="background:#fff176; color:#201D17; padding:1px 3px;">Highlighted text.</span></div>
+              <div><span style="background:#fff176; color:#201D17; border:1px solid #111; padding:1px 4px;">Framed highlight.</span></div>
+            </div>
+          </div>
+        </div>
+        <p class="small-note">This same <code class="inline">\textcolor</code>/<code class="inline">\colorbox</code> machinery is exactly what colors <em>table cells</em> later in §04 — one package, two use-cases, so learning the color-name syntax here pays off twice.</p>
+      </div>
+
+      <div class="subtopic">
+        <h3>Font size &amp; family</h3>
+        <p>The ten size-switching commands form a strict, ordered ladder from smallest to largest: <code class="inline">tiny → scriptsize → footnotesize → small → normalsize → large → Large → LARGE → huge → Huge</code>. Notice the capitalization pattern isn't random — it climbs from all-lowercase, to one capital, to all-caps, roughly tracking size within each name (<code class="inline">large</code> &lt; <code class="inline">Large</code> &lt; <code class="inline">LARGE</code>, same for huge/Huge). These are <em>declarations</em>, not commands that take an argument — that's why you always see them wrapped in an extra pair of braces, <code class="inline">{\Large some text}</code>: the braces create a group, the declaration changes the size for everything inside that group, and the closing brace restores whatever size was active before. Forget the braces and the size change leaks into the rest of your document — every following paragraph stays huge until you manually switch back, which is a very common and very visible mistake in exam scripts.</p>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">source</span>
+            <pre class="tex-code"><code>{\tiny tiny} {\small small} {\normalsize normal}
+{\large large} {\Large Large} {\LARGE LARGE}
+{\huge huge} {\Huge Huge}
+
+\textrm{serif} \quad \textsf{sans-serif} \quad \texttt{monospace}</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">rendered</span>
+            <div class="rendered">
+              <span style="font-size:0.6rem;">tiny</span> <span style="font-size:0.75rem;">small</span> <span style="font-size:1rem;">normal</span> <span style="font-size:1.1rem;">large</span> <span style="font-size:1.25rem;">Large</span> <span style="font-size:1.4rem;">LARGE</span> <span style="font-size:1.7rem;">huge</span> <span style="font-size:2rem;">Huge</span>
+              <div style="margin-top:10px;"><span style="font-family:'Literata',serif;">serif</span> &nbsp; <span style="font-family:sans-serif;">sans-serif</span> &nbsp; <span style="font-family:monospace;">monospace</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="mistake"><b>Common mistake, straight from the teacher's own file:</b> <code class="inline">\Large{Large Text}</code> (braces placed <em>after</em> the size command, wrapping only the words) versus <code class="inline">{\Large Large Text}</code> (braces wrapping the whole declaration). Both usually look identical for a single word or short phrase, which is exactly why this mistake survives unnoticed — but <code class="inline">\Large{...}</code> is subtly wrong: <code class="inline">\Large</code> is not a command that takes <code class="inline">{...}</code> as an argument, so writing it that way works by accident (the braces just happen to form a group right after), not by design. The safe, unambiguous habit is always <code class="inline">{\Large text}</code> with the size switch as the very first token inside the group.</div>
+      </div>
+    </section>
+
+    <!-- ============ 02 LISTS ============ -->
+    <section id="lists">
+      <div class="section-head"><span class="section-num">02</span><h2>Lists &amp; Labelling</h2></div>
+      <p class="lead">The Image Synthesis paper mixed itemize and enumerate, used roman numerals, sub-bullets, and a bold inline "mini-header" item. Your teacher's own template independently used a dash bullet and a bold <code class="inline">[Description]</code> label on plain <code class="inline">itemize</code>, no extra package required. This section covers the full spread, from zero-package tricks to the fully customizable <code class="inline">enumitem</code> machinery.</p>
+
+      <div class="subtopic">
+        <h3>The three base environments</h3>
+        <p>LaTeX ships with exactly three list environments out of the box, and it helps to be explicit about what each one is <em>for</em>, not just what it looks like. <code class="inline">itemize</code> is for an unordered collection where sequence carries no meaning — swapping two bullets shouldn't change anything the reader understands. <code class="inline">enumerate</code> is for a sequence where order <em>is</em> the information — steps in a procedure, ranked items, anything you'd later refer back to as "step 3." <code class="inline">description</code> is for term–definition pairs, and is the one people forget exists, reaching instead for a bold word followed by itemize when <code class="inline">description</code> would be both shorter to write and more semantically correct.</p>
+      </div>
+
+      <div class="subtopic">
+        <h3>Custom bullets and labels without any extra package</h3>
+        <p>Before reaching for <code class="inline">enumitem</code>, know that base <code class="inline">itemize</code> already lets you override <em>one</em> item's marker by passing it in square brackets: <code class="inline">\item[--]</code> swaps the bullet for a dash just for that line, and <code class="inline">\item[\textbf{Description}]</code> replaces the bullet entirely with bold text — this is precisely the "mini-header" trick used in the Image Synthesis paper and in your teacher's own file. This is the right tool when you need to override one or two items; if you need to change the marker for an <em>entire</em> list consistently, that's what <code class="inline">enumitem</code>'s <code class="inline">label=</code> option (below) is for.</p>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">source (from your teacher's file)</span>
+            <pre class="tex-code"><code>\begin{itemize}
+    \item first item
+    \item [--] second item
+    \item [\textbf{Description}] This is
+      the description
+
+    \begin{itemize}
+        \item nested item 1
+    \end{itemize}
+\end{itemize}</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">rendered</span>
+            <div class="rendered">
+              <ul style="margin:0; padding-left:20px;">
+                <li>first item</li>
+                <li>&mdash;&nbsp; second item</li>
+                <li><b>Description</b>&nbsp; This is the description
+                  <ul><li>nested item 1</li></ul>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <p class="small-note">Notice the nested <code class="inline">itemize</code> in the source sits <em>outside</em> the third <code class="inline">\item</code>'s own line but still inside the outer <code class="inline">itemize</code> block — LaTeX doesn't require nested content to be glued to the exact <code class="inline">\item</code> line; it just needs to appear somewhere between that item and the next one (or the <code class="inline">\end{itemize}</code>) to render as a sub-list of the item above it.</p>
+      </div>
+
+      <div class="subtopic">
+        <h3>Enumerate labelling variations (<code class="inline">enumitem</code>)</h3>
+        <p>By default, <code class="inline">enumerate</code> numbers with plain Arabic numerals followed by a period: 1. 2. 3. Changing that globally — to roman numerals, letters, or a custom pattern — is what the <code class="inline">enumitem</code> package's <code class="inline">label=</code> option is for. The syntax takes some getting used to: you write the <em>literal</em> punctuation you want around the number, and drop in a placeholder token — <code class="inline">\alph*</code>, <code class="inline">\Alph*</code>, <code class="inline">\roman*</code>, <code class="inline">\Roman*</code>, or <code class="inline">\arabic*</code> — exactly where the counter itself should appear. The asterisk is not decorative; it's part of the required syntax and means "substitute the running counter value here."</p>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">source</span>
+            <pre class="tex-code"><code>\begin{enumerate}[label=(\alph*)]
+  \item divisible by 4
+  \item divisible by 400
+\end{enumerate}
+
+\begin{enumerate}[label=\Roman*.]
+  \item Primary Rays
+  \item Secondary Rays
+\end{enumerate}
+
+\begin{enumerate}[label=\arabic*), start=3]
+  \item continues from three
+\end{enumerate}</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">rendered</span>
+            <div class="rendered">
+              <div>(a) divisible by 4<br>(b) divisible by 400</div>
+              <div style="margin-top:10px;">I. Primary Rays<br>II. Secondary Rays</div>
+              <div style="margin-top:10px;">3) continues from three</div>
+            </div>
+          </div>
+        </div>
+        <p class="small-note">Reference: <code class="inline">\alph*</code> = a,b,c &nbsp;·&nbsp; <code class="inline">\Alph*</code> = A,B,C &nbsp;·&nbsp; <code class="inline">\roman*</code> = i,ii,iii &nbsp;·&nbsp; <code class="inline">\Roman*</code> = I,II,III &nbsp;·&nbsp; <code class="inline">\arabic*</code> = 1,2,3.</p>
+        <div class="mistake"><b>Common mistake:</b> nesting a plain <code class="inline">enumerate</code> inside another <code class="inline">enumerate</code> (as in your teacher's <code class="inline">(i), (ii), (ii.a), (ii.b), (iii)</code> example) without giving the inner list its own <code class="inline">label=</code>. LaTeX's default nesting behaviour auto-switches style by depth (1,2,3 → a,b,c → i,ii,iii → A,B,C), which is convenient until you've <em>also</em> set a custom label on the outer list — then the inner list often silently reuses the outer numbering style instead of stepping to the next default, and the roman numerals from the outer list and inner list become impossible to tell apart. If you've customized one level, customize the level below it explicitly too.</div>
+      </div>
+
+      <div class="subtopic">
+        <h3>Nested / mixed lists + a bold "mini-header" item</h3>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">source</span>
+            <pre class="tex-code"><code>\begin{itemize}
+  \item Scene Definition
+  \item Camera Configuration
+    \begin{itemize}
+      \item Light Placement
+    \end{itemize}
+  \item \textbf{Important} Shading Model
+    \begin{itemize}
+      \item Diffuse Shading
+      \item Specular Highlights
+    \end{itemize}
+\end{itemize}</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">rendered</span>
+            <div class="rendered">
+              <ul style="margin:0; padding-left:20px;">
+                <li>Scene Definition</li>
+                <li>Camera Configuration
+                  <ul><li>Light Placement</li></ul>
+                </li>
+                <li><b>Important</b> Shading Model
+                  <ul><li>Diffuse Shading</li><li>Specular Highlights</li></ul>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <p class="small-note">There's no special "mini-header" command — it's just a normal <code class="inline">\item</code> whose text starts with <code class="inline">\textbf{}</code>, followed by a nested <code class="inline">itemize</code>. Both this pattern and the teacher's <code class="inline">\item[\textbf{Description}]</code> pattern achieve visually similar results through genuinely different mechanisms — the first bolds part of the item's <em>text</em>, the second replaces the item's <em>marker</em> entirely. Either is correct; know which one you're doing.</p>
+      </div>
+
+      <div class="subtopic">
+        <h3>Description lists &amp; tight spacing</h3>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">source</span>
+            <pre class="tex-code"><code>\begin{description}
+  \item[Note] Lists can be customized.
+\end{description}
+
+\begin{itemize}[noitemsep, topsep=2pt]
+  \item compresses the gaps
+  \item between items
+\end{itemize}</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">rendered</span>
+            <div class="rendered">
+              <div><b>Note</b> &nbsp;Lists can be customized.</div>
+              <ul style="margin:8px 0 0; padding-left:20px; line-height:1.25;">
+                <li>compresses the gaps</li><li>between items</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <p class="small-note">Default LaTeX lists are noticeably loose (extra vertical space between items) because that's the safest default for arbitrary content. <code class="inline">noitemsep</code> (kill the extra spacing between items while keeping spacing before/after the list) and <code class="inline">topsep=2pt</code> (shrink the gap before/after the whole list) are the two options you'll reach for constantly once you start caring about a document's visual density, e.g. fitting a long spec sheet on one slide or one exam page.</p>
+      </div>
+    </section>
+
+    <!-- ============ 03 STRUCTURE ============ -->
+    <section id="structure">
+      <div class="section-head"><span class="section-num">03</span><h2>Document Structure &amp; Navigation</h2></div>
+      <p class="lead">Every past paper used a title block plus a numbered section hierarchy, and both of your teacher's templates layered on <code class="inline">\tableofcontents</code>, an unnumbered heading, and — in the older file — a full <code class="inline">\listoftables</code> too. This is the skeleton every one of your documents will share.</p>
+
+      <div class="grid-2">
+        <div class="subtopic">
+          <h3>Title block</h3>
+          <pre class="tex-code" style="background:var(--paper); color:var(--ink); padding:16px; border-radius:6px;"><code>\title{The History Behind Leap Year}
+\author{Your Name (Your Student ID)}
+\date{\today}
+
+\begin{document}
+\maketitle</code></pre>
+          <p class="small-note"><code class="inline">\title</code>, <code class="inline">\author</code>, and <code class="inline">\date</code> only <em>store</em> the information — nothing is typeset until <code class="inline">\maketitle</code> is called inside the document body. <code class="inline">\date{\today}</code> inserts whatever the compile date is at build time, which is convenient but means the date silently changes every time you recompile — for a fixed submission date, write it literally instead: <code class="inline">\date{June 2026}</code>.</p>
+        </div>
+        <div class="subtopic">
+          <h3>Section hierarchy</h3>
+          <pre class="tex-code" style="background:var(--paper); color:var(--ink); padding:16px; border-radius:6px;"><code>\section{History}
+\subsection{Julian Calendar}
+\subsubsection{Detail}
+\paragraph{Aside.} inline run-in text</code></pre>
+          <p class="small-note">In the <code class="inline">article</code> class there is no <code class="inline">\chapter</code> — the top level is <code class="inline">\section</code>. <code class="inline">\paragraph</code> and <code class="inline">\subparagraph</code> exist but render as bold run-in text with no number by default (more on exactly why below) — they are easy to mistake for a bug rather than the intended, documented behaviour.</p>
+        </div>
+      </div>
+
+      <div class="subtopic">
+        <h3>Why some headings get numbers and some don't — <code class="inline">secnumdepth</code> and <code class="inline">tocdepth</code></h3>
+        <p>This is one of the single most confusing things in LaTeX document structure, and it explains something you've almost certainly already seen: in your teacher's own template, <code class="inline">\paragraph{Paragraph XYZ}</code> gets no number at all, while every <code class="inline">\subsubsection</code> above it does. This isn't random — every sectioning command has a numeric "depth" baked in: <code class="inline">\section</code> is depth 1, <code class="inline">\subsection</code> is depth 2, <code class="inline">\subsubsection</code> is depth 3, <code class="inline">\paragraph</code> is depth 4, <code class="inline">\subparagraph</code> is depth 5. Two invisible counters then gate what actually happens to each one: <code class="inline">secnumdepth</code> controls the deepest level that gets a printed number, and <code class="inline">tocdepth</code> controls the deepest level that gets an entry in <code class="inline">\tableofcontents</code>. For the <code class="inline">article</code> class, both default to <b>3</b> — meaning sections, subsections, and subsubsections are numbered <em>and</em> appear in the TOC automatically, but paragraphs (depth 4) and subparagraphs (depth 5) get neither, by design, because a document with numbered paragraphs and a TOC entry for every one of them would be unreadable clutter. If you genuinely want numbered paragraphs, you raise the counters yourself:</p>
+        <pre class="tex-code" style="background:var(--paper); color:var(--ink); padding:16px; border-radius:6px;"><code>\setcounter{secnumdepth}{4}   % now \paragraph gets a number
+\setcounter{tocdepth}{4}      % ...and shows up in \tableofcontents too</code></pre>
+        <p class="small-note">Book and report classes default <code class="inline">secnumdepth</code> to <b>2</b> instead of 3 — meaning even <code class="inline">\subsubsection</code> is unnumbered by default in those classes, which surprises people coming from <code class="inline">article</code>. If a heading in a report-class document looks like it "should" have a number and doesn't, this is almost always why.</p>
+      </div>
+
+      <div class="subtopic">
+        <h3>Unnumbered headings, and getting them into the TOC anyway</h3>
+        <p>Every sectioning command has a starred variant — <code class="inline">\section*</code>, <code class="inline">\subsection*</code>, and so on — that suppresses both the number <em>and</em> the automatic TOC entry, regardless of what <code class="inline">secnumdepth</code>/<code class="inline">tocdepth</code> say. This is what your teacher's file used for <code class="inline">\section*{Unlisted Section}</code>, and it's the right tool whenever a heading is structural but shouldn't be numbered — "Abstract," "Acknowledgements," "References," "Disclaimer." The catch: because the starred version genuinely never touches the TOC machinery, it stays invisible in <code class="inline">\tableofcontents</code> even if you want it listed. The fix is to manually add a line to the table-of-contents file yourself, immediately after the heading:</p>
+        <pre class="tex-code" style="background:var(--paper); color:var(--ink); padding:16px; border-radius:6px;"><code>\section*{Disclaimer}
+\addcontentsline{toc}{section}{Disclaimer}</code></pre>
+        <p class="small-note">The three arguments to <code class="inline">\addcontentsline</code> are: which list file to write to (<code class="inline">toc</code>, or <code class="inline">lof</code>/<code class="inline">lot</code> for figures/tables), what level to format it as (<code class="inline">section</code>, <code class="inline">subsection</code>, ...), and the text to display.</p>
+      </div>
+
+      <div class="subtopic">
+        <h3>The full "list of..." family, and why compiling twice isn't optional</h3>
+        <p>Your teacher's older template calls all three list-generating commands back to back: <code class="inline">\tableofcontents</code>, <code class="inline">\listoftables</code>, and <code class="inline">\listoffigures</code> (all figures/tables need a <code class="inline">\caption</code> to appear in these — an uncaptioned figure is invisible to both lists). All three work identically under the hood and share the exact same quirk that trips up almost every new LaTeX user: <b>on the very first compile, they will be wrong, empty, or missing entirely</b> — not because anything is broken, but because of a fundamental chicken-and-egg problem. <code class="inline">\tableofcontents</code> needs to know the page number of every section, but sections later in the document haven't been typeset yet when LaTeX reaches the TOC near the top of the file. So instead, the first compile pass silently <em>writes</em> a side-file (<code class="inline">.toc</code>, <code class="inline">.lot</code>, <code class="inline">.lof</code>) recording everything it found, and only the <em>second</em> compile pass reads that file back in and actually typesets the correct list. This is why "just compile it twice" is not superstition — it's the literal mechanism.</p>
+        <div class="mistake"><b>Common mistake:</b> adding a new section, recompiling once, and concluding the table of contents is "broken" because it's missing the new entry or shows stale page numbers. It isn't broken — it's one compile pass behind. Whenever you edit headings, figure captions, or table captions, run pdflatex twice before judging the result.</div>
+      </div>
+
+      <div class="subtopic">
+        <h3>Forcing exact placement: <code class="inline">[H]</code> vs. the hints <code class="inline">[h] [t] [b] [p]</code></h3>
+        <p>Both your Tables (§04) and Figures (§05) sections already cover the standard placement letters — but it's worth being precise about what they actually promise, because the honest answer is: <em>not much</em>. <code class="inline">[h]</code> ("here") is only a <em>suggestion</em>. LaTeX runs an internal aesthetic algorithm that tries to avoid ugly page breaks and half-empty pages, and it is entirely willing to override your <code class="inline">[h]</code> and float the content to the top of the next page if fitting it exactly "here" would look bad by its own rules. This is why figures sometimes seem to "jump" a page or two away from where you placed them in the source — that's not a bug, that's LaTeX's placement algorithm doing exactly what it's designed to do.</p>
+        <p>Your teacher's older template sidesteps this entirely by loading <code class="inline">\usepackage{float}</code> and using <code class="inline">[H]</code> (capital H) instead, as in <code class="inline">\begin{table}[H]</code>. This is a genuinely different specifier, not a stronger version of the same one — <code class="inline">[H]</code> means "place this <em>exactly</em> at this point in the source, full stop, no aesthetic negotiation." The trade-off: because LaTeX is no longer allowed to move it, a large <code class="inline">[H]</code> figure can force an awkward page break or leave a large gap of white space, precisely the ugliness the normal float algorithm exists to prevent. Use <code class="inline">[H]</code> when exact positioning matters more than a clean layout (e.g. "this diagram must be right next to the paragraph describing it" for a grader); use the lowercase hints, ideally combined as <code class="inline">[htbp]</code>, when you trust LaTeX's placement judgment and just want a reasonable result with minimal fuss.</p>
+      </div>
+
+      <div class="subtopic">
+        <h3>Dummy text for testing a layout: <code class="inline">lipsum</code></h3>
+        <p>Your teacher's newer template fills every section with <code class="inline">\lipsum[1-6]</code>-style calls instead of real content — this is a completely standard, deliberate technique, not a placeholder someone forgot to remove. <code class="inline">\usepackage{lipsum}</code> gives you access to roughly 150 pre-written "Lorem ipsum" paragraphs, individually numbered, so you can build and check a document's visual structure — does this figure fit next to this paragraph? does this section run too short? — before the real writing exists. <code class="inline">\lipsum</code> alone inserts paragraph 1; <code class="inline">\lipsum[5-7]</code> inserts paragraphs 5 through 7 back to back; <code class="inline">\lipsum[8]</code> inserts just paragraph 8.</p>
+        <div class="tip"><b>Practical use for you:</b> when you're handed a mark-distribution sheet like your Online-1 papers (10 marks for lists, 25 for equations, ...) before you've written a word, scaffold the whole document with real headings and <code class="inline">\lipsum</code> filler first, get the tables/figures/equations exactly right, and only then replace the filler paragraphs with real prose. It separates "does the LaTeX work" from "is the writing good," which is a much easier way to debug either problem in isolation.</div>
+      </div>
+
+      <div class="subtopic">
+        <h3>Page breaks: <code class="inline">\newpage</code> vs. <code class="inline">\pagebreak</code></h3>
+        <p>Your teacher's older template calls <code class="inline">\pagebreak</code> three times, right after <code class="inline">\maketitle</code>, before <code class="inline">\tableofcontents</code>, and before <code class="inline">\listoftables</code>. <code class="inline">\newpage</code> is the blunt, unconditional instrument: it ends the current page immediately, no matter what, and starts fresh. <code class="inline">\pagebreak</code> (optionally <code class="inline">\pagebreak[0]</code> through <code class="inline">\pagebreak[4]</code>) is a <em>priority hint</em> to the page-breaking algorithm, the same mechanism behind <code class="inline">\linebreak</code> for lines within a paragraph — <code class="inline">[4]</code> (the default when you write bare <code class="inline">\pagebreak</code>) means "strongly prefer breaking here," and in the overwhelming majority of real documents it does in fact force a break, but technically it is still a preference the algorithm is allowed to weigh against other constraints, unlike <code class="inline">\newpage</code>'s absolute guarantee. For everyday use the two are close enough to interchangeable; reach for <code class="inline">\newpage</code> when you want a guarantee with zero ambiguity, which is most of the time.</p>
+      </div>
+    </section>
+
+    <!-- ============ 04 TABLES ============ -->
+    <section id="tables">
+      <div class="section-head"><span class="section-num">04</span><h2>Tables — multirow &amp; multicolumn</h2></div>
+      <p class="lead">This is exactly what the Leap Year paper's "Divisible By" spanning header, and the Document Structure paper's merged "Module B" row, were built from — and your teacher's older template independently drills the same three ideas (multicolumn, multirow, booktabs) as three separate, deliberately minimal subsections before combining them.</p>
+
+      <div class="subtopic">
+        <h3>The mental model: rows, columns, and why <code class="inline">&amp;</code> and <code class="inline">\\</code> aren't optional</h3>
+        <p>A <code class="inline">tabular</code> environment is, underneath the visual formatting, a strict grid. The column specification you give it — <code class="inline">{l c r}</code>, <code class="inline">{|l|c|r|}</code>, and so on — fixes the number of columns for the <em>entire table</em> before a single cell is written. Every row must then contain exactly that many cells, separated by <code class="inline">&amp;</code>, and terminated by <code class="inline">\\</code>. Both symbols are easy to get subtly wrong in ways that produce genuinely unhelpful error messages: forgetting the final <code class="inline">\\</code> on the last row (LaTeX will often still compile, just merging that row visually with whatever comes after the table) or writing one <code class="inline">&amp;</code> too many or too few for the declared column count, which throws <code class="inline">! Extra alignment tab has been changed to \cr</code> or <code class="inline">Misplaced alignment tab character &amp;</code> — two of the most common error messages you'll hit while learning tables, and both are almost always a miscount of columns, not a deep problem.</p>
+      </div>
+
+      <div class="subtopic">
+        <h3><code class="inline">\multicolumn</code> — one header spanning several columns</h3>
+        <p><code class="inline">\multicolumn{n}{align}{content}</code> takes over for exactly <code class="inline">n</code> of the columns that row would otherwise need, re-declares their alignment just for this cell (it can differ from the table's own column spec — useful when a spanning header should be centered even though the columns underneath are left- or right-aligned), and prints <code class="inline">content</code> across the merged space. Crucially, because it consumes <code class="inline">n</code> columns' worth of <code class="inline">&amp;</code>-separated slots in one go, <em>the rest of that row still needs exactly the right total column count</em> — a row with one <code class="inline">\multicolumn{3}{...}{...}</code> plus two ordinary cells is only using 5 "slots" of table width but is written with just 3 <code class="inline">&amp;</code>-separated entries, and this is precisely where people miscount and trigger the alignment-tab errors above.</p>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">source</span>
+            <pre class="tex-code"><code>\begin{tabular}{|c|c|c|c|c|}
+\hline
+\multirow{2}{*}{Year} & \multicolumn{3}{c|}{Divisible By} & \multirow{2}{*}{Leap Year?} \\
+\cline{2-4}
+ & 4? & 100? & 400? & \\
+\hline
+1900 & Yes & Yes & No  & No  \\
+2000 & Yes & Yes & Yes & Yes \\
+2024 & Yes & No  & No  & Yes \\
+\hline
+\end{tabular}</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">rendered</span>
+            <table class="demo-table tbl-hlines">
+              <tr><th rowspan="2">Year</th><th colspan="3">Divisible By</th><th rowspan="2">Leap Year?</th></tr>
+              <tr><td>4?</td><td>100?</td><td>400?</td></tr>
+              <tr><td>1900</td><td>Yes</td><td>Yes</td><td>No</td><td>No</td></tr>
+              <tr><td>2000</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+              <tr><td>2024</td><td>Yes</td><td>No</td><td>No</td><td>Yes</td></tr>
+            </table>
+          </div>
+        </div>
+        <p class="small-note"><code class="inline">\multicolumn{3}{c|}{...}</code> reads as: span <b>3</b> columns, center-align, put a <b>|</b> vertical rule after. <code class="inline">\cline{2-4}</code> draws a horizontal rule under <i>only</i> columns 2–4, leaving the merged "Year"/"Leap Year?" cells uninterrupted. <code class="inline">\multirow{2}{*}{Year}</code> (from the <code class="inline">multirow</code> package) merges that cell down through 2 rows; the <code class="inline">*</code> as the width argument tells <code class="inline">multirow</code> to use the column's natural width rather than a fixed size you specify.</p>
+        <p>Your teacher's own multicolumn subsection is a leaner, standalone version of exactly this same technique — worth studying because it isolates the concept without the added complexity of also merging rows:</p>
+        <pre class="tex-code" style="background:var(--paper); color:var(--ink); padding:16px; border-radius:6px;"><code>\begin{tabular}{ | l | c | r | }
+\hline
+ cell1 & cell2 & cell3 \\
+\hline
+ \multicolumn{2}{|c|}{Merged cols} & bigcellcell6 \\
+\hline
+ 1 & 2 & 3 \\
+ \cline{1-2}
+ cell7 & cell8 & cell9    \\
+\hline
+\end{tabular}</code></pre>
+      </div>
+
+      <div class="subtopic">
+        <h3><code class="inline">\multirow</code> in isolation</h3>
+        <p>The mirror-image situation to <code class="inline">\multicolumn</code>: a cell that should visually span two or more <em>rows</em> instead of columns. The catch that catches almost everyone the first time: when a cell above merges downward, the row(s) below it must have <em>one fewer</em> <code class="inline">&amp;</code>-separated entry for that column, because the merged cell has already claimed that grid position — you do not write an empty placeholder cell for it.</p>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">source (from your teacher's file)</span>
+            <pre class="tex-code"><code>\begin{tabular}{|c|c|c|}
+    \hline
+    c11 & c12 & c13 \\
+    \hline
+    \multirow{2}{*}{c23} & c22 & c23 \\
+    \cline{2-3}
+     & c32 & c33 \\
+    \hline
+\end{tabular}</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">rendered</span>
+            <table class="demo-table tbl-hlines">
+              <tr><td>c11</td><td>c12</td><td>c13</td></tr>
+              <tr><td rowspan="2">c23</td><td>c22</td><td>c23</td></tr>
+              <tr><td>c32</td><td>c33</td></tr>
+            </table>
+          </div>
+        </div>
+        <p class="small-note">Look closely at the second-to-last row: it begins with a bare <code class="inline">&amp;</code> — an intentionally empty first cell — precisely because the merged <code class="inline">c23</code> cell above is already occupying that grid position for both rows. This is the exact detail people get wrong when adapting a multirow example: they either leave the cell genuinely empty (correct) or, more often, try to also write content there (which shifts every subsequent cell in that row one column to the right and throws off the whole table).</p>
+      </div>
+
+      <div class="subtopic">
+        <h3>Booktabs style + colored rows/cells</h3>
+        <p><code class="inline">booktabs</code> is a small but opinionated package built entirely around a single typographic argument: hand-ruled tables with a full grid of vertical and horizontal lines look cluttered and amateurish in print, and professional publishing almost universally uses just three carefully-weighted horizontal rules — a slightly heavier rule at the very top (<code class="inline">\toprule</code>), a lighter rule separating the header from the body (<code class="inline">\midrule</code>), and a heavier rule at the very bottom (<code class="inline">\bottomrule</code>) — with <em>no vertical lines at all</em>. If this looks "incomplete" compared to a fully gridded table, that reaction is exactly what the package is trying to train out of you; it's the deliberate convention, not a missing feature.</p>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">source</span>
+            <pre class="tex-code"><code>\begin{tabular}{lcc}
+\toprule
+Method & Accuracy & Time \\
+\midrule
+\rowcolor{gray!15} Rasterization & Medium & $O(n)$ \\
+Ray Tracing & High & $O(n^2)$ \\
+Hybrid & \cellcolor{yellow!40}High & $O(n^2)$ \\
+\bottomrule
+\end{tabular}</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">rendered</span>
+            <table class="demo-table tbl-booktabs">
+              <tr><th>Method</th><th>Accuracy</th><th>Time</th></tr>
+              <tr style="background:#e7e7e7; color:#201D17;"><td style="color:#201D17;">Rasterization</td><td style="color:#201D17;">Medium</td><td style="color:#201D17;">O(n)</td></tr>
+              <tr><td>Ray Tracing</td><td>High</td><td>O(n²)</td></tr>
+              <tr><td class="bottom-rule">Hybrid</td><td class="bottom-rule" style="background:#fdeaa0; color:#201D17;">High</td><td class="bottom-rule">O(n²)</td></tr>
+            </table>
+          </div>
+        </div>
+        <p class="small-note"><code class="inline">\rowcolor{}</code> tints a whole row and must appear as the very first thing in that row, before any cell content; <code class="inline">\cellcolor{}</code> tints a single cell and is placed inside that cell like any other content. Both need <code class="inline">\usepackage[table]{xcolor}</code>. The <code class="inline">gray!15</code> / <code class="inline">yellow!40</code> syntax mixes a named color with white — <code class="inline">yellow!40</code> means "40% yellow, 60% white," which is how you get pastel tints instead of a jarring saturated color sitting behind readable text.</p>
+        <p>Your teacher's file demonstrates one more booktabs-specific rule you won't find in plain <code class="inline">\hline</code>-based tables: <code class="inline">\cmidrule</code>, a partial-width version of <code class="inline">\midrule</code> that plays the same role <code class="inline">\cline</code> plays for grid-style tables, but drawn with booktabs' lighter weight and — critically — with automatic trimming so the rule doesn't visually collide with the vertical whitespace of a merged header above it:</p>
+        <pre class="tex-code" style="background:var(--paper); color:var(--ink); padding:16px; border-radius:6px;"><code>\begin{tabular}{llr}
+    \toprule
+    \multicolumn{2}{c}{Architecture Profile} \\
+    \cmidrule(r){1-2}
+    Network Name & Topology & Parameters (M) \\
+    \midrule
+    ResNet-50 & CNN & 25.6 \\
+    ViT-Base & Transformer & 86.0 \\
+    \bottomrule
+\end{tabular}</code></pre>
+        <p class="small-note">The <code class="inline">(r)</code> in <code class="inline">\cmidrule(r){1-2}</code> trims the rule's right end slightly short, which keeps it from visually running into whatever sits in column 3 on the same logical row — a level of typographic polish <code class="inline">\cline</code> simply doesn't offer. Options are <code class="inline">(l)</code>, <code class="inline">(r)</code>, or <code class="inline">(lr)</code> to trim either or both ends.</p>
+      </div>
+
+      <div class="subtopic">
+        <h3>Positioning, captions, and column types</h3>
+        <pre class="tex-code" style="background:var(--paper); color:var(--ink); padding:16px; border-radius:6px;"><code>\begin{table}[htbp]
+  \centering
+  \begin{tabular}{l p{4cm} r}
+    ...
+  \end{tabular}
+  \caption{Comparison of Image Synthesis Techniques}
+  \label{tab:comparison}
+\end{table}</code></pre>
+        <p><code class="inline">[htbp]</code> stacks placement hints in priority order: try <b>h</b>ere, else the <b>t</b>op of a page, else the <b>b</b>ottom, else give it its own <b>p</b>age of just floats. Add <code class="inline">!</code> (e.g. <code class="inline">[h!]</code>) to tell LaTeX to relax some of its internal aesthetic thresholds — not to override placement entirely (that's what the <code class="inline">float</code> package's <code class="inline">[H]</code>, discussed in §03, is for), just to be less picky about what counts as "good enough" before accepting your preference.</p>
+        <p class="small-note">Column types: <code class="inline">l/c/r</code> = fixed-width left/center/right (width determined by the widest cell content, no wrapping), <code class="inline">p{width}</code> = fixed-width paragraph column that wraps long text and top-aligns its content vertically, <code class="inline">m{width}</code>/<code class="inline">b{width}</code> (from the <code class="inline">array</code> package) = the same wrapping behaviour but middle/bottom-aligned instead. Leaving a cell empty (just <code class="inline">&amp;</code> with nothing between) — like the missing method name in your Image Synthesis table — is perfectly valid syntax, not an error.</p>
+        <div class="mistake"><b>Common mistake:</b> putting <code class="inline">\label{}</code> <em>before</em> <code class="inline">\caption{}</code> inside a table or figure. LaTeX assigns the actual number to a label by looking at whatever numbered counter was most recently updated — and it's <code class="inline">\caption</code> that updates the table/figure counter, not <code class="inline">\begin{table}</code> itself. A label placed above the caption captures whatever number was current <em>before</em> this table (often the previous table's number, or nothing at all), and every <code class="inline">\ref</code> to it will be silently wrong. Always: table/figure content, then <code class="inline">\caption</code>, then <code class="inline">\label</code>, in that order.</div>
+      </div>
+    </section>
+
+    <!-- ============ 05 FIGURES ============ -->
+    <section id="figures">
+      <div class="section-head"><span class="section-num">05</span><h2>Figures &amp; Subfigures</h2></div>
+      <p class="lead">Two layouts appeared across your papers: an even side-by-side row (Leap Year, Image Synthesis) and an asymmetric "one big + two small" layout (Document Structure C2). Your teacher's own newer template also shows the more ordinary single-figure case, which is worth grounding first.</p>
+
+      <div class="subtopic">
+        <h3>A single figure, from scratch</h3>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">source (your teacher's file)</span>
+            <pre class="tex-code"><code>\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\linewidth]{g.png}
+    \caption{Grading scheme of CSE, BUET}
+    \label{fig:placeholder}
+\end{figure}</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">rendered</span>
+            <div style="text-align:center;">
+              <div class="fig-box" style="width:150px; height:100px; margin:0 auto;">g.png</div>
+              <div class="fig-cap">Figure 1: Grading scheme of CSE, BUET</div>
+            </div>
+          </div>
+        </div>
+        <p><code class="inline">\centering</code> inside the <code class="inline">figure</code> environment centers the image horizontally on the page — without it, the image left-aligns, which surprises people who assume <code class="inline">figure</code> centers by default. <code class="inline">width=0.5\linewidth</code> sizes the image to exactly half the width of the current text column, which is why it's almost always preferred over a fixed unit like <code class="inline">width=6cm</code>: it scales automatically if the page margins or column width ever change, whereas a fixed size doesn't. <code class="inline">\linewidth</code> and <code class="inline">\textwidth</code> are usually interchangeable in a simple one-column document, but differ inside more complex layouts (a minipage, a two-column article) where <code class="inline">\linewidth</code> tracks the width of the immediate surrounding box while <code class="inline">\textwidth</code> always refers to the whole page's text block.</p>
+      </div>
+
+      <div class="subtopic">
+        <h3>Even row of subfigures</h3>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">source</span>
+            <pre class="tex-code"><code>\begin{figure}[h]
+  \centering
+  \begin{subfigure}{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{julius}
+    \caption{Julius}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{gregory}
+    \caption{Gregory}
+  \end{subfigure}
+  \caption{Pioneers of Modern Calendars}
+  \label{fig:pioneers}
+\end{figure}</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">rendered</span>
+            <div class="fig-row">
+              <div>
+                <div class="fig-box" style="width:140px; height:100px;">A</div>
+                <div class="fig-cap">(a) Julius</div>
+              </div>
+              <div>
+                <div class="fig-box" style="width:140px; height:100px;">B</div>
+                <div class="fig-cap">(b) Gregory</div>
+              </div>
+            </div>
+            <div class="cap">Figure: Pioneers of Modern Calendars</div>
+          </div>
+        </div>
+        <p class="small-note">Two widths that sum to <b>less than 1</b> (0.45 + 0.45 = 0.9) leave the leftover 0.1 as the gap. <code class="inline">\hfill</code> pushes the two boxes apart to use that space evenly; swap it for a fixed <code class="inline">\hspace{1cm}</code> if you want an exact gap instead of a stretchy one that adjusts depending on the two widths you chose.</p>
+        <p>Also note the two different widths in play here and why neither is a typo: the <em>outer</em> <code class="inline">\begin{subfigure}{0.45\textwidth}</code> sets how much horizontal space this whole sub-block (image + its own caption) is allowed to occupy, while the <em>inner</em> <code class="inline">\includegraphics[width=\textwidth]{...}</code> then fills <em>that entire allotted space</em> — inside a <code class="inline">subfigure</code>, <code class="inline">\textwidth</code> is locally redefined to mean "the width of this subfigure," not the width of the whole page. Writing <code class="inline">width=\textwidth</code> here is deliberate and correct, not a mistake — it's exactly how you make the image fill its box.</p>
+      </div>
+
+      <div class="subtopic">
+        <h3>Asymmetric layout: one dominant figure + two details below</h3>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">source</span>
+            <pre class="tex-code"><code>\begin{figure}[h]
+  \centering
+  \begin{subfigure}{0.6\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{main}
+    \caption{Main Diagram}
+  \end{subfigure}
+
+  \vspace{0.5cm}
+
+  \begin{subfigure}{0.35\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{b}
+    \caption{Detail B}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{0.35\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{c}
+    \caption{Detail C}
+  \end{subfigure}
+  \caption{Asymmetric layout with one dominant figure}
+\end{figure}</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">rendered</span>
+            <div style="text-align:center;">
+              <div class="fig-box" style="width:180px; height:120px; margin:0 auto;">A</div>
+              <div class="fig-cap">(a) Main Diagram</div>
+              <div class="fig-row" style="justify-content:center; margin-top:14px;">
+                <div><div class="fig-box" style="width:110px; height:80px;">B</div><div class="fig-cap">(b) Detail B</div></div>
+                <div><div class="fig-box" style="width:110px; height:80px;">C</div><div class="fig-cap">(c) Detail C</div></div>
+              </div>
+              <div class="cap">Figure: Asymmetric layout</div>
+            </div>
+          </div>
+        </div>
+        <p class="small-note">A blank line (or explicit <code class="inline">\vspace{}</code>) between subfigure blocks starts a new visual "row" — LaTeX just wraps subfigures like words wrap in a paragraph, once a row's total width exceeds <code class="inline">\textwidth</code>. There's no special "asymmetric layout" environment; it's the same <code class="inline">subfigure</code> block repeated with different widths and an explicit break between the first block and the next two.</p>
+      </div>
+
+      <div class="subtopic">
+        <h3><code class="inline">\includegraphics</code> sizing options</h3>
+        <pre class="tex-code" style="background:var(--paper); color:var(--ink); padding:16px; border-radius:6px;"><code>\includegraphics[width=0.6\textwidth]{fig}   % relative to text width
+\includegraphics[height=4cm]{fig}            % fixed height
+\includegraphics[scale=0.5]{fig}             % scale factor
+\includegraphics[width=5cm, angle=90]{fig}   % rotate</code></pre>
+        <p class="small-note">Specify <em>either</em> <code class="inline">width</code> or <code class="inline">height</code> alone and the image scales proportionally, preserving its aspect ratio automatically. Specify <em>both</em> together and you override the natural aspect ratio, stretching or squashing the image — almost always accidental when it happens, so if an image looks distorted, check whether both options snuck in.</p>
+      </div>
+    </section>
+
+    <!-- ============ 06 MATH I ============ -->
+    <section id="math">
+      <div class="section-head"><span class="section-num">06</span><h2>Math I — Core Environments</h2></div>
+      <p class="lead">Both the Image Synthesis and Document Structure papers used <code class="inline">cases</code> for piecewise functions, and your teacher's templates independently exercise <code class="inline">equation</code>, <code class="inline">align</code>, <code class="inline">cases</code>, and <code class="inline">bmatrix</code> around a real worked quadratic-formula derivation. This section is the environments; §07 is the symbol vocabulary you'll fill them with.</p>
+
+      <div class="subtopic">
+        <h3>Inline vs. display math, and the <code class="inline">$$...$$</code> question</h3>
+        <p>LaTeX distinguishes <em>inline</em> math (sits inside a line of running text, sized to match the surrounding text) from <em>display</em> math (broken onto its own centered line, typeset larger, used for anything you want the reader's eye to land on directly). Inline math is written between single dollar signs, <code class="inline">$x^2$</code>, or equivalently <code class="inline">\(x^2\)</code>. Display math has more options than most students realize: bare <code class="inline">\[ ... \]</code> or the <code class="inline">equation*</code> environment both give you an unnumbered centered display; the <code class="inline">equation</code> environment gives you the same thing <em>with</em> an automatic number on the right. You will also see <code class="inline">$$ ... $$</code> used for display math — your teacher's own template uses it directly, e.g. <code class="inline">$$\alpha x^2 + bx + c = 0$$</code> — and it does work under plain LaTeX. It's worth knowing precisely why some style guides discourage it anyway: <code class="inline">$$</code> is technically a plain-TeX construct that LaTeX merely tolerates for backward compatibility, and it doesn't integrate with <code class="inline">amsmath</code>'s spacing and numbering logic as cleanly as <code class="inline">\[...\]</code> or <code class="inline">equation*</code> do — in rare cases it can produce inconsistent vertical spacing around the display. In practice, for coursework, either is accepted and both compile fine; just be consistent within one document, and know that <code class="inline">equation</code>/<code class="inline">equation*</code> are the only two of the three that can carry a <code class="inline">\label</code> for later reference.</p>
+      </div>
+
+      <div class="subtopic">
+        <h3>Piecewise functions with <code class="inline">cases</code></h3>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">source</span>
+            <pre class="tex-code"><code>|y| =
+\begin{cases}
+  y  &amp; \text{if } y \geq 0 \\
+  -y &amp; \text{if } y &lt; 0
+\end{cases}</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">rendered</span>
+            <div class="cases-wrap">
+              <span>|y| =</span>
+              <span class="cases-brace">{</span>
+              <div class="cases-rows">
+                <div class="row"><span>y</span><span class="cond">if y ≥ 0</span></div>
+                <div class="row"><span>−y</span><span class="cond">if y &lt; 0</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p>Needs <code class="inline">amsmath</code>. Each line is <code class="inline">value &amp; condition</code>, separated by <code class="inline">\\</code> — structurally, <code class="inline">cases</code> is really just a two-column array with a giant left brace glued to it, which is why the syntax (an <code class="inline">&amp;</code> to separate the two "columns," <code class="inline">\\</code> to end a row) matches ordinary table syntax. Use <code class="inline">\text{...}</code> (not plain words typed directly into math mode) for the "if" labels — inside math mode, LaTeX treats every letter as a separate mathematical variable by default, italicizing each one and tightening the spacing between them as if you'd written a product of variables; typing <code class="inline">if y \geq 0</code> without <code class="inline">\text{}</code> renders as a cramped, italic <em>ifyge0</em>-looking mess rather than readable words. <code class="inline">\text{}</code> is the escape hatch that says "this specific stretch is ordinary prose, format it like prose."</p>
+      </div>
+
+      <div class="subtopic">
+        <h3>Multi-line derivations with <code class="inline">align</code></h3>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">source</span>
+            <pre class="tex-code"><code>\begin{align}
+  f(x) &amp;= x^2 + 2x + 1 \\
+       &amp;= (x+1)^2
+\end{align}</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">rendered</span>
+            <div class="rendered">
+              f(x) = x² + 2x + 1 &nbsp;&nbsp;&nbsp; (1)<br>
+              &nbsp;&nbsp;&nbsp; = (x + 1)² &nbsp;&nbsp;&nbsp; (2)
+            </div>
+          </div>
+        </div>
+        <p>The <code class="inline">&amp;</code> in each line marks the exact column where every line should vertically line up — put it just before the <code class="inline">=</code> sign, as here, and every equals sign across every line stacks in a single column, which is what makes a multi-step derivation actually readable instead of a ragged left margin. Every line is numbered by default; use <code class="inline">\notag</code> (or the older <code class="inline">\nonumber</code>) at the end of a specific line to suppress just that line's number — your teacher's older file does exactly this on the first line of a two-line <code class="inline">align</code> block so only the final simplified result carries a number — or use <code class="inline">align*</code> (with an asterisk) to suppress numbering for every line in the block at once.</p>
+        <p class="small-note">A frequent point of confusion: <code class="inline">align</code> is not the same environment as <code class="inline">align*</code>, and unlike <code class="inline">equation</code>/<code class="inline">equation*</code> the star has to be typed on <em>both</em> the <code class="inline">\begin</code> and <code class="inline">\end</code> lines — <code class="inline">\begin{align*} ... \end{align*}</code>, never a mix of one starred and one not.</p>
+      </div>
+
+      <div class="subtopic">
+        <h3>Matrices, fractions, sums</h3>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">source</span>
+            <pre class="tex-code"><code>k = \dfrac{ab}{cd}
+
+M = \begin{pmatrix} a &amp; b \\ c &amp; d \end{pmatrix}
+
+W = \begin{bmatrix}
+  w_{11} &amp; w_{12} &amp; \cdots &amp; w_{1n} \\
+  \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+  w_{m1} &amp; w_{m2} &amp; \cdots &amp; w_{mn}
+\end{bmatrix}
+
+T = \sum_{i=1}^{n} (x_i - \mu)^2</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">rendered</span>
+            <div class="rendered" style="line-height:2.1;">
+              k = ab⁄cd<br>
+              M = ( a b ; c d ) — parentheses matrix<br>
+              W = [ a big m×n grid, with ⋯ and ⋱ marking the skipped middle ]<br>
+              T = Σ<sub>i=1</sub><sup>n</sup> (xᵢ − μ)²
+            </div>
+          </div>
+        </div>
+        <p>Matrix variants: <code class="inline">pmatrix</code> gives ( ) parentheses, <code class="inline">bmatrix</code> gives [ ] square brackets, <code class="inline">vmatrix</code> gives | | bars (the standard notation for a determinant), <code class="inline">Bmatrix</code> gives { } curly braces. All four take the exact same row/column syntax as <code class="inline">tabular</code> or <code class="inline">array</code> — <code class="inline">&amp;</code> between entries, <code class="inline">\\</code> between rows — and none of them need you to declare a column specification the way <code class="inline">tabular</code> does; the environment figures out the column count from the widest row automatically. For a large matrix with an implied pattern, <code class="inline">\cdots</code> (centered dots, horizontal), <code class="inline">\vdots</code> (vertical dots), and <code class="inline">\ddots</code> (diagonal dots) are the standard way to show "and so on" without writing out every entry — exactly as in the <code class="inline">W</code> matrix above, lifted directly from your teacher's file.</p>
+        <p class="small-note"><code class="inline">\frac{a}{b}</code> shrinks slightly when used inline (mid-sentence) to avoid disrupting line spacing; <code class="inline">\dfrac{a}{b}</code> forces the full "display style" size even inline, which is what you want when a fraction is genuinely the main content of the expression rather than a small aside.</p>
+      </div>
+
+      <div class="subtopic">
+        <h3>A complete worked example: the quadratic formula</h3>
+        <p>Your teacher's own template solves the general quadratic $\alpha x^2 + bx + c = 0$ using exactly the tools above chained together — display math for the setup, then <code class="inline">align*</code> for the two-root derivation. It's worth reading end-to-end as a template for "how do I actually write up a multi-step math solution":</p>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">source</span>
+            <pre class="tex-code"><code>We want to write the solution for the
+quadratic equation
+$$\alpha x^2 + bx + c = 0$$.
+
+The solution is
+$$ x = \frac{1}{2\alpha} \times
+   \left(-b + \sqrt{-b^2 \pm 4\cdot \alpha \cdot c}\right) $$
+
+But there are two solutions actually.
+\begin{align*}
+ x_1 &amp; = \frac{1}{2\alpha} \times
+   \left(-b + \sqrt{-b^2 + 4\cdot \alpha \cdot c}\right)  \\
+ x_2 &amp; = \frac{1}{2\alpha} \times
+   \left(-b - \sqrt{-b^2 - 4\cdot \alpha \cdot c}\right) \\
+ &amp; = \frac{-b - \sqrt{-b^2 - 4 \alpha c}}{2a}
+\end{align*}</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">what to notice</span>
+            <div class="rendered" style="font-size:0.88rem;">
+              The <code style="background:#eee; padding:0 3px;">\left(</code> ... <code style="background:#eee; padding:0 3px;">\right)</code> pair around the square root auto-sizes both parentheses to match the tall content between them — try deleting <code style="background:#eee; padding:0 3px;">\left</code>/<code style="background:#eee; padding:0 3px;">\right</code> and the parentheses stay small while the <code style="background:#eee; padding:0 3px;">\sqrt{}</code> grows past them.<br><br>
+              The final line of the <code style="background:#eee; padding:0 3px;">align*</code> block has <b>no left-hand side before its <code>&amp;</code></b> — a genuinely empty alignment column is valid syntax, and lines up this continuation line's <code style="background:#eee; padding:0 3px;">=</code> directly under the one above it, the standard way to show "this simplifies further" across an extra line.
+            </div>
+          </div>
+        </div>
+        <div class="mistake"><b>A bug hiding in plain sight:</b> this real example from the course material writes <code class="inline">\sqrt{-b^2 \pm 4\cdot \alpha \cdot c}</code> in the general setup, but the two individual roots use <code class="inline">+</code> and <code class="inline">-</code> under the square root, <em>not</em> <code class="inline">-b^2 + 4ac</code> and <code class="inline">-b^2 - 4ac</code> — mathematically the standard discriminant is $b^2 - 4ac$, not $-b^2 \pm 4ac$. This is a genuine sign slip in the source document, not a LaTeX issue, and it's a good reminder that LaTeX will happily, perfectly typeset an equation that is mathematically wrong — compiling without errors is not the same thing as being correct, and proofreading the math itself is a separate job from proofreading the markup.</div>
+      </div>
+    </section>
+
+    <!-- ============ 07 MATH II — SYMBOLS ============ -->
+    <section id="mathsym">
+      <div class="section-head"><span class="section-num">07</span><h2>Math II — Symbols, Greek &amp; Spacing</h2></div>
+      <p class="lead">Pulled from Jim Hefferon's "LaTeX Math for Undergrads" cheat-sheet — this is the vocabulary layer that goes <em>inside</em> the environments from §06. Treat this section as a lookup reference, not something to memorize in one sitting.</p>
+
+      <div class="subtopic">
+        <h3>Rule zero</h3>
+        <p>Hefferon opens with the single rule that explains almost every beginner mistake in this whole area: <em>any</em> mathematics at all, even a lone variable, needs a math setting. Writing "the value of x is 7" directly produces exactly that ugly upright text; writing "the value of <code class="inline">$x$</code> is <code class="inline">$7$</code>" produces properly italicized, correctly-spaced math. This is why a stray unmatched <code class="inline">$</code> anywhere in your document throws off everything after it — LaTeX is a strict two-state machine (in math mode, or not), and every <code class="inline">$</code> flips that state, so an odd number of them anywhere in the file leaves you in the wrong state for the rest of the document.</p>
+      </div>
+
+      <div class="subtopic">
+        <h3>The Greek alphabet</h3>
+        <p>Every Greek letter is <code class="inline">\</code> followed by its lowercase spelled-out name for the lowercase glyph, and a <em>capitalized</em> command name for the uppercase glyph — but only for the letters whose uppercase form actually differs from a Latin letter (uppercase alpha looks identical to Latin "A," so LaTeX doesn't bother giving you a redundant <code class="inline">\Alpha</code>; you'd just type <code class="inline">A</code>). Several letters also have a "var" alternate glyph (e.g. <code class="inline">\epsilon</code> vs. <code class="inline">\varepsilon</code>) — both are mathematically the same letter, just different conventional glyph shapes, and which one a field prefers is mostly a matter of convention (physics tends to prefer the var-forms for epsilon and phi, for instance).</p>
+        <div class="table-scroll">
+        <table class="sym-table">
+          <tr><th>Letter</th><th>Command</th><th>Letter</th><th>Command</th></tr>
+          <tr><td class="glyph">α</td><td class="cmd">\alpha</td><td class="glyph">ξ, Ξ</td><td class="cmd">\xi, \Xi</td></tr>
+          <tr><td class="glyph">β</td><td class="cmd">\beta</td><td class="glyph">π, Π</td><td class="cmd">\pi, \Pi</td></tr>
+          <tr><td class="glyph">γ, Γ</td><td class="cmd">\gamma, \Gamma</td><td class="glyph">ϖ</td><td class="cmd">\varpi</td></tr>
+          <tr><td class="glyph">δ, Δ</td><td class="cmd">\delta, \Delta</td><td class="glyph">ρ</td><td class="cmd">\rho</td></tr>
+          <tr><td class="glyph">ε</td><td class="cmd">\epsilon</td><td class="glyph">ϱ</td><td class="cmd">\varrho</td></tr>
+          <tr><td class="glyph">ε (var)</td><td class="cmd">\varepsilon</td><td class="glyph">σ, Σ</td><td class="cmd">\sigma, \Sigma</td></tr>
+          <tr><td class="glyph">ζ</td><td class="cmd">\zeta</td><td class="glyph">ς</td><td class="cmd">\varsigma</td></tr>
+          <tr><td class="glyph">η</td><td class="cmd">\eta</td><td class="glyph">τ</td><td class="cmd">\tau</td></tr>
+          <tr><td class="glyph">θ, Θ</td><td class="cmd">\theta, \Theta</td><td class="glyph">υ, Υ</td><td class="cmd">\upsilon, \Upsilon</td></tr>
+          <tr><td class="glyph">ϑ</td><td class="cmd">\vartheta</td><td class="glyph">φ, Φ</td><td class="cmd">\phi, \Phi</td></tr>
+          <tr><td class="glyph">ι</td><td class="cmd">\iota</td><td class="glyph">ϕ (var)</td><td class="cmd">\varphi</td></tr>
+          <tr><td class="glyph">κ</td><td class="cmd">\kappa</td><td class="glyph">χ</td><td class="cmd">\chi</td></tr>
+          <tr><td class="glyph">λ, Λ</td><td class="cmd">\lambda, \Lambda</td><td class="glyph">ψ, Ψ</td><td class="cmd">\psi, \Psi</td></tr>
+          <tr><td class="glyph">μ</td><td class="cmd">\mu</td><td class="glyph">ω, Ω</td><td class="cmd">\omega, \Omega</td></tr>
+          <tr><td class="glyph">ν</td><td class="cmd">\nu</td><td class="glyph">o</td><td class="cmd">(plain "o", no command)</td></tr>
+        </table>
+        </div>
+      </div>
+
+      <div class="subtopic">
+        <h3>Calligraphic, script &amp; blackboard-bold letters</h3>
+        <p>These three "alternate alphabets" are visually easy to confuse but come from different families and mean different things by convention. <code class="inline">\mathcal{A}</code> gives the pointed, angular calligraphic style built into every standard LaTeX installation — commonly used for sets, categories, or (as in your own past papers) a normal-distribution function name like <code class="inline">\mathcal{N}(x,\mu,\sigma)</code>. <code class="inline">\mathscr{P}</code> gives a rounder, more flowing script style, but needs an extra package, <code class="inline">\usepackage{mathrsfs}</code>, that isn't loaded by default. <code class="inline">\mathbb{R}</code> gives blackboard-bold — the "double-struck" font used almost universally for number sets ($\mathbb{R}$ real numbers, $\mathbb{Z}$ integers, $\mathbb{Q}$ rationals, $\mathbb{N}$ naturals, $\mathbb{C}$ complex) — and requires <code class="inline">amssymb</code>, one more reason that package belongs in nearly every math-heavy preamble.</p>
+        <table class="pkg-table">
+          <tr><th>Style</th><th>Command</th><th>Needs</th><th>Typical use</th></tr>
+          <tr><td>Calligraphic</td><td><code class="inline">\mathcal{A}</code></td><td>built-in</td><td>Sets, the normal-distribution function <code class="inline">\mathcal{N}</code></td></tr>
+          <tr><td>Script</td><td><code class="inline">\mathscr{P}</code></td><td><code class="inline">mathrsfs</code></td><td>An alternate, rounder script look</td></tr>
+          <tr><td>Blackboard bold</td><td><code class="inline">\mathbb{R}</code></td><td><code class="inline">amssymb</code></td><td>Number sets: ℝ ℤ ℚ ℕ ℂ</td></tr>
+        </table>
+      </div>
+
+      <div class="subtopic">
+        <h3>Decorations &amp; accents</h3>
+        <table class="pkg-table">
+          <tr><th>Command</th><th>Effect</th></tr>
+          <tr><td><code class="inline">f'</code> via <code class="inline">f'</code> or <code class="inline">f^\prime</code></td><td>Prime, first derivative notation.</td></tr>
+          <tr><td><code class="inline">\dot{a}</code>, <code class="inline">\ddot{a}</code></td><td>Single/double dot above (rate of change, acceleration in physics).</td></tr>
+          <tr><td><code class="inline">\tilde{x}</code>, <code class="inline">\hat{x}</code>, <code class="inline">\bar{x}</code></td><td>Tilde, hat, bar over a single character.</td></tr>
+          <tr><td><code class="inline">\vec{x}</code>, <code class="inline">\boldsymbol{x}</code></td><td>Arrow-vector notation, or bold for a vector (a common alternate convention).</td></tr>
+          <tr><td><code class="inline">\widehat{x+y}</code>, <code class="inline">\overline{x+y}</code></td><td>Wide versions that stretch across a whole multi-character expression, not just one letter.</td></tr>
+          <tr><td><code class="inline">\overbrace{...}</code>, <code class="inline">\underbrace{...}</code></td><td>A brace above/below an expression, usually paired with a label written as a super/subscript on the brace itself.</td></tr>
+        </table>
+        <p class="small-note">If the letter being decorated is <code class="inline">i</code> or <code class="inline">j</code>, some decorations need the dotless forms <code class="inline">\imath</code>/<code class="inline">\jmath</code> instead — e.g. <code class="inline">\vec{\imath}</code> — because a regular <code class="inline">i</code> already has its own dot, which collides visually with an accent placed on top of it.</p>
+      </div>
+
+      <div class="subtopic">
+        <h3>Spacing in mathematics</h3>
+        <p>LaTeX's automatic math spacing is very good but occasionally needs a manual nudge — most often to separate a differential like <code class="inline">dx</code> from what precedes it, or to tighten a spot where automatic spacing looks too loose. The five common spaces, from narrowest to widest, are in the ratio 3:4:5 for the first three, then two much larger fixed spaces:</p>
+        <table class="pkg-table">
+          <tr><th>Command</th><th>Width</th><th>Typical use</th></tr>
+          <tr><td><code class="inline">\,</code></td><td>thin space</td><td>Before a differential: <code class="inline">\int x^2\,dx</code></td></tr>
+          <tr><td><code class="inline">\:</code></td><td>medium space</td><td>Slightly more separation than <code class="inline">\,</code></td></tr>
+          <tr><td><code class="inline">\;</code></td><td>thick space</td><td>Separating loosely related pieces of one expression</td></tr>
+          <tr><td><code class="inline">\quad</code></td><td>one full character width</td><td>Between parts of a displayed equation</td></tr>
+          <tr><td><code class="inline">\qquad</code></td><td>two full character widths</td><td>Wider separation, e.g. equation and its condition</td></tr>
+          <tr><td><code class="inline">\!</code></td><td><em>negative</em> thin space</td><td>Tightening, e.g. <code class="inline">n/\!\log n</code> instead of an awkward gap before <code class="inline">log</code></td></tr>
+        </table>
+      </div>
+
+      <div class="subtopic">
+        <h3>Roman-type operator names</h3>
+        <p>Function names like sine, cosine, and log are <em>words</em>, not products of variables — <code class="inline">sin(x)</code> typed without a backslash renders as the four separate italic variables <em>s</em>, <em>i</em>, <em>n</em>, <em>(x)</em> multiplied together, with the wrong spacing and the wrong (italic) shape. The backslashed forms <code class="inline">\sin(x)</code>, <code class="inline">\log</code>, <code class="inline">\lim</code>, and so on are pre-defined LaTeX "operator names": upright roman type, with correct spacing rules built in automatically (for instance, <code class="inline">\lim_{x \to 0}</code> knows to place the subscript directly underneath in display style).</p>
+        <table class="pkg-table">
+          <tr><th>Trig / hyperbolic / inverse</th><th>Other common operators</th></tr>
+          <tr><td><code class="inline">\sin \cos \tan \sec \csc \cot</code></td><td><code class="inline">\log \ln \lg \exp</code></td></tr>
+          <tr><td><code class="inline">\sinh \cosh \tanh \coth</code></td><td><code class="inline">\det \dim \ker \deg \gcd</code></td></tr>
+          <tr><td><code class="inline">\arcsin \arccos \arctan</code></td><td><code class="inline">\min \max \inf \sup</code></td></tr>
+          <tr><td>—</td><td><code class="inline">\liminf \limsup \lim \arg</code></td></tr>
+        </table>
+      </div>
+
+      <div class="subtopic">
+        <h3>Fences that grow with their contents</h3>
+        <p>Plain <code class="inline">(</code> and <code class="inline">)</code> always print at the same fixed size, which looks visibly wrong once the content between them grows tall — a fraction, a square root, a summation. <code class="inline">\left(</code> and <code class="inline">\right)</code> tell LaTeX to measure whatever sits between them and automatically scale both delimiters to match. The one strict rule: every <code class="inline">\left</code> must be matched by a corresponding <code class="inline">\right</code> somewhere later, and — a genuinely common source of a cryptic <code class="inline">! Missing \right</code> error — both must end up on the same "line" of math as far as LaTeX's grouping is concerned, so splitting a <code class="inline">\left(...\right)</code> pair across two lines of an <code class="inline">align</code> block without care is a classic way to break a build.</p>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">source</span>
+            <pre class="tex-code"><code>\left\langle i, 2^{2^i} \right\rangle
+
+\left. \frac{df}{dx} \right|_{x_0}
+
+\Big[ \sum_{k=0}^n e^{k^2} \Big]</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">what each does</span>
+            <div class="rendered" style="font-size:0.88rem;">
+              First: auto-sized angle brackets ⟨ ⟩ around a tall expression.<br><br>
+              Second: a <b>one-sided</b> fence — <code style="background:#eee; padding:0 3px;">\left.</code> (a period) means "invisible left delimiter," pairing with a visible <code style="background:#eee; padding:0 3px;">\right|</code> to show a derivative evaluated at a point.<br><br>
+              Third: manually fixed-size brackets via <code style="background:#eee; padding:0 3px;">\Big</code> — for when <code style="background:#eee; padding:0 3px;">\left</code>/<code style="background:#eee; padding:0 3px;">\right</code>'s automatic sizing overshoots and you want precise manual control instead. The size ladder is <code style="background:#eee; padding:0 3px;">\big &lt; \Big &lt; \bigg &lt; \Bigg</code>.
+            </div>
+          </div>
+        </div>
+        <p class="small-note">Common fence pairs: <code class="inline">( )</code> parentheses, <code class="inline">[ ]</code> brackets, <code class="inline">\{ \}</code> curly braces (need escaping — plain <code class="inline">{ }</code> are reserved for LaTeX grouping), <code class="inline">\langle \rangle</code> angle brackets, <code class="inline">\lfloor \rfloor</code> floor, <code class="inline">\lceil \rceil</code> ceiling, <code class="inline">| |</code> single bars (absolute value), <code class="inline">\| \|</code> double bars (norm).</p>
+      </div>
+
+      <div class="subtopic">
+        <h3>Binomial coefficients, permutations &amp; modulo notation</h3>
+        <table class="pkg-table">
+          <tr><th>Command</th><th>Renders (roughly)</th><th>Note</th></tr>
+          <tr><td><code class="inline">\binom{n}{k}</code></td><td>big parenthesized stack, size adapts to context</td><td>The general form; auto-shrinks inline, auto-grows in display</td></tr>
+          <tr><td><code class="inline">\dbinom{n}{k}</code> / <code class="inline">\tbinom{n}{k}</code></td><td>forced display-size / forced inline-size</td><td>Overrides the automatic sizing above</td></tr>
+          <tr><td><code class="inline">n^{\underline{r}}</code></td><td>falling factorial notation for permutations</td><td>Alternative to writing out <code class="inline">P(n, r)</code></td></tr>
+          <tr><td><code class="inline">m \bmod n</code></td><td>m mod n</td><td>A binary operator, used inline within an expression</td></tr>
+          <tr><td><code class="inline">a \equiv b \pmod{m}</code></td><td>a ≡ b (mod m)</td><td>The parenthesized form for a congruence statement</td></tr>
+          <tr><td><code class="inline">a \equiv b \mod{m}</code></td><td>a ≡ b mod m</td><td>Same idea, unparenthesized</td></tr>
+        </table>
+      </div>
+
+      <div class="subtopic">
+        <h3>Variable-sized operators: inline vs. display</h3>
+        <p>Summations, products, and integrals are the clearest example of why "inline" and "display" math genuinely typeset differently rather than just differing in surrounding text flow: <code class="inline">$\sum_{j=0}^3 j^2$</code> written inline compresses its limits to small sub/superscripts squeezed to the side of the Σ to avoid disrupting the line height, while the exact same code inside a display environment (<code class="inline">equation</code>, <code class="inline">\[...\]</code>) automatically expands, placing the limits directly above and below a larger symbol. You don't control this manually in normal use — it's automatic based on context — but it's worth recognizing so a summation "looking small" inline doesn't read as a mistake.</p>
+        <table class="pkg-table">
+          <tr><th>Symbol family</th><th>Commands</th></tr>
+          <tr><td>Integrals</td><td><code class="inline">\int</code> (single), <code class="inline">\iint</code>, <code class="inline">\iiint</code> (double/triple), <code class="inline">\oint</code> (contour/closed)</td></tr>
+          <tr><td>Big union/intersection</td><td><code class="inline">\bigcup</code>, <code class="inline">\bigcap</code></td></tr>
+          <tr><td>Sum / product</td><td><code class="inline">\sum</code>, <code class="inline">\prod</code></td></tr>
+        </table>
+      </div>
+
+      <div class="subtopic">
+        <h3>Breaking a long equation across lines: <code class="inline">multline</code></h3>
+        <p>When a single equation is too long for one line but doesn't have a natural "align at the equals sign" structure the way a derivation does, <code class="inline">multline</code> (and its unnumbered twin <code class="inline">multline*</code>) is the right tool — it left-aligns the first line, right-aligns the last, and centers anything in between, which reads more naturally for one continuous expression than forcing an artificial alignment point.</p>
+        <pre class="tex-code" style="background:var(--paper); color:var(--ink); padding:16px; border-radius:6px;"><code>\begin{multline*}
+  \sin(x) = x - \frac{x^3}{3!} \\
+  + \frac{x^5}{5!} - \cdots
+\end{multline*}</code></pre>
+      </div>
+    </section>
+
+    <!-- ============ 08 THEOREMS ============ -->
+    <section id="theorems">
+      <div class="section-head"><span class="section-num">08</span><h2>Theorems &amp; Proofs</h2></div>
+      <p class="lead">Not covered anywhere in your four Online-1 papers, but a full worked example in your teacher's older template — this is likely to matter once your courses move past LaTeX mechanics into actually writing up algorithmic or mathematical arguments.</p>
+
+      <div class="subtopic">
+        <h3>Defining your own theorem-like environments</h3>
+        <p><code class="inline">amsthm</code> doesn't ship with a "Theorem" environment ready to use out of the box — instead it gives you a factory, <code class="inline">\newtheorem</code>, for building exactly the environments your document needs, each with its own automatic numbering.</p>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">preamble (from your teacher's file)</span>
+            <pre class="tex-code"><code>\usepackage{amsthm}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">what each argument means</span>
+            <div class="rendered" style="font-size:0.88rem;">
+              <b>First line:</b> creates an environment named <code style="background:#eee; padding:0 3px;">theorem</code>, displayed with the label word "Theorem," and its own independent counter — <code style="background:#eee; padding:0 3px;">\begin{theorem}...\end{theorem}</code> will print "Theorem 1," then "Theorem 2," and so on.<br><br>
+              <b>Second line:</b> creates <code style="background:#eee; padding:0 3px;">lemma</code>, displayed as "Lemma," but the <code style="background:#eee; padding:0 3px;">[theorem]</code> in square brackets means "share theorem's counter" instead of starting a fresh one. The two environments now interleave on one running number: Theorem 1, Lemma 2, Theorem 3 — never two "Lemma 1"s from two different environments looking like independent series.
+            </div>
+          </div>
+        </div>
+        <div class="mistake"><b>The two optional arguments people mix up:</b> <code class="inline">\newtheorem{lemma}[theorem]{Lemma}</code> and <code class="inline">\newtheorem{lemma}{Lemma}[section]</code> look almost identical but do genuinely different things, and this is one of the most commonly confused pairs in all of <code class="inline">amsthm</code>. The bracket <em>immediately after the environment name</em> (<code class="inline">[theorem]</code>) means "share this other environment's counter," producing interleaved numbering across two different environment types, as above. The bracket <em>at the very end, after the display name</em> (<code class="inline">[section]</code>) means "reset this environment's own counter every time the given sectioning unit increments," which instead produces numbers like "Lemma 2.1," "Lemma 2.2," then resetting to "Lemma 3.1" in the next section. They are not interchangeable, and using the wrong one produces numbering that looks superficially plausible but is structurally wrong.</div>
+      </div>
+
+      <div class="subtopic">
+        <h3>Using it: a statement, then a proof</h3>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">source (from your teacher's file)</span>
+            <pre class="tex-code"><code>\begin{lemma}[Graph Representability]
+    \label{lem:tree_representability}
+    Every tree $T = (V, E)$ is a
+    Pairwise Compatibility Graph (PCG).
+\end{lemma}
+
+\begin{proof}
+    Let $T$ be a tree. By definition,
+    there exists a non-negative edge
+    weight assignment
+    $w: E \rightarrow \mathbb{R}^+$
+    and a real interval $[L, U]$ such
+    that two vertices $u, v \in V$ are
+    adjacent in the PCG if and only if
+    the path distance $d_T(u,v)$ falls
+    within $[L, U]$.
+\end{proof}</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">rendered</span>
+            <div class="rendered" style="font-size:0.9rem;">
+              <p style="margin:0 0 10px;"><b><i>Lemma 1</i></b> <i>(Graph Representability).</i> Every tree <i>T</i> = (<i>V, E</i>) is a Pairwise Compatibility Graph (PCG).</p>
+              <p style="margin:0;"><i>Proof.</i> Let <i>T</i> be a tree. By definition, there exists a non-negative edge weight assignment <i>w: E → ℝ⁺</i> and a real interval [<i>L, U</i>] such that two vertices <i>u, v ∈ V</i> are adjacent in the PCG if and only if the path distance d<sub>T</sub>(u,v) falls within [<i>L, U</i>]. ∎</p>
+            </div>
+          </div>
+        </div>
+        <p>Two details worth internalizing. First, the square-bracket argument on <code class="inline">\begin{lemma}[Graph Representability]</code> is an <em>optional title</em> for this specific instance — it prints in parentheses right after the auto-generated number, exactly the same mechanism as a figure caption's own text, and it's entirely optional per-use, not something you declared back when you defined the environment. Second, <code class="inline">\begin{proof}...\end{proof}</code> is special-cased by <code class="inline">amsthm</code>: it automatically prefixes the block with the italicized word "Proof." and appends a small tombstone symbol (∎, the "Q.E.D. box") at the very end, entirely automatically — you never type either one yourself. If you want a different symbol, redefine it once in the preamble: <code class="inline">\renewcommand{\qedsymbol}{$\blacksquare$}</code>.</p>
+      </div>
+
+      <div class="subtopic">
+        <h3>Changing the visual style</h3>
+        <p><code class="inline">\theoremstyle{name}</code>, called <em>before</em> the relevant <code class="inline">\newtheorem</code> calls (style changes only affect theorems defined afterward), switches between three built-in presentations: <code class="inline">plain</code> (bold header, italic body — the default, and what's used above), <code class="inline">definition</code> (bold header, upright/roman body — more common for definitions than for results being proven), and <code class="inline">remark</code> (italic header, upright body, usually with less vertical spacing — for asides and remarks that are less formally weighty than a theorem).</p>
+        <pre class="tex-code" style="background:var(--paper); color:var(--ink); padding:16px; border-radius:6px;"><code>\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}   % starred = unnumbered</code></pre>
+        <p class="small-note">A starred <code class="inline">\newtheorem*{name}{Display Text}</code> (note: the star goes on the <em>definition</em>, not on individual uses) creates an environment with no counter and no number at all — useful for a one-off "Remark" or "Note" that doesn't belong in a numbered sequence.</p>
+      </div>
+    </section>
+
+    <!-- ============ 09 REFS/HYPERLINKS ============ -->
+    <section id="refs">
+      <div class="section-head"><span class="section-num">09</span><h2>Cross-references &amp; Hyperlinks</h2></div>
+      <p class="lead">Labels tie a figure/table/equation/section/theorem to a number; <code class="inline">hyperref</code> makes every one of those numbers (plus every citation) a clickable link. Your teacher's older file uses <code class="inline">\ref{tab:table1}</code> in running prose and <code class="inline">\label{lem:tree_representability}</code> on a lemma — the exact same mechanism regardless of what's being referenced.</p>
+
+      <div class="subtopic">
+        <h3>Label / ref family</h3>
+        <p>Every <code class="inline">\label</code> in a document shares one global namespace, so a naming convention isn't optional politeness — it's what keeps a fifty-label document navigable. A common, effective habit is a short type prefix followed by a colon: <code class="inline">fig:</code> for figures, <code class="inline">tab:</code> for tables, <code class="inline">eq:</code> for equations, <code class="inline">sec:</code> for sections, <code class="inline">lem:</code>/<code class="inline">thm:</code> for lemmas/theorems, exactly as your teacher's own <code class="inline">lem:tree_representability</code> does.</p>
+        <table class="pkg-table">
+          <tr><th>Command</th><th>Produces</th></tr>
+          <tr><td><code class="inline">\label{fig:pioneers}</code></td><td>Attaches a name to the nearest numbered thing (figure/table/section/equation/theorem).</td></tr>
+          <tr><td><code class="inline">\ref{fig:pioneers}</code></td><td>Just the number, e.g. "1".</td></tr>
+          <tr><td><code class="inline">\pageref{fig:pioneers}</code></td><td>The page number that label sits on.</td></tr>
+          <tr><td><code class="inline">\eqref{eq:lighting}</code></td><td>The number wrapped in parentheses: "(1)".</td></tr>
+        </table>
+        <p class="small-note">As established in §04, place <code class="inline">\label</code> <b>after</b> <code class="inline">\caption</code> in figures/tables (captions assign the number) — placed before, it will silently reference the wrong number rather than throwing an error, which is what makes this particular mistake so easy to ship unnoticed.</p>
+        <div class="mistake"><b>Common mistake:</b> compiling once, seeing <code class="inline">??</code> in place of every reference number, and assuming something is broken. This is the exact same "needs a second pass" mechanism as the table of contents in §03 — <code class="inline">\ref</code> reads from an auxiliary <code class="inline">.aux</code> file that only gets written during the compile it's used in, so a brand-new label is always unresolved on the pass where it's first introduced. Compile twice.</div>
+      </div>
+
+      <div class="subtopic">
+        <h3><code class="inline">hyperref</code> setup + <code class="inline">\url</code> vs <code class="inline">\href</code></h3>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">source</span>
+            <pre class="tex-code"><code>% load LAST in the preamble
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  citecolor=teal,
+  urlcolor=magenta
+}
+
+See \url{https://en.wikipedia.org/wiki/...}
+or \href{https://en.wikipedia.org/wiki/...}{this page}.</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">rendered</span>
+            <div class="rendered">
+              See <span style="color:magenta;">https://en.wikipedia.org/wiki/...</span><br>
+              or <span style="color:blue; text-decoration:underline;">this page</span>.
+            </div>
+          </div>
+        </div>
+        <p><code class="inline">\url{}</code> prints the raw address verbatim, in a monospace-like typewriter font, and — importantly — handles special characters like <code class="inline">~</code>, <code class="inline">_</code>, and <code class="inline">%</code> inside the URL correctly, which would otherwise need manual escaping in ordinary LaTeX text (a bare <code class="inline">%</code> starts a comment; a bare <code class="inline">_</code> tries to start a math subscript and errors outside math mode). This is precisely why it's the right choice inside a footnote or a reference list, where you want the exact address visible and copy-pasteable. <code class="inline">\href{link}{text}</code> hides the address behind readable words, appropriate for running prose where showing the raw URL would be visual clutter.</p>
+        <p class="small-note">Load <code class="inline">hyperref</code> as the very last <code class="inline">\usepackage</code> — most conflicts trace back to something being loaded after it and clashing with the internal commands it redefines.</p>
+      </div>
+    </section>
+
+    <!-- ============ 10 CITATIONS ============ -->
+    <section id="cite">
+      <div class="section-head"><span class="section-num">10</span><h2>Citations &amp; Building a .bib File from a PDF</h2></div>
+      <p class="lead">Every paper you sent ended in a numbered reference like <code class="inline">[1] Jean Meeus. Astronomical Algorithms...</code> — that number is generated, never typed by hand. Here's the full pipeline: PDF → .bib entry → citation style.</p>
+
+      <div class="subtopic">
+        <h3>Step 1 — pull the fields out of the source PDF</h3>
+        <p>When you only have a PDF (not a DOI), extract these by hand from the cover/title page and copyright page:</p>
+        <table class="pkg-table">
+          <tr><th>Field</th><th>Where to find it</th></tr>
+          <tr><td>Author(s)</td><td>Title page — keep "Last, First" order, join multiple authors with <code class="inline">and</code>.</td></tr>
+          <tr><td>Title</td><td>Title page, exact capitalization.</td></tr>
+          <tr><td>Year</td><td>Copyright page ("©") or title page.</td></tr>
+          <tr><td>Publisher / Journal</td><td>Copyright page (books) or the journal header/footer on each page (articles).</td></tr>
+          <tr><td>Volume, Number, Pages</td><td>Journal articles only — usually in the running header/footer.</td></tr>
+          <tr><td>DOI</td><td>First page or copyright page, format <code class="inline">10.xxxx/xxxxx</code>.</td></tr>
+        </table>
+        <div class="tip"><b>Shortcut:</b> if you have the title, search it on <a href="https://scholar.google.com" target="_blank" rel="noopener">Google Scholar</a> → click the quotation-mark "Cite" icon → "BibTeX" — it hands you a ready-made entry. If you have a DOI instead, paste it into <a href="https://www.doi2bib.org" target="_blank" rel="noopener">doi2bib.org</a> for the same result. Manual extraction (below) is your fallback when neither exists.</div>
+      </div>
+
+      <div class="subtopic">
+        <h3>Step 2 — write the entry into <code class="inline">references.bib</code></h3>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">references.bib</span>
+            <pre class="tex-code"><code>@book{meeus1991,
+  author    = {Meeus, Jean},
+  title     = {Astronomical Algorithms},
+  publisher = {Willmann-Bell Inc.},
+  year      = {1991}
+}
+
+@book{graham1994concrete,
+  author    = {Graham, Ronald L. and Knuth, Donald E.
+               and Patashnik, Oren},
+  title     = {Concrete Mathematics: A Foundation
+               for Computer Science},
+  edition   = {2nd},
+  publisher = {Addison-Wesley Longman},
+  address   = {USA},
+  year      = {1994}
+}</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">entry types cheat-sheet</span>
+            <div class="rendered" style="font-size:0.85rem;">
+              <b>@article</b> — author, title, journal, year, volume, number, pages<br><br>
+              <b>@inproceedings</b> — author, title, booktitle, year, pages<br><br>
+              <b>@book</b> — author/editor, title, publisher, year<br><br>
+              <b>@incollection</b> — chapter inside an edited book<br><br>
+              <b>@misc</b> — author, title, year, note/howpublished, url — for websites, GitHub repos, datasets
+            </div>
+          </div>
+        </div>
+        <p class="small-note">The word right after the opening brace (<code class="inline">meeus1991</code>) is the <b>citation key</b> — anything unique, no spaces. That's the string you'll type inside <code class="inline">\cite{}</code>.</p>
+      </div>
+
+      <div class="subtopic">
+        <h3>Step 3a — numeric style, gives <code class="inline">[1]</code></h3>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">source</span>
+            <pre class="tex-code"><code>% preamble
+\bibliographystyle{plain}   % or ieeetr, unsrt, abbrv
+
+% in text
+As discussed by Meeus \cite{meeus1991}, ...
+
+% at the very end of the document
+\bibliography{references}</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">rendered</span>
+            <div class="rendered">As discussed by Meeus [1], ...</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="subtopic">
+        <h3>Step 3b — author-year style, gives <code class="inline">(Author, Year)</code></h3>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">source</span>
+            <pre class="tex-code"><code>% preamble
+\usepackage{natbib}
+\bibliographystyle{plainnat}   % or apalike
+
+% in text
+\citet{meeus1991} showed that ...      % textual
+Leap years correct for drift \citep{meeus1991}.  % parenthetical</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">rendered</span>
+            <div class="rendered">
+              Meeus (1991) showed that ...<br>
+              Leap years correct for drift (Meeus, 1991).
+            </div>
+          </div>
+        </div>
+        <p class="small-note">The <b>same</b> <code class="inline">.bib</code> file drives both formats — switching <code class="inline">[1]</code> ↔ <code class="inline">(Author, Year)</code> is purely a matter of which bibliography <i>style</i> you pick and whether you load <code class="inline">natbib</code>, never a matter of rewriting the .bib file.</p>
+        <div class="callout"><b>Compile order matters:</b> <code class="inline">pdflatex → bibtex → pdflatex → pdflatex</code> (four runs). Skipping steps is the #1 reason references show up as "[?]". Tools like <code class="inline">latexmk -pdf</code> automate this.</div>
+      </div>
+
+      <div class="subtopic">
+        <h3>Step 3c — fine control: <code class="inline">\bibpunct</code>, <code class="inline">\setcitestyle</code>, <code class="inline">\citestyle</code></h3>
+        <p>These three all edit the <em>same</em> underlying punctuation settings, just at different levels of convenience. Think of them as one dial with three different grips:</p>
+        <table class="pkg-table">
+          <tr><th>Command</th><th>What it is</th></tr>
+          <tr><td><code class="inline">\bibpunct{...}</code></td><td>The original, terse command — six positional arguments, no names. Powerful but easy to miscount.</td></tr>
+          <tr><td><code class="inline">\setcitestyle{...}</code></td><td>A friendlier wrapper added in natbib v8.0 — same settings as <code class="inline">\bibpunct</code>, but as readable <code class="inline">key=value</code> pairs. Preferred for new documents.</td></tr>
+          <tr><td><code class="inline">\citestyle{name}</code></td><td>Loads a whole <em>preset</em> of punctuation choices bundled under a given name (e.g. a journal's house style), without you specifying each piece yourself.</td></tr>
+        </table>
+
+        <h4>The low-level version: <code class="inline">\bibpunct</code></h4>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">source (preamble)</span>
+            <pre class="tex-code"><code>% natbib's own built-in default:
+\bibpunct[,]{(}{)}{;}{a}{,}{,}</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">argument-by-argument</span>
+            <div class="rendered" style="font-size:0.83rem; line-height:1.9;">
+              <b>[optional]</b> punctuation before a post-note → <code>,</code><br>
+              <b>arg 1</b> opening bracket → <code>(</code><br>
+              <b>arg 2</b> closing bracket → <code>)</code><br>
+              <b>arg 3</b> separator between multiple keys in one <code>\cite</code> → <code>;</code><br>
+              <b>arg 4</b> mode: <code>n</code>=numeric, <code>s</code>=superscript, anything else (e.g. <code>a</code>)=author–year<br>
+              <b>arg 5</b> punctuation between author and year → <code>,</code><br>
+              <b>arg 6</b> punctuation between years sharing one author → <code>,</code>
+            </div>
+          </div>
+        </div>
+
+        <h4>The readable version: <code class="inline">\setcitestyle</code></h4>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">source</span>
+            <pre class="tex-code"><code>\usepackage{natbib}
+\bibliographystyle{plainnat}
+\setcitestyle{authoryear, open={((}, close={))}}
+
+Leap years correct solar drift \citep{meeus1991}.</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">rendered</span>
+            <div class="rendered">Leap years correct solar drift ((Meeus, 1991)).</div>
+          </div>
+        </div>
+        <table class="pkg-table">
+          <tr><th>Key</th><th>Controls</th></tr>
+          <tr><td><code class="inline">authoryear</code> / <code class="inline">numbers</code> / <code class="inline">super</code></td><td>Overall citation mode (arg 4 of <code class="inline">\bibpunct</code>).</td></tr>
+          <tr><td><code class="inline">round</code> / <code class="inline">square</code> / <code class="inline">open={c},close={c}</code></td><td>Bracket shape (args 1–2). For curly <code class="inline">{ }</code> or angle <code class="inline">&lt; &gt;</code> brackets, set <code class="inline">open</code>/<code class="inline">close</code> directly.</td></tr>
+          <tr><td><code class="inline">semicolon</code> / <code class="inline">comma</code> / <code class="inline">citesep={c}</code></td><td>Separator between multiple citation keys in one <code class="inline">\cite</code> (arg 3).</td></tr>
+          <tr><td><code class="inline">aysep={c}</code></td><td>Punctuation between author and year (arg 5).</td></tr>
+          <tr><td><code class="inline">yysep={c}</code></td><td>Punctuation between years when the same author repeats (arg 6).</td></tr>
+          <tr><td><code class="inline">notesep={text}</code></td><td>Text/punctuation inserted before a post-note.</td></tr>
+        </table>
+
+        <h4>The whole-preset version: <code class="inline">\citestyle</code></h4>
+        <div class="demo-grid">
+          <div class="note note-code">
+            <span class="note-label">source</span>
+            <pre class="tex-code"><code>\usepackage{natbib}
+\bibliographystyle{plainnat}
+\citestyle{nature}   % pulls in Nature's own punctuation preset</code></pre>
+          </div>
+          <div class="note note-output">
+            <span class="note-label">what this buys you</span>
+            <div class="rendered" style="font-size:0.88rem;">
+              <code class="inline">\citestyle{name}</code> loads the punctuation preset tied to a named house style (e.g. <code class="inline">nature</code>, <code class="inline">agsm</code>, <code class="inline">dcu</code>, <code class="inline">kluwer</code>, <code class="inline">chicago</code>) — <em>independently</em> of whatever <code class="inline">\bibliographystyle</code> is formatting your reference list.
+            </div>
+          </div>
+        </div>
+        <div class="callout"><b>Precedence to remember:</b> calling <code class="inline">\bibpunct</code>, <code class="inline">\setcitestyle</code>, or <code class="inline">\citestyle</code> yourself always <em>overrides</em> — and silences — the automatic punctuation that some <code class="inline">\bibliographystyle</code> files try to set on their own. Since natbib v8.0, all three commands can also be issued anywhere in the document, so a thesis can legitimately switch citation style between chapters.</div>
+      </div>
+    </section>
+
+    <!-- ============ 11 TEACHER'S TEMPLATES ============ -->
+    <section id="templates">
+      <div class="section-head"><span class="section-num">11</span><h2>Your Teacher's Master Templates</h2></div>
+      <p class="lead">Sheikh Azizul Hakim's own two demo files aren't just examples — they're effectively a syllabus written in code. Reading them top to bottom against the sections above tells you almost exactly what a CSE200 assignment expects.</p>
+
+      <div class="subtopic">
+        <h3><code class="inline">main-old-version.tex</code> — the comprehensive tour</h3>
+        <p>This is the denser of the two files, and it's organized as one section per topic, almost exactly mirroring this guide's structure — which is a strong signal it's worth treating as the closest thing to an official checklist you have. Walking it top to bottom:</p>
+        <table class="pkg-table">
+          <tr><th>What's in the file</th><th>Maps to</th></tr>
+          <tr><td><code class="inline">\newtheorem</code>, <code class="inline">amsthm</code> loaded in the preamble</td><td>§08 Theorems &amp; Proofs — declared before <code class="inline">\begin{document}</code>, exactly as required.</td></tr>
+          <tr><td><code class="inline">\maketitle → \pagebreak → \tableofcontents → \pagebreak → \listoftables → \pagebreak</code></td><td>§03 — the full front-matter sequence: title, then TOC, then a list of every captioned table, each on its own page.</td></tr>
+          <tr><td>§1.1 Text Formatting, then a separate §Fonts subsection</td><td>§01 — deliberately split: weight/shape/emphasis is one lesson, size is a second, distinct lesson.</td></tr>
+          <tr><td><code class="inline">\section*{Unlisted Section}</code> right after a numbered <code class="inline">\section{Section 2}</code></td><td>§03 — a clean, minimal demonstration of the starred-section pattern, deliberately placed next to a numbered one for contrast.</td></tr>
+          <tr><td>Unordered lists with <code class="inline">\item[--]</code> and <code class="inline">\item[\textbf{Description}]</code>, then nested itemize</td><td>§02 — zero-package custom labels, before ever introducing <code class="inline">enumitem</code>.</td></tr>
+          <tr><td>Ordered list containing both a nested <code class="inline">enumerate</code> and a nested <code class="inline">itemize</code> as siblings under one <code class="inline">\item</code></td><td>§02 — proof that you can mix list <em>types</em> at the same nesting depth, not just nest the same type repeatedly.</td></tr>
+          <tr><td>Basic tabular → multicolumn → multirow → booktabs, as four separate, escalating subsections</td><td>§04 — deliberately isolates each table technique before ever combining them.</td></tr>
+          <tr><td><code class="inline">equation</code>, <code class="inline">equation*</code>, <code class="inline">align</code> with <code class="inline">\nonumber</code>, bare <code class="inline">$$...$$</code>, <code class="inline">cases</code>, <code class="inline">bmatrix</code>, a real loss-function summation</td><td>§06 — nearly a one-to-one checklist of every math environment this guide covers.</td></tr>
+          <tr><td><code class="inline">lemma</code> with an optional title, then <code class="inline">proof</code></td><td>§08 — the theorem machinery declared earlier, finally used.</td></tr>
+        </table>
+        <p class="small-note">If you can reproduce every row of this table from memory, in order, you've effectively reproduced your teacher's own reference document.</p>
+      </div>
+
+      <div class="subtopic">
+        <h3><code class="inline">main-class-version.tex</code> — the leaner walkthrough</h3>
+        <p>Shorter, more recent (dated June 2026), and built around <code class="inline">\lipsum</code> filler text rather than real prose — this reads like a live in-class demo file rather than a reference document, which makes it useful for a different reason: it shows the <em>minimum</em> preamble needed for a normal assignment (<code class="inline">graphicx</code>, <code class="inline">lipsum</code>, <code class="inline">enumitem</code>, <code class="inline">amsmath</code> — noticeably leaner than the older file's kitchen-sink preamble), and it isolates a few specific details worth flagging on their own:</p>
+        <table class="pkg-table">
+          <tr><th>Detail</th><th>Why it's worth noticing</th></tr>
+          <tr><td><code class="inline">\subsubsection*{Intro V}</code> sitting between two numbered <code class="inline">\subsubsection</code>s</td><td>A direct, minimal demonstration that the starred/unstarred choice is made independently for <em>every single heading</em>, not once per document — you can freely mix numbered and unnumbered headings at the same level.</td></tr>
+          <tr><td><code class="inline">\begin{enumerate}[label=(\roman*)]</code> with a nested plain <code class="inline">enumerate</code> inside item 2</td><td>Exactly the "customize one level, forget the level below" trap flagged in §02 — the inner list falls back to default numbering (1, 2) rather than continuing the roman-numeral scheme, since only the outer list's label was customized.</td></tr>
+          <tr><td>A commented-out figure block (<code class="inline">% \begin{figure} ...</code>)</td><td>The standard way to temporarily disable a block without deleting it — every line individually prefixed with <code class="inline">%</code>. Handy while drafting, easy to forget to re-enable before submitting.</td></tr>
+          <tr><td>The quadratic-formula worked example</td><td>Walked through in full in §06, including the sign error worth knowing is there.</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============ 12 EXTRAS ============ -->
+    <section id="extras">
+      <div class="section-head"><span class="section-num">12</span><h2>Loose Ends Worth Knowing</h2></div>
+      <p class="lead">Small things that showed up once each across your papers and templates, and are easy to forget under exam pressure.</p>
+
+      <div class="grid-2">
+        <div class="subtopic">
+          <h3>Footnotes</h3>
+          <pre class="tex-code" style="background:var(--paper); color:var(--ink); padding:14px; border-radius:6px; font-size:0.78rem;"><code>have applications in computer science
+\footnote{\url{https://en.wikipedia.org/...}}</code></pre>
+          <p class="small-note">Place <code class="inline">\footnote{}</code> immediately after the word it annotates — numbering and page placement are automatic. Inside a footnote, prefer <code class="inline">\url{}</code> over <code class="inline">\href{}</code> for a raw address, since the reader can't click a printed page.</p>
+        </div>
+        <div class="subtopic">
+          <h3>Block quotations</h3>
+          <pre class="tex-code" style="background:var(--paper); color:var(--ink); padding:14px; border-radius:6px; font-size:0.78rem;"><code>\begin{quote}
+Don't forget to practice more problems!
+\end{quote}</code></pre>
+          <p class="small-note">Indents both margins slightly — used for the closing remark in the Stirling Numbers paper. For a short quotation with no paragraph break, <code class="inline">quotation</code> (which also indents the first line of each paragraph) is the multi-paragraph sibling of <code class="inline">quote</code>.</p>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="subtopic">
+          <h3>Commenting out content</h3>
+          <pre class="tex-code" style="background:var(--paper); color:var(--ink); padding:14px; border-radius:6px; font-size:0.78rem;"><code>% this whole line is ignored
+Visible text. % ignored from here on</code></pre>
+          <p class="small-note">A bare <code class="inline">%</code> makes LaTeX ignore everything after it on that line, including the line break — which is why two consecutive commented-out lines don't leave an accidental blank line/paragraph break in the output. This is exactly the mechanism your teacher's file uses to disable a whole figure block during drafting.</p>
+        </div>
+        <div class="subtopic">
+          <h3>Two compiles minimum, always</h3>
+          <p class="small-note">Anything that depends on "what number will this be" — TOC/LOF/LOT, cross-references, theorem numbers — is wrong on the very first compile and correct by the second (or, for citations via BibTeX, correct only after the full four-run cycle in §10). Seeing a "?" or "??" in place of a number almost always means: compile again, don't start debugging the markup.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 13 RESOURCES ============ -->
+    <section id="resources">
+      <div class="section-head"><span class="section-num">13</span><h2>Resources</h2></div>
+      <p class="lead">Four links worth bookmarking, in the order you'll actually reach for them.</p>
+      <table class="pkg-table">
+        <tr><th>Link</th><th>Use it for</th></tr>
+        <tr><td><a href="https://www.learnlatex.org/" target="_blank" rel="noopener">learnlatex.org</a></td><td>A structured, beginner-oriented course if any single topic above still feels shaky — it starts from "what is a preamble" and builds up slowly, a good complement to this board's denser reference style.</td></tr>
+        <tr><td><a href="https://www.overleaf.com/learn/latex/Learn_LaTeX_in_30_minutes" target="_blank" rel="noopener">Overleaf: Learn LaTeX in 30 minutes</a></td><td>The fastest "get productive today" primer — good the night before an assignment is due and you need the absolute essentials refreshed quickly.</td></tr>
+        <tr><td><a href="https://en.wikibooks.org/wiki/LaTeX/Mathematics" target="_blank" rel="noopener">Wikibooks: LaTeX/Mathematics</a></td><td>A deeper, more exhaustive companion to §06–§07 above when a specific symbol or environment isn't covered here.</td></tr>
+        <tr><td><a href="https://tablesgenerator.com/" target="_blank" rel="noopener">tablesgenerator.com</a></td><td>Build a table visually in a spreadsheet-like grid and export the exact <code class="inline">tabular</code> LaTeX code — genuinely useful for anything beyond a 3×3 table, where hand-typing <code class="inline">&amp;</code>s and <code class="inline">\\</code>s reliably introduces column-count errors (§04).</td></tr>
+      </table>
+    </section>
+
+    <footer>
+      <div class="sign">— now go run practice problems on this.</div>
+      <p>Tell me which topic to drill first and I'll generate fresh problems in that exact exam style.</p>
+    </footer>
+  </main>
+</div>
+
+<script>
+  // lightweight, dependency-free LaTeX-ish syntax highlighting
+  function highlightTex(raw){
+    return raw.split('\n').map(function(line){
+      var commentIdx = -1;
+      for (var i=0;i<line.length;i++){
+        if (line[i] === '%' && line[i-1] !== '\\'){ commentIdx = i; break; }
+      }
+      var codePart = commentIdx >= 0 ? line.slice(0, commentIdx) : line;
+      var commentPart = commentIdx >= 0 ? line.slice(commentIdx) : '';
+      codePart = codePart.replace(/(\\[a-zA-Z]+\*?)/g, '<span class="tex-cmd">$1</span>');
+      codePart = codePart.replace(/([{}\[\]])/g, '<span class="tex-brace">$1</span>');
+      if (commentPart) commentPart = '<span class="tex-comment">' + commentPart + '</span>';
+      return codePart + commentPart;
+    }).join('\n');
+  }
+  document.querySelectorAll('pre.tex-code code').forEach(function(el){
+    el.innerHTML = highlightTex(el.textContent);
+  });
+
+  // active TOC highlighting on scroll
+  var sections = Array.from(document.querySelectorAll('section[id]'));
+  var links = Array.from(document.querySelectorAll('.toc a'));
+  function onScroll(){
+    var pos = window.scrollY + 120;
+    var current = sections[0];
+    sections.forEach(function(s){ if (s.offsetTop <= pos) current = s; });
+    links.forEach(function(l){
+      l.classList.toggle('active', l.getAttribute('href') === '#' + current.id);
+    });
+  }
+  window.addEventListener('scroll', onScroll);
+  onScroll();
+
+  // close mobile nav after a link tap
+  links.forEach(function(l){
+    l.addEventListener('click', function(){
+      document.querySelector('.sidebar').classList.remove('open');
+    });
+  });
+</script>
+</body>
+</html>
